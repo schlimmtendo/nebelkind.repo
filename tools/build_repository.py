@@ -4,6 +4,7 @@ All uploaded packages are public immediately. Kodi auto-updates require higher v
 """
 import hashlib
 import io
+import json
 import re
 from pathlib import Path
 import sys
@@ -104,6 +105,20 @@ def main():
     PACKAGES.mkdir(exist_ok=True)
     (PACKAGES/'addons.xml').write_bytes(data)
     (PACKAGES/'addons.xml.md5').write_text(hashlib.md5(data).hexdigest(),encoding='ascii')
+    # Minimal public version manifest for the Nebelkind startup notices.
+    # Keep it deterministic, and never report same-version test ZIPs as upgrades.
+    manifest = {
+        'schema': 1,
+        'addons': [
+            {'id': addon_id, 'version': version}
+            for addon_id, (version, _) in sorted(entries.items())
+            if addon_id != REPO_ID
+        ]
+    }
+    (PACKAGES/'release.json').write_text(
+        json.dumps(manifest, indent=2, ensure_ascii=False) + '\\n',
+        encoding='utf-8'
+    )
     print('Indexed:',', '.join(f'{k} {v[0]}' for k,v in sorted(entries.items())))
 
 
