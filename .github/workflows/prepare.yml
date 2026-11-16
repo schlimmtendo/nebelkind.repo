@@ -16,6 +16,11 @@ on:
       - 'nebelkind-paket.zip'
       - '.github/workflows/prepare.yml'
   workflow_dispatch:
+# Serialize publishing so two updates cannot overwrite each other's commits.
+concurrency:
+  group: nebelkind-publish-main
+  cancel-in-progress: false
+
 permissions:
   contents: write
 jobs:
