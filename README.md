@@ -40,6 +40,18 @@ GitHub Actions führt dann automatisch die vier Schritte aus:
 
 Die Versionen der Addons bleiben beim Import unverändert. **Unveränderte Versionsnummern lösen in Kodi kein automatisches Update aus**; das ist für manuelle Testinstallationen vorgesehen. Für reguläre Updates die Versionsnummer im jeweiligen `addon.xml` erhöhen.
 
+## Automatische Veröffentlichung über GitHub (nach der Erstinstallation)
+
+Nach dem einmaligen Import der vier Addon-ZIPs kann die Entwicklung direkt über die GitHub-Dateien stattfinden:
+
+- `overrides/<addon-id>/<relativer Addon-Dateipfad>`: Geänderte Textdateien des Addons. Beispiel: `overrides/skin.nebelflix/xml/Home.xml`. Die Action übernimmt nur diese Änderungen in die vorhandene Addon-ZIP und verpackt **nur das betroffene Addon** neu. Die unveränderten Bilder und sonstigen ZIP-Dateien bleiben erhalten.
+- `release_versions.json`: Versionsnummern nur dann anheben, wenn ein offizielles Kodi-Update veröffentlicht werden soll. Ohne Versionsänderung kann eine öffentliche Test-ZIP derselben Version neu bereitgestellt werden; Kodi aktualisiert bereits installierte Geräte dann nicht automatisch.
+- **Erst nach ausdrücklicher Freigabe veröffentlichen:** Neue Änderungen können zunächst im Branch `testing` vorbereitet werden. Nur Änderungen im Branch `main` lösen die Live-Veröffentlichung aus.
+- Vor dem Hochladen werden alle Addon-ZIPs und die Kodi-Indexdateien geprüft. **Ältere Versions-ZIPs werden erst nach erfolgreicher Validierung im selben atomaren Git-Commit wie die neue Version entfernt.** Scheitert die Prüfung oder der Push, bleiben die bereits veröffentlichten Dateien bestehen.
+- Über die `nebelkind-paket.zip` können beim Import **ein bis vier** Addon-ZIPs übergeben werden. Dies ist der Weg für große Binärpakete, die nicht über die GitHub-Textschnittstelle übertragen werden können.
+
+**Wichtig:** Neue Python-/XML-Dateien können direkt durch die autorisierte GitHub-Verbindung geändert werden. Der allererste Upload des großen ZIP-Pakets muss einmalig über GitHub erfolgen; danach erlaubt das Override-Verfahren viele weitere Codeänderungen ohne erneuten manuellen ZIP-Upload. Änderungen an eingebetteten Binärressourcen benötigen gegebenenfalls weiterhin einen Paket-Upload.
+
 ## So veröffentliche ich Updates – auch Teststände
 
 1. **Jede fertige Test- oder Update-ZIP wird öffentlich in `main` abgelegt** unter `packages/<addon-id>/<addon-id>-<version>.zip`. Sie muss intern eine `addon.xml` mit exakt gleicher ID und Versionsnummer enthalten.
