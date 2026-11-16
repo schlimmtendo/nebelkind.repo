@@ -27,8 +27,13 @@ with TemporaryDirectory(prefix="nebelkind-publish-test-") as folder:
     old = addon_dir / (addon_id + "-0.5.70.zip")
     with ZipFile(old, "w", ZIP_DEFLATED) as z:
         z.writestr(addon_id + "/addon.xml",
-                   '<addon id="skin.nebelflix" version="0.5.70"/>')
+                   '<addon id="skin.nebelflix" version="0.5.70">'
+                   '<extension point="xbmc.addon.metadata"><assets>'
+                   '<icon>resources/nebelflix-icon.png</icon>'
+                   '<fanart>resources/missing.jpg</fanart><screenshot/>'
+                   '</assets></extension></addon>')
         z.writestr(addon_id + "/xml/Home.xml", "<home>OLD</home>")
+        z.writestr(addon_id + "/resources/nebelflix-icon.png", b"TEST-IMAGE")
 
     overrides.ROOT = base
     overrides.PACKAGES = packs
@@ -51,6 +56,19 @@ with TemporaryDirectory(prefix="nebelkind-publish-test-") as folder:
         assert z.testzip() is None
         assert z.read(addon_id + "/xml/Home.xml") == b"<home>FIXED</home>"
         assert ET.fromstring(z.read(addon_id + "/addon.xml")).get("version") == "0.5.71"
+
+    # Kodi browses artwork via separate packages/<id>/<asset> URLs.
+    # The index must reference only URLs that are actually published.
+    artwork = load("build_repository.py", "nebelkind_build_repository")
+    artwork.ROOT = base
+    artwork.PACKAGES = packs
+    with ZipFile(newest) as z:
+        addon_meta = ET.fromstring(z.read(addon_id + "/addon.xml"))
+    artwork.publish_metadata_artwork({addon_id: ("0.5.71", addon_meta)})
+    icon = packs / addon_id / "resources/nebelflix-icon.png"
+    assert icon.read_bytes() == b"TEST-IMAGE", "Metadata artwork was not published"
+    assets = addon_meta.find("./extension[@point='xbmc.addon.metadata']/assets")
+    assert len(assets) == 1 and assets[0].tag == "icon", "Broken artwork metadata was not removed"
 
     manifest = ET.Element("addons")
     ET.SubElement(manifest, "addon", {"id": addon_id, "version": "0.5.71"})
