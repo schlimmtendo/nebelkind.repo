@@ -105,7 +105,6 @@
   <addon id="skin.nebelflix" version="0.5.70" name="Nebelflix" provider-name="Nebelflix / Nebelflix contributors">
     <requires>
       <import addon="xbmc.gui" version="5.17.0" />
-      <import addon="plugin.video.nebelflix.hybrid" version="2026.11.10.1" optional="true" />
       <import addon="xbmc.python" version="3.0.0" />
       <import addon="plugin.video.multitrailer" />
     </requires>
