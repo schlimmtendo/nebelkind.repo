@@ -12,6 +12,7 @@ on:
       - 'tools/build_overrides.py'
       - 'tools/prune_verified_releases.py'
       - 'tools/test_release_pipeline.py'
+      - 'tools/check_repository_consistency.py'
       - 'overrides/**'
       - 'release_versions.json'
       - 'nebelkind-paket.zip'
@@ -46,6 +47,8 @@ jobs:
         run: python tools/enforce_skin_dependency.py
       - name: Validate addon ZIPs and rebuild repository
         run: python tools/build_repository.py
+      - name: Verify published Kodi metadata, artwork, dependencies, ZIPs and checksums
+        run: python tools/check_repository_consistency.py
       - name: Validate full release and retire only superseded ZIPs
         run: python tools/prune_verified_releases.py
       - name: Publish verified files in a single atomic commit
