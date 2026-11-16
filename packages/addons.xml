@@ -78,7 +78,6 @@
       <assets>
         <icon>icon.png</icon>
         <fanart>fanart.jpg</fanart>
-        <screenshot />
       </assets>
     </extension>
   </addon>
