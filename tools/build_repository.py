@@ -116,7 +116,7 @@ def main():
         ]
     }
     (PACKAGES/'release.json').write_text(
-        json.dumps(manifest, indent=2, ensure_ascii=False) + '\\n',
+        json.dumps(manifest, indent=2, ensure_ascii=False) + chr(10),
         encoding='utf-8'
     )
     print('Indexed:',', '.join(f'{k} {v[0]}' for k,v in sorted(entries.items())))
