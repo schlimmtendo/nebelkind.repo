@@ -12,6 +12,7 @@ on:
       - 'tools/build_overrides.py'
       - 'tools/prune_verified_releases.py'
       - 'tools/test_release_pipeline.py'
+      - 'tools/test_update_monitor.py'
       - 'tools/check_repository_consistency.py'
       - 'overrides/**'
       - 'release_versions.json'
@@ -39,6 +40,8 @@ jobs:
         run: pip install Pillow cairosvg
       - name: Verify Kodi release safety with synthetic addon ZIPs
         run: python tools/test_release_pipeline.py
+      - name: Test automatic Nebelkind update watcher
+        run: python tools/test_update_monitor.py
       - name: Import owner-uploaded Nebelkind package (if present)
         run: python tools/import_upload.py
       - name: Build changed addon ZIPs from Github source overrides
