@@ -1,9 +1,5 @@
 #!/usr/bin/env python3
-"""Enforce NebelFlix Skin dependency only for Hybrid and TV addon ZIPs.
-
-Keeps all published version numbers. Kodi auto-installs dependencies from
-repositories where available, so this is not an access-control system.
-"""
+"""Keep Nebelkind Video addons independent of the NebelFlix skin.\nPreserve required functional dependencies such as Vavoo TV Plus.\n"""
 import os
 import tempfile
 import xml.etree.ElementTree as ET
@@ -13,7 +9,6 @@ from zipfile import ZipFile
 ROOT = Path(__file__).resolve().parents[1]
 PACKAGES = ROOT / "packages"
 SKIN = "skin.nebelflix"
-MINIMUM_SKIN_VERSION = "0.5.70"
 PLUGINS = {
     "plugin.video.nebelflix.hybrid",
     "plugin.video.nebelflix.tv",
@@ -37,35 +32,15 @@ def normalize(path):
             requires = ET.Element("requires")
             metadata.insert(0, requires)
         changed = False
-        if addon_id == SKIN:
-            # Never reference Hybrid here, not even as an optional import:
-            # Hybrid requires Skin and a reverse edge creates a cycle.
-            for dependency in list(requires.findall("import")):
-                if dependency.get("addon") == "plugin.video.nebelflix.hybrid":
-                    requires.remove(dependency)
-                    changed = True
-        elif addon_id == MUSIC:
-            # Music is a standalone addon. Remove any older Skin dependency.
-            for dependency in list(requires.findall("import")):
-                if dependency.get("addon") == SKIN:
-                    requires.remove(dependency)
-                    changed = True
-        else:
-            deps = [x for x in requires.findall("import") if x.get("addon") == SKIN]
-            if len(deps) > 1:
-                raise ValueError("Duplicate Skin dependency: " + str(path))
-            if deps:
-                dep = deps[0]
-                if dep.get("version") != MINIMUM_SKIN_VERSION:
-                    dep.set("version", MINIMUM_SKIN_VERSION)
-                    changed = True
-                if "optional" in dep.attrib:
-                    del dep.attrib["optional"]
-                    changed = True
-            else:
-                requires.append(ET.Element("import", {
-                    "addon": SKIN, "version": MINIMUM_SKIN_VERSION
-                }))
+        # All our addons must be browsable/installable independently of the
+        # cosmetic skin. Removing this import also prevents repository
+        # dependency resolution involving the skin from blocking the dialog.
+        for dependency in list(requires.findall("import")):
+            if dependency.get("addon") == SKIN and addon_id != SKIN:
+                requires.remove(dependency)
+                changed = True
+            elif addon_id == SKIN and dependency.get("addon") == "plugin.video.nebelflix.hybrid":
+                requires.remove(dependency)
                 changed = True
         if not changed:
             print("Dependency OK:", path)
