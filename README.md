@@ -21,11 +21,11 @@ Dort wird die installierbare `repository.nebelkind-1.0.0.zip` direkt heruntergel
 
 ## 🔒 NebelFlix Skin als Voraussetzung
 
-Der Skin `skin.nebelflix` lässt sich eigenständig installieren. **Hybrid, Live-TV und Musik** enthalten dagegen eine Pflicht-Abhängigkeit auf `skin.nebelflix >= 0.5.70`. Der Skin muss installiert, aber nicht aktiv sein.
+Der Skin `skin.nebelflix` lässt sich eigenständig installieren. **Nur Hybrid und Live-TV** enthalten eine Pflicht-Abhängigkeit auf `skin.nebelflix >= 0.5.70`. Der Skin muss für diese beiden Addons installiert, aber nicht aktiv sein. **Nebelkind Musik (`plugin.video.nebelkindmusic`) ist frei installierbar und benötigt keinen NebelFlix-Skin.**
 
-**Wichtige Kodi-Einschränkung:** Kodi darf eine fehlende Skin-Abhängigkeit beim Installieren eines der drei Addons automatisch mitinstallieren. Die Addons sind dann nur *zusammen mit installiertem Skin* ausführbar – das ist keine Zugangskontrolle, kein DRM und keine unsichtbare Repository-Liste. Öffentliche ZIP-Dateien können außerdem kopiert werden.
+**Wichtige Kodi-Einschränkung:** Kodi darf eine fehlende Skin-Abhängigkeit beim Installieren von Hybrid oder Live-TV automatisch mitinstallieren. Diese beiden Addons sind dann nur *zusammen mit installiertem Skin* ausführbar – das ist keine Zugangskontrolle, kein DRM und keine unsichtbare Repository-Liste. Öffentliche ZIP-Dateien können außerdem kopiert werden.
 
-Die GitHub-Veröffentlichungsautomatik ergänzt bzw. prüft diese Abhängigkeit bei jedem Paket und vermeidet den früheren Abhängigkeits-Zirkel (Skin → Hybrid → Skin). Im Skin ist Hybrid nur noch eine optionale Abhängigkeit.
+Die GitHub-Veröffentlichungsautomatik ergänzt bzw. prüft die Skin-Abhängigkeit ausschließlich bei Hybrid und Live-TV und entfernt eine versehentliche Skin-Abhängigkeit aus Musik und vermeidet den früheren Abhängigkeits-Zirkel (Skin → Hybrid → Skin). Im Skin ist Hybrid nur noch eine optionale Abhängigkeit.
 
 ### Vier Addons mit einer einzigen ZIP hochladen
 
@@ -34,7 +34,7 @@ Die vorbereitete Datei **`nebelkind-paket.zip`** enthält genau vier einzelne Ko
 GitHub Actions führt dann automatisch die vier Schritte aus:
 
 1. Vier Addon-ZIPs prüfen und nach `packages/<addon-id>/` kopieren.
-2. Fehlende Skin-Abhängigkeit ergänzen und einen Pflicht-Abhängigkeits-Zirkel ausschließen.
+2. Skin-Abhängigkeit für Hybrid und TV sicherstellen, Musik davon freihalten und einen Pflicht-Abhängigkeits-Zirkel ausschließen.
 3. `packages/addons.xml` und `addons.xml.md5` aktualisieren.
 4. Die verarbeitete `nebelkind-paket.zip` aus dem Git-Stand entfernen.
 
