@@ -72,6 +72,17 @@ def validate_zip(path):
             raise ValueError(f'Invalid addon version: {version}')
         expected=PACKAGES/addon_id/f'{addon_id}-{version}.zip'
         if path!=expected: raise ValueError(f'ZIP path must be {expected}')
+        deps = [dep for dep in xml.findall('./requires/import')]
+                if dep.get('addon') in ('skin.nebelflix', 'plugin.video.nebelflix.hybrid')]
+        if addon_id == 'skin.nebelflix':
+            if any(dep.get('addon') == 'plugin.video.nebelflix.hybrid'
+                   and dep.get('optional') != 'true' for dep in deps):
+                raise ValueError('Skin must not require Hybrid (circular dependency)')
+        elif addon_id != REPO_ID:
+            matches = [dep for dep in deps if dep.get('addon') == 'skin.nebelflix']
+            if (len(matches) != 1 or matches[0].get('optional') == 'true'
+                    or not matches[0].get('version')):
+                raise ValueError('Addon requires skin.nebelflix: ' + addon_id)
         return addon_id,version,xml
 
 
