@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Enforce NebelFlix Skin dependency for every public Nebelkind addon ZIP.
+"""Enforce NebelFlix Skin dependency only for Hybrid and TV addon ZIPs.
 
 Keeps all published version numbers. Kodi auto-installs dependencies from
 repositories where available, so this is not an access-control system.
@@ -17,12 +17,12 @@ MINIMUM_SKIN_VERSION = "0.5.70"
 PLUGINS = {
     "plugin.video.nebelflix.hybrid",
     "plugin.video.nebelflix.tv",
-    "plugin.video.nebelkindmusic",
 }
+MUSIC = "plugin.video.nebelkindmusic"
 
 def normalize(path):
     addon_id = path.parent.name
-    if addon_id != SKIN and addon_id not in PLUGINS:
+    if addon_id != SKIN and addon_id not in PLUGINS and addon_id != MUSIC:
         return False
     name = addon_id + "/addon.xml"
     with ZipFile(path) as source:
@@ -43,6 +43,12 @@ def normalize(path):
                     if dependency.get("optional") != "true":
                         dependency.set("optional", "true")
                         changed = True
+        elif addon_id == MUSIC:
+            # Music is a standalone addon. Remove any older Skin dependency.
+            for dependency in list(requires.findall("import")):
+                if dependency.get("addon") == SKIN:
+                    requires.remove(dependency)
+                    changed = True
         else:
             deps = [x for x in requires.findall("import") if x.get("addon") == SKIN]
             if len(deps) > 1:
