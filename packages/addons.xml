@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <addons>
-  <addon id="plugin.video.nebelflix.hybrid" version="2026.11.15.1" name="Nebelflix Hybrid" provider-name="Modded by Akisame">
+  <addon id="plugin.video.nebelflix.hybrid" version="2026.11.15.2" name="Nebelkind Hybrid" provider-name="Eragon (Nebelkind) | Support by Mr. Evil">
     <requires>
       <import addon="xbmc.python" version="3.0.0" />
       <import addon="script.module.requests" />
@@ -18,12 +18,12 @@
     </extension>
     <extension point="xbmc.service" library="service.py" start="startup" />
     <extension point="xbmc.addon.metadata">
-      <summary lang="de_DE">Nebelflix Hybrid</summary>
-      <summary lang="en_GB">Nebelflix Hybrid</summary>
-      <description lang="de">Nebelflix Hybrid wurde als Video-Addon entwickelt, um Streams verschiedener Webseiten zu sammeln und anzuzeigen. Das Addon verbindet die eigene Hybrid-Suche mit optionalen MovieScout-Remote-Scrapern.</description>
-      <description lang="en_GB">Nebelflix Hybrid is a video add-on that collects and displays streams from various websites. It combines its own Hybrid search with optional MovieScout remote scrapers.</description>
-      <disclaimer lang="de_DE">Mit diesem Video-Addon kannst du auf alle angebotenen Streams verschiedenster deutscher Quellen zugreifen. Dieses Addon ist kein offizieller Teil des Kodi Media Center und wird daher nicht von den offiziellen Support-Kanälen abgedeckt! Nebelflix Hybrid durchsucht die enthaltenen Webseiten nach Streams und stellt diese in einer Übersicht dar. Der bereitgestellte Inhalt der Webseiten steht in keinem direkten Bezug zum Addon oder den Entwicklern!</disclaimer>
-      <disclaimer lang="en_GB">With this video add-on you can access all streams offered by various German sources. This add-on is not an official part of the Kodi Media Center and is therefore not covered by the official support channels! Nebelflix Hybrid searches included websites for streams and displays them in an overview. The content provided by the websites has no direct connection to the add-on or the developers!</disclaimer>
+      <summary lang="de_DE">Nebelkind Hybrid – Owner: Eragon, Support: Mr. Evil</summary>
+      <summary lang="en_GB">Nebelkind Hybrid – Owner: Eragon, Support: Mr. Evil</summary>
+      <description lang="de">Nebelkind Hybrid ist ein eigenständiges Video-Addon mit Suche, Quellenauswahl und Wiedergabe. Projektinhaber und Owner: Eragon. Unterstützung und Support: Mr. Evil.</description>
+      <description lang="en_GB">Nebelkind Hybrid is an independent video addon for search, source selection and playback. Owner: Eragon. Support by Mr. Evil.</description>
+      <disclaimer lang="de_DE">Mit diesem Video-Addon kannst du auf alle angebotenen Streams verschiedenster deutscher Quellen zugreifen. Dieses Addon ist kein offizieller Teil des Kodi Media Center und wird daher nicht von den offiziellen Support-Kanälen abgedeckt! Nebelkind Hybrid durchsucht die enthaltenen Webseiten nach Streams und stellt diese in einer Übersicht dar. Der bereitgestellte Inhalt der Webseiten steht in keinem direkten Bezug zum Addon oder den Entwicklern!</disclaimer>
+      <disclaimer lang="en_GB">With this video add-on you can access all streams offered by various German sources. This add-on is not an official part of the Kodi Media Center and is therefore not covered by the official support channels! Nebelkind Hybrid searches included websites for streams and displays them in an overview. The content provided by the websites has no direct connection to the add-on or the developers!</disclaimer>
       <language>de</language>
       <platform>all</platform>
       <license>GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007</license>
