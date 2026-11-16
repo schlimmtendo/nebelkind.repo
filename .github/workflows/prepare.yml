@@ -8,6 +8,8 @@ on:
       - 'assets/nebelkind-logo.svg'
       - 'tools/build_repository.py'
       - 'tools/enforce_skin_dependency.py'
+      - 'tools/import_upload.py'
+      - 'nebelkind-paket.zip'
       - '.github/workflows/prepare.yml'
   workflow_dispatch:
 permissions:
@@ -24,6 +26,8 @@ jobs:
           python-version: '3.12'
       - name: Install image library
         run: pip install Pillow cairosvg
+      - name: Import owner-uploaded Nebelkind package (if present)
+        run: python tools/import_upload.py
       - name: Apply NebelFlix Skin dependency rules
         run: python tools/enforce_skin_dependency.py
       - name: Validate addon ZIPs and rebuild repository
@@ -33,6 +37,7 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add repository.nebelkind/icon.png repository.nebelkind/fanart.jpg packages/
+          git add -A nebelkind-paket.zip
           if ! git diff --cached --quiet; then
             git commit -m 'Publish Nebelkind Kodi packages and index'
             git push origin HEAD:main
