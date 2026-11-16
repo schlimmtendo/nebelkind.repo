@@ -1,5 +1,87 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <addons>
+  <addon id="plugin.video.nebelflix.hybrid" version="2026.11.15.1" name="Nebelflix Hybrid" provider-name="Modded by Akisame">
+    <requires>
+      <import addon="xbmc.python" version="3.0.0" />
+      <import addon="script.module.requests" />
+      <import addon="script.module.pyaes" />
+      <import addon="script.module.six" />
+      <import addon="script.module.kodi-six" />
+      <import addon="script.module.infotagger" />
+      <import addon="script.module.resolveurl" version="5.1.100" />
+      <import addon="script.module.httpx" optional="true" />
+      <import addon="script.module.cloudscraper" optional="true" />
+      <import addon="script.module.pydevd" optional="true" />
+      <import addon="skin.nebelflix" version="0.5.70" />
+    </requires>
+    <extension point="xbmc.python.pluginsource" library="default.py">
+      <provides>video</provides>
+    </extension>
+    <extension point="xbmc.service" library="service.py" start="startup" />
+    <extension point="xbmc.addon.metadata">
+      <summary lang="de_DE">Nebelflix Hybrid</summary>
+      <summary lang="en_GB">Nebelflix Hybrid</summary>
+      <description lang="de">Nebelflix Hybrid wurde als Video-Addon entwickelt, um Streams verschiedener Webseiten zu sammeln und anzuzeigen. Das Addon verbindet die eigene Hybrid-Suche mit optionalen MovieScout-Remote-Scrapern.</description>
+      <description lang="en_GB">Nebelflix Hybrid is a video add-on that collects and displays streams from various websites. It combines its own Hybrid search with optional MovieScout remote scrapers.</description>
+      <disclaimer lang="de_DE">Mit diesem Video-Addon kannst du auf alle angebotenen Streams verschiedenster deutscher Quellen zugreifen. Dieses Addon ist kein offizieller Teil des Kodi Media Center und wird daher nicht von den offiziellen Support-Kanälen abgedeckt! Nebelflix Hybrid durchsucht die enthaltenen Webseiten nach Streams und stellt diese in einer Übersicht dar. Der bereitgestellte Inhalt der Webseiten steht in keinem direkten Bezug zum Addon oder den Entwicklern!</disclaimer>
+      <disclaimer lang="en_GB">With this video add-on you can access all streams offered by various German sources. This add-on is not an official part of the Kodi Media Center and is therefore not covered by the official support channels! Nebelflix Hybrid searches included websites for streams and displays them in an overview. The content provided by the websites has no direct connection to the add-on or the developers!</disclaimer>
+      <language>de</language>
+      <platform>all</platform>
+      <license>GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007</license>
+      <assets>
+        <icon>resources/media/icon.png</icon>
+        <fanart>resources/media/fanart.jpg</fanart>
+        <banner>resources/media/banner.png</banner>
+        <clearlogo>resources/media/clearlogo.png</clearlogo>
+        <screenshot>resources/media/screenshot-01.jpg</screenshot>
+        <screenshot>resources/media/screenshot-02.jpg</screenshot>
+        <screenshot>resources/media/screenshot-04.jpg</screenshot>
+      </assets>
+    </extension>
+  </addon>
+  <addon id="plugin.video.nebelflix.tv" name="Nebelflix TV" version="0.2.0" provider-name="TitanX Lab">
+    <requires>
+      <import addon="xbmc.python" version="3.0.0" />
+      <import addon="plugin.video.vavoo.tv.plus" version="2.0.8" />
+      <import addon="skin.nebelflix" version="0.5.70" />
+    </requires>
+    <extension point="xbmc.python.pluginsource" library="default.py">
+      <provides>video</provides>
+    </extension>
+    <extension point="xbmc.service" library="service.py" start="startup" />
+    <extension point="xbmc.addon.metadata">
+      <summary lang="de_DE">Vavoo-TV-Plus-Sendergruppen mit eigenem Programmführer, XMLTV-EPG und Senderlogos.</summary>
+      <description lang="de_DE">Eigenständiger TV-Guide für Vavoo TV Plus ab 2.0.8. Liest dessen Sendergruppen und Abspielwege direkt, kombiniert XMLTV-Programmdaten aus mehreren Quellen und speichert Senderlogos. Kein binärer PVR-Client; Vavoo übernimmt die Wiedergabe.</description>
+      <description lang="en_GB">Live TV guide for Vavoo TV Plus with channel groups, merged XMLTV schedules, and cached logos. Not a native PVR client.</description>
+      <platform>all</platform>
+      <license>MIT</license>
+      <assets>
+        <icon>icon.png</icon>
+        <fanart>fanart.jpg</fanart>
+      </assets>
+    </extension>
+  </addon>
+  <addon id="plugin.video.nebelkindmusic" name="[B][COLOR skyblue]Nebelkind[/COLOR][COLOR gold] Musik[/COLOR][/B]" version="5.0.0" provider-name="NebelKind">
+    <requires>
+      <import addon="xbmc.python" version="3.0.0" />
+      <import addon="plugin.video.youtube" />
+    </requires>
+    <extension point="xbmc.python.pluginsource" library="default.py">
+      <provides>video</provides>
+    </extension>
+    <extension point="xbmc.addon.metadata">
+      <summary>YouTube Music Video Playlists</summary>
+      <description>
+            Immer wieder neue Inhalte.
+        </description>
+      <platform>all</platform>
+      <assets>
+        <icon>icon.png</icon>
+        <fanart>fanart.jpg</fanart>
+        <screenshot />
+      </assets>
+    </extension>
+  </addon>
   <addon id="repository.nebelkind" name="Nebelkind Repo" version="1.0.0" provider-name="Nebelkind">
     <extension point="xbmc.addon.repository">
       <dir>
@@ -19,6 +101,30 @@
         <icon>icon.png</icon>
         <fanart>fanart.jpg</fanart>
       </assets>
+    </extension>
+  </addon>
+  <addon id="skin.nebelflix" version="0.5.70" name="Nebelflix" provider-name="Nebelflix / Nebelflix contributors">
+    <requires>
+      <import addon="xbmc.gui" version="5.17.0" />
+      <import addon="plugin.video.nebelflix.hybrid" version="2026.11.10.1" optional="true" />
+      <import addon="xbmc.python" version="3.0.0" />
+      <import addon="plugin.video.multitrailer" />
+    </requires>
+    <extension point="xbmc.gui.skin" debugging="false">
+      <res width="1920" height="1080" aspect="16:9" default="true" folder="xml" />
+    </extension>
+    <extension point="xbmc.addon.metadata">
+      <summary lang="de_DE">Filmische Startseite mit Overlay-Navigation und vollständigen Kodi-Werkzeugen.</summary>
+      <summary lang="en_GB">Cinematic home with overlay navigation and complete Kodi tools.</summary>
+      <description lang="de_DE">Nebelflix mit modularen Reitern und Widgets, manuellen deutschen Spotlight-Trailern, Weiterschauen, Meine Liste und eigenem Intro. Vollständige Kodi-Systemzugänge ohne Games.</description>
+      <platform>all</platform>
+      <license>CC BY-SA 4.0, GPL-2.0-or-later</license>
+      <assets>
+        <icon>resources/nebelflix-icon.png</icon>
+      </assets>
+    </extension>
+    <extension point="xbmc.python.pluginsource" library="resources/provider.py">
+      <provides>video</provides>
     </extension>
   </addon>
 </addons>

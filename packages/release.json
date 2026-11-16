@@ -1,4 +1,21 @@
 {
   "schema": 1,
-  "addons": []
+  "addons": [
+    {
+      "id": "plugin.video.nebelflix.hybrid",
+      "version": "2026.11.15.1"
+    },
+    {
+      "id": "plugin.video.nebelflix.tv",
+      "version": "0.2.0"
+    },
+    {
+      "id": "plugin.video.nebelkindmusic",
+      "version": "5.0.0"
+    },
+    {
+      "id": "skin.nebelflix",
+      "version": "0.5.70"
+    }
+  ]
 }
