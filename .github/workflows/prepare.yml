@@ -7,6 +7,7 @@ on:
       - 'repository.nebelkind/**'
       - 'assets/nebelkind-logo.svg'
       - 'tools/build_repository.py'
+      - 'tools/enforce_skin_dependency.py'
       - '.github/workflows/prepare.yml'
   workflow_dispatch:
 permissions:
@@ -23,6 +24,8 @@ jobs:
           python-version: '3.12'
       - name: Install image library
         run: pip install Pillow cairosvg
+      - name: Apply NebelFlix Skin dependency rules
+        run: python tools/enforce_skin_dependency.py
       - name: Validate addon ZIPs and rebuild repository
         run: python tools/build_repository.py
       - name: Publish generated files on main
