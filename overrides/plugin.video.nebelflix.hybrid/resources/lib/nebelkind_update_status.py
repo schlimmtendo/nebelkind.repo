@@ -28,7 +28,7 @@ NAMES = {
     "plugin.video.nebelkindmusic": "Nebelkind Music",
 }
 CHECK_INTERVAL = 30 * 60
-HTTP_TIMEOUT = 2.5
+HTTP_TIMEOUT = 8
 INSTALL_WAIT = 150
 POLL_SECONDS = 5
 VERSION = re.compile(r"^[0-9][0-9A-Za-z.+_-]{0,47}$")
@@ -226,7 +226,6 @@ def run_startup_check():
                     return
                 continue
             first = False
-            state["last_check"] = now
             if "repository.nebelkind" not in _check_repository_installed(xbmcaddon):
                 _log(xbmc, "Nebelkind repo missing, no background install", True)
                 _save_state(state_path, state)
@@ -234,9 +233,14 @@ def run_startup_check():
                     return
                 continue
             versions = _published_versions()
+            state["last_check"] = now
             pending = _pending(versions, installed)
             signature = ";".join("%s:%s" % item for item in sorted(pending.items()))
             mode = _update_mode(xbmc)
+            _log(xbmc, "Release check: installed=%s; published=%s; pending=%s; kodi_auto_update_mode=%s" %
+                 (json.dumps(installed, sort_keys=True),
+                  json.dumps(versions, sort_keys=True),
+                  json.dumps(pending, sort_keys=True), str(mode)))
             if not pending:
                 state["last_announced"] = ""
                 state["last_incomplete"] = ""
@@ -281,7 +285,9 @@ def run_startup_check():
         except Exception as exc:
             _log(xbmc, "Update monitor error: " + type(exc).__name__, True)
             # Connection failure or corrupt manifest must not block Kodi.
-            state["last_check"] = int(time.time())
+            # Network failures are transient. Retrying sooner is preferable to
+            # silently missing an update for the next 30 minutes.
+            state["last_check"] = int(time.time()) - CHECK_INTERVAL + 120
             try:
                 _save_state(state_path, state)
             except Exception:
