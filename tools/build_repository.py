@@ -79,14 +79,9 @@ def validate_zip(path):
             if any(dep.get('addon') == 'plugin.video.nebelflix.hybrid'
                    for dep in deps):
                 raise ValueError('Skin must not import Hybrid, even optionally (dependency cycle)')
-        elif addon_id == 'plugin.video.nebelkindmusic':
-            if any(dep.get('addon') == 'skin.nebelflix' for dep in deps):
-                raise ValueError('Music must be standalone without Skin dependency')
         elif addon_id != REPO_ID:
-            matches = [dep for dep in deps if dep.get('addon') == 'skin.nebelflix']
-            if (len(matches) != 1 or matches[0].get('optional') == 'true'
-                    or not matches[0].get('version')):
-                raise ValueError('Addon requires skin.nebelflix: ' + addon_id)
+            if any(dep.get('addon') == 'skin.nebelflix' for dep in deps):
+                raise ValueError('Standalone video addons must not depend on NebelFlix Skin: ' + addon_id)
         return addon_id,version,xml
 
 
