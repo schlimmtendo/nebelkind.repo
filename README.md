@@ -19,6 +19,27 @@ Nach Aktivierung von GitHub Pages: **https://schlimmtendo.github.io/nebelkind.re
 
 Dort wird die installierbare `repository.nebelkind-1.0.0.zip` direkt heruntergeladen. Kodi kann danach die veröffentlichten Nebelkind-Addons aus dem Repository installieren und Updates beziehen.
 
+## 🔒 NebelFlix Skin als Voraussetzung
+
+Der Skin `skin.nebelflix` lässt sich eigenständig installieren. **Hybrid, Live-TV und Musik** enthalten dagegen eine Pflicht-Abhängigkeit auf `skin.nebelflix >= 0.5.70`. Der Skin muss installiert, aber nicht aktiv sein.
+
+**Wichtige Kodi-Einschränkung:** Kodi darf eine fehlende Skin-Abhängigkeit beim Installieren eines der drei Addons automatisch mitinstallieren. Die Addons sind dann nur *zusammen mit installiertem Skin* ausführbar – das ist keine Zugangskontrolle, kein DRM und keine unsichtbare Repository-Liste. Öffentliche ZIP-Dateien können außerdem kopiert werden.
+
+Die GitHub-Veröffentlichungsautomatik ergänzt bzw. prüft diese Abhängigkeit bei jedem Paket und vermeidet den früheren Abhängigkeits-Zirkel (Skin → Hybrid → Skin). Im Skin ist Hybrid nur noch eine optionale Abhängigkeit.
+
+### Vier Addons mit einer einzigen ZIP hochladen
+
+Die vorbereitete Datei **`nebelkind-paket.zip`** enthält genau vier einzelne Kodi-Addon-ZIPs. Diese Datei gehört **unentpackt in das Hauptverzeichnis des Branches `main`**: auf GitHub **Add file → Upload files → Commit changes**.
+
+GitHub Actions führt dann automatisch die vier Schritte aus:
+
+1. Vier Addon-ZIPs prüfen und nach `packages/<addon-id>/` kopieren.
+2. Fehlende Skin-Abhängigkeit ergänzen und einen Pflicht-Abhängigkeits-Zirkel ausschließen.
+3. `packages/addons.xml` und `addons.xml.md5` aktualisieren.
+4. Die verarbeitete `nebelkind-paket.zip` aus dem Git-Stand entfernen.
+
+Die Versionen der Addons bleiben beim Import unverändert. **Unveränderte Versionsnummern lösen in Kodi kein automatisches Update aus**; das ist für manuelle Testinstallationen vorgesehen. Für reguläre Updates die Versionsnummer im jeweiligen `addon.xml` erhöhen.
+
 ## So veröffentliche ich Updates – auch Teststände
 
 1. **Jede fertige Test- oder Update-ZIP wird öffentlich in `main` abgelegt** unter `packages/<addon-id>/<addon-id>-<version>.zip`. Sie muss intern eine `addon.xml` mit exakt gleicher ID und Versionsnummer enthalten.
