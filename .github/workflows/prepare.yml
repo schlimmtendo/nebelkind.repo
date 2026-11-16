@@ -18,6 +18,13 @@ on:
       - 'release_versions.json'
       - 'nebelkind-paket.zip'
       - '.github/workflows/prepare.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'tools/**'
+      - 'overrides/**'
+      - 'release_versions.json'
+      - '.github/workflows/prepare.yml'
   workflow_dispatch:
 # Serialize publishing so two updates cannot overwrite each other's commits.
 concurrency:
@@ -32,7 +39,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: main
+          ref: ${{ github.head_ref || 'main' }}
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
@@ -55,6 +62,7 @@ jobs:
       - name: Validate full release and retire only superseded ZIPs
         run: python tools/prune_verified_releases.py
       - name: Publish verified files in a single atomic commit
+        if: github.event_name != 'pull_request'
         id: publish
         run: |
           git config user.name 'github-actions[bot]'
