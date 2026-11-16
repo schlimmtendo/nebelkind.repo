@@ -30,6 +30,7 @@ with TemporaryDirectory(prefix="nebelkind-publish-test-") as folder:
                    '<addon id="skin.nebelflix" version="0.5.70"/>')
         z.writestr(addon_id + "/xml/Home.xml", "<home>OLD</home>")
 
+    overrides.ROOT = base
     overrides.PACKAGES = packs
     overrides.OVERRIDES = base / "overrides"
     overrides.VERSION_FILE = base / "release_versions.json"
@@ -57,6 +58,7 @@ with TemporaryDirectory(prefix="nebelkind-publish-test-") as folder:
     (packs / "release.json").write_text(json.dumps({
         "schema": 1, "addons": [{"id": addon_id, "version": "0.5.71"}]
     }))
+    retire.ROOT = base
     retire.PACKAGES = packs
 
     # Corrupt newer archive must block all retirement (no old ZIP loss).
