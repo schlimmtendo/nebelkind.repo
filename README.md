@@ -11,11 +11,11 @@
 | `plugin.video.nebelflix.tv` – Live-TV/Programmführer | 0.2.0 |
 | `plugin.video.nebelkindmusic` – Nebelkind Musik | 5.0.0 |
 
-Die ZIP-Dateien werden unverändert aus den bereitgestellten Addon-Versionen übernommen. Externe Kodi-Abhängigkeiten müssen bei Bedarf separat installiert werden (z. B. Vavoo TV Plus für NebelFlix TV oder Multitrailer für den Skin).
+Die Addon-ZIPs werden aus dem geprüften Erstinstallationspaket übernommen. Beim Import werden erforderliche Skin-Abhängigkeiten nur für Hybrid und TV ergänzt beziehungsweise korrigiert. Externe Kodi-Abhängigkeiten müssen bei Bedarf separat installiert werden (z. B. Vavoo TV Plus für NebelFlix TV oder Multitrailer für den Skin).
 
 ## 🌐 Website und Download
 
-Nach Aktivierung von GitHub Pages: **https://schlimmtendo.github.io/nebelkind.repo/**
+Offizielle Download-Website: **https://schlimmtendo.github.io/**
 
 Dort wird die installierbare `repository.nebelkind-1.0.0.zip` direkt heruntergeladen. Kodi kann danach die veröffentlichten Nebelkind-Addons aus dem Repository installieren und Updates beziehen.
 
@@ -29,13 +29,13 @@ Die GitHub-Veröffentlichungsautomatik ergänzt bzw. prüft die Skin-Abhängigke
 
 ### Vier Addons mit einer einzigen ZIP hochladen
 
-Die vorbereitete Datei **`nebelkind-paket.zip`** enthält genau vier einzelne Kodi-Addon-ZIPs. Diese Datei gehört **unentpackt in das Hauptverzeichnis des Branches `main`**: auf GitHub **Add file → Upload files → Commit changes**.
+Die vorbereitete Datei **`nebelkind-paket.zip`** enthält genau vier einzelne Kodi-Addon-ZIPs. Das Paket wurde für den ersten Test mit **Skin 0.5.70** zusammengestellt; die Versionsnummer darf erst nach dem erfolgreichen Basistest erhöht werden. Diese Datei gehört **unentpackt in das Hauptverzeichnis des Branches `main`**: auf GitHub **Add file → Upload files → Commit changes**.
 
 GitHub Actions führt dann automatisch die vier Schritte aus:
 
 1. Vier Addon-ZIPs prüfen und nach `packages/<addon-id>/` kopieren.
 2. Skin-Abhängigkeit für Hybrid und TV sicherstellen, Musik davon freihalten und einen Pflicht-Abhängigkeits-Zirkel ausschließen.
-3. `packages/addons.xml` und `addons.xml.md5` aktualisieren.
+3. `packages/addons.xml`, `addons.xml.md5` und `release.json` (Update-Versionsübersicht) aktualisieren.
 4. Die verarbeitete `nebelkind-paket.zip` aus dem Git-Stand entfernen.
 
 Die Versionen der Addons bleiben beim Import unverändert. **Unveränderte Versionsnummern lösen in Kodi kein automatisches Update aus**; das ist für manuelle Testinstallationen vorgesehen. Für reguläre Updates die Versionsnummer im jeweiligen `addon.xml` erhöhen.
