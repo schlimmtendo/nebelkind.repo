@@ -9,6 +9,10 @@ on:
       - 'tools/build_repository.py'
       - 'tools/enforce_skin_dependency.py'
       - 'tools/import_upload.py'
+      - 'tools/build_overrides.py'
+      - 'tools/prune_verified_releases.py'
+      - 'overrides/**'
+      - 'release_versions.json'
       - 'nebelkind-paket.zip'
       - '.github/workflows/prepare.yml'
   workflow_dispatch:
@@ -28,16 +32,21 @@ jobs:
         run: pip install Pillow cairosvg
       - name: Import owner-uploaded Nebelkind package (if present)
         run: python tools/import_upload.py
+      - name: Build changed addon ZIPs from Github source overrides
+        run: python tools/build_overrides.py
       - name: Apply NebelFlix Skin dependency rules
         run: python tools/enforce_skin_dependency.py
       - name: Validate addon ZIPs and rebuild repository
         run: python tools/build_repository.py
-      - name: Publish generated files on main
+      - name: Validate full release and retire only superseded ZIPs
+        run: python tools/prune_verified_releases.py
+      - name: Publish verified files in a single atomic commit
+        id: publish
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add -A -- .
           if ! git diff --cached --quiet; then
-            git commit -m 'Publish Nebelkind Kodi packages and index'
+            git commit -m 'Publish verified Nebelkind releases and retire older ZIPs'
             git push origin HEAD:main
           fi
