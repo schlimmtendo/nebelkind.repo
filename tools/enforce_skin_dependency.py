@@ -38,11 +38,12 @@ def normalize(path):
             metadata.insert(0, requires)
         changed = False
         if addon_id == SKIN:
-            for dependency in requires.findall("import"):
+            # Never reference Hybrid here, not even as an optional import:
+            # Hybrid requires Skin and a reverse edge creates a cycle.
+            for dependency in list(requires.findall("import")):
                 if dependency.get("addon") == "plugin.video.nebelflix.hybrid":
-                    if dependency.get("optional") != "true":
-                        dependency.set("optional", "true")
-                        changed = True
+                    requires.remove(dependency)
+                    changed = True
         elif addon_id == MUSIC:
             # Music is a standalone addon. Remove any older Skin dependency.
             for dependency in list(requires.findall("import")):
