@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <addons>
-  <addon id="plugin.video.nebelflix.hybrid" version="2026.11.15.2" name="Nebelkind Hybrid" provider-name="Eragon (Nebelkind) | Support by Mr. Evil">
+  <addon id="plugin.video.nebelflix.hybrid" version="2026.11.15.3" name="Nebelkind Hybrid" provider-name="Eragon (Nebelkind) | Support by Mr. Evil">
     <requires>
       <import addon="xbmc.python" version="3.0.0" />
       <import addon="script.module.requests" />
