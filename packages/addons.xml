@@ -12,7 +12,6 @@
       <import addon="script.module.httpx" optional="true" />
       <import addon="script.module.cloudscraper" optional="true" />
       <import addon="script.module.pydevd" optional="true" />
-      <import addon="skin.nebelflix" version="0.5.70" />
     </requires>
     <extension point="xbmc.python.pluginsource" library="default.py">
       <provides>video</provides>
@@ -43,7 +42,6 @@
     <requires>
       <import addon="xbmc.python" version="3.0.0" />
       <import addon="plugin.video.vavoo.tv.plus" version="2.0.8" />
-      <import addon="skin.nebelflix" version="0.5.70" />
     </requires>
     <extension point="xbmc.python.pluginsource" library="default.py">
       <provides>video</provides>
