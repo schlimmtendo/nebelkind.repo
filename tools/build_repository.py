@@ -82,6 +82,19 @@ def validate_zip(path):
         elif addon_id != REPO_ID:
             if any(dep.get('addon') == 'skin.nebelflix' for dep in deps):
                 raise ValueError('Standalone video addons must not depend on NebelFlix Skin: ' + addon_id)
+        if addon_id == 'plugin.video.nebelflix.hybrid':
+            if xml.get('name') != 'Nebelkind Hybrid':
+                raise ValueError('Hybrid must be branded Nebelkind Hybrid')
+            expected_provider = 'Eragon (Nebelkind) | Support by Mr. Evil'
+            if xml.get('provider-name') != expected_provider:
+                raise ValueError('Hybrid owner/support metadata was unexpectedly changed')
+            # Audit every ZIP filename and all payloads before any GitHub publish.
+            # Do not allow an old admin's name to return in future updates.
+            for member in z.infolist():
+                if 'akisame' in member.filename.lower():
+                    raise ValueError('Prohibited legacy attribution in filename: ' + member.filename)
+                if not member.is_dir() and b'akisame' in z.read(member.filename).lower():
+                    raise ValueError('Prohibited legacy attribution in ZIP content: ' + member.filename)
         return addon_id,version,xml
 
 
