@@ -82,7 +82,7 @@ def validate_zip(path):
         elif addon_id != REPO_ID:
             if any(dep.get('addon') == 'skin.nebelflix' for dep in deps):
                 raise ValueError('Standalone video addons must not depend on NebelFlix Skin: ' + addon_id)
-        if addon_id == 'plugin.video.nebelflix.hybrid':
+        if addon_id == 'plugin.video.nebelflix.hybrid' and version_key(version) >= version_key('2026.11.15.2'):
             if xml.get('name') != 'Nebelkind Hybrid':
                 raise ValueError('Hybrid must be branded Nebelkind Hybrid')
             expected_provider = 'Eragon (Nebelkind) | Support by Mr. Evil'
