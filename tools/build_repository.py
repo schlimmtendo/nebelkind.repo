@@ -6,7 +6,7 @@ import hashlib
 import io
 import json
 import re
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 import sys
 import xml.etree.ElementTree as ET
 from zipfile import ZipFile, ZIP_DEFLATED
@@ -90,6 +90,48 @@ def validate_zip(path):
         return addon_id,version,xml
 
 
+def publish_metadata_artwork(entries):
+    """Make Kodi metadata artwork individually fetchable from the repo datadir.
+
+    Kodi fetches <assets> references from packages/<addonid>/<relative asset>
+    rather than reading those files inside the downloadable addon ZIP.
+    Strip any broken/empty artwork references from the published index.
+    """
+    for addon_id, (version, xml) in sorted(entries.items()):
+        metadata = xml.find("./extension[@point='xbmc.addon.metadata']")
+        if metadata is None:
+            continue
+        assets = metadata.find("assets")
+        if assets is None:
+            continue
+        archive = PACKAGES / addon_id / (addon_id + '-' + version + '.zip')
+        with ZipFile(archive) as z:
+            members = set(z.namelist())
+            for element in list(assets):
+                rel = (element.text or '').strip()
+                # Invalid/empty declarations must not yield broken Kodi URLs.
+                candidate = PurePosixPath(rel)
+                if (not rel or rel.startswith('/') or '\\' in rel
+                        or '://' in rel or any(p in ('.', '..') for p in candidate.parts)):
+                    assets.remove(element)
+                    print('Dropped invalid metadata asset:', addon_id, rel)
+                    continue
+                member = addon_id + '/' + candidate.as_posix()
+                if member not in members:
+                    assets.remove(element)
+                    print('Dropped absent metadata asset:', member)
+                    continue
+                item = z.getinfo(member)
+                if item.file_size > 20_000_000:
+                    raise ValueError('Metadata image too large: ' + member)
+                payload = z.read(member)
+                target = PACKAGES / addon_id / candidate.as_posix()
+                target.parent.mkdir(parents=True, exist_ok=True)
+                if not target.exists() or target.read_bytes() != payload:
+                    target.write_bytes(payload)
+                    print('Published Kodi metadata asset:', target.relative_to(ROOT))
+
+
 def main():
     generate_branding()
     repo_zip()
@@ -98,6 +140,7 @@ def main():
         addon_id,version,xml=validate_zip(path)
         if addon_id not in entries or version_key(version)>version_key(entries[addon_id][0]):
             entries[addon_id]=(version,xml)
+    publish_metadata_artwork(entries)
     node=ET.Element('addons')
     for key in sorted(entries):node.append(entries[key][1])
     ET.indent(node,space='  ')
