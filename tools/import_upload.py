@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Expand one owner-uploaded Nebelkind addon bundle on GitHub Actions.
 
-Only the exact four known addon ZIPs are accepted. No arbitrary extraction.
+Between one and four known addon ZIPs are accepted. No arbitrary extraction.
 Upload nebelkind-paket.zip to the repo root on main.
 """
 from io import BytesIO
@@ -50,8 +50,8 @@ def main():
     pending = []
     with ZipFile(UPLOAD) as bundle:
         files = [x for x in bundle.infolist() if not x.is_dir()]
-        if len(files) != 4:
-            raise ValueError("Bundle must contain exactly four addon ZIPs")
+        if not 1 <= len(files) <= 4:
+            raise ValueError("Bundle must contain between one and four addon ZIPs")
         seen = set()
         for item in files:
             path = item.filename
