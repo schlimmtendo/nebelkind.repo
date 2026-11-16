@@ -36,8 +36,7 @@ jobs:
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add repository.nebelkind/icon.png repository.nebelkind/fanart.jpg packages/
-          git add -A nebelkind-paket.zip
+          git add -A -- .
           if ! git diff --cached --quiet; then
             git commit -m 'Publish Nebelkind Kodi packages and index'
             git push origin HEAD:main
