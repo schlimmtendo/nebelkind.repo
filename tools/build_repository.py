@@ -82,12 +82,21 @@ def validate_zip(path):
         elif addon_id != REPO_ID:
             if any(dep.get('addon') == 'skin.nebelflix' for dep in deps):
                 raise ValueError('Standalone video addons must not depend on NebelFlix Skin: ' + addon_id)
-        if addon_id == 'plugin.video.nebelflix.hybrid' and version_key(version) >= version_key('2026.11.15.2'):
+        if addon_id == 'plugin.video.nebelflix.hybrid' and version_key(version) >= version_key('2026.11.15.4'):
             if xml.get('name') != 'Nebelkind Hybrid':
                 raise ValueError('Hybrid must be branded Nebelkind Hybrid')
-            expected_provider = 'Eragon (Nebelkind) | Support by Mr. Evil'
+            expected_provider = 'Nebelkind'
             if xml.get('provider-name') != expected_provider:
-                raise ValueError('Hybrid owner/support metadata was unexpectedly changed')
+                raise ValueError('Hybrid owner metadata was unexpectedly changed')
+            metadata = xml.find("./extension[@point='xbmc.addon.metadata']")
+            if metadata is None:
+                raise ValueError('Hybrid requires addon metadata')
+            metadata_text = ET.tostring(metadata, encoding='unicode')
+            if 'Modifikation: Xship, MovieScout' not in metadata_text:
+                raise ValueError('Hybrid missing required Xship/MovieScout modification credit')
+            if any(label.lower() in metadata_text.lower()
+                   for label in ('eragon', 'mr. evil', 'akisame')):
+                raise ValueError('Legacy owner names must not be shown in new Hybrid metadata')
             # Audit every ZIP filename and all payloads before any GitHub publish.
             # Do not allow an old admin's name to return in future updates.
             for member in z.infolist():

@@ -13,6 +13,8 @@ on:
       - 'tools/prune_verified_releases.py'
       - 'tools/test_release_pipeline.py'
       - 'tools/test_update_monitor.py'
+      - 'tools/patch_skin_preload_installer.py'
+      - 'tools/test_skin_auto_installer.py'
       - 'tools/check_repository_consistency.py'
       - 'overrides/**'
       - 'release_versions.json'
@@ -53,6 +55,10 @@ jobs:
         run: python tools/import_upload.py
       - name: Build changed addon ZIPs from Github source overrides
         run: python tools/build_overrides.py
+      - name: Wire safe, first-boot-gated auto-installer into Skin ZIP
+        run: python tools/patch_skin_preload_installer.py
+      - name: Verify Skin updater safety and built ZIP contents
+        run: python tools/test_skin_auto_installer.py
       - name: Apply NebelFlix Skin dependency rules
         run: python tools/enforce_skin_dependency.py
       - name: Validate addon ZIPs and rebuild repository
