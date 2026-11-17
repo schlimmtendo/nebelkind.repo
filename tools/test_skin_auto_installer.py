@@ -12,7 +12,7 @@ spec = importlib.util.spec_from_file_location("skin_auto_installer_for_test", MO
 installer = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(installer)
 
-assert installer._key("0.5.74") > installer._key("0.5.73")
+assert installer._key("0.5.75") > installer._key("0.5.74")
 assert installer._check_due(10000, 10010, first_check_in_session=True), (
     "A Kodi restart MUST cause an immediate release check")
 assert not installer._check_due(10000, 10010, first_check_in_session=False), (
@@ -70,8 +70,8 @@ with tempfile.TemporaryDirectory() as folder:
     assert not ready(pid=401), "Deleted preload state must BLOCK"
 
 version_plan = json.loads((ROOT / "release_versions.json").read_text(encoding="utf-8"))
-assert version_plan["skin.nebelflix"] == "0.5.74"
-skin = ROOT / "packages/skin.nebelflix/skin.nebelflix-0.5.74.zip"
+assert version_plan["skin.nebelflix"] == "0.5.75"
+skin = ROOT / "packages/skin.nebelflix/skin.nebelflix-0.5.75.zip"
 with ZipFile(skin) as z:
     assert z.testzip() is None
     source = z.read("skin.nebelflix/resources/controller.py").decode("utf-8")
