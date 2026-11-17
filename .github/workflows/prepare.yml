@@ -13,6 +13,8 @@ on:
       - 'tools/prune_verified_releases.py'
       - 'tools/test_release_pipeline.py'
       - 'tools/test_update_monitor.py'
+      - 'tools/patch_firetv_tv_brand.py'
+      - 'tools/test_firetv_tv_brand.py'
       - 'tools/patch_tv_guide_back.py'
       - 'tools/test_tv_guide_back.py'
       - 'tools/patch_skin_preload_installer.py'
@@ -61,6 +63,10 @@ jobs:
         run: python tools/patch_tv_guide_back.py
       - name: Verify TV guide remote and keyboard navigation
         run: python tools/test_tv_guide_back.py
+      - name: Optimize Fire TV widget/artwork load and NebelFlix TV icon
+        run: python tools/patch_firetv_tv_brand.py
+      - name: Test Fire TV load limits and independent channel placeholder
+        run: python tools/test_firetv_tv_brand.py
       - name: Wire safe, first-boot-gated auto-installer into Skin ZIP
         run: python tools/patch_skin_preload_installer.py
       - name: Verify Skin updater safety and built ZIP contents

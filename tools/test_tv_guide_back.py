@@ -6,7 +6,7 @@ from zipfile import ZipFile
 
 ROOT = Path(__file__).resolve().parents[1]
 AID = "plugin.video.nebelflix.tv"
-ARCHIVE = ROOT / "packages" / AID / (AID + "-0.2.2.zip")
+ARCHIVE = ROOT / "packages" / AID / (AID + "-0.2.3.zip")
 SOURCE = AID + "/resources/lib/guide.py"
 
 with ZipFile(ARCHIVE) as z:
