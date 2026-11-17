@@ -70,10 +70,12 @@ with tempfile.TemporaryDirectory() as folder:
     assert not ready(pid=401), "Deleted preload state must BLOCK"
 
 version_plan = json.loads((ROOT / "release_versions.json").read_text(encoding="utf-8"))
-assert version_plan["skin.nebelflix"] == "0.5.81"
-assert version_plan["plugin.video.nebelflix.hybrid"] == "2026.11.15.6"
-assert version_plan["plugin.video.nebelflix.tv"] == "0.2.2"
-skin = ROOT / "packages/skin.nebelflix/skin.nebelflix-0.5.81.zip"
+# Release checks use the currently planned versions rather than stale ZIP names.
+for addon_id in ("skin.nebelflix", "plugin.video.nebelflix.hybrid",
+                 "plugin.video.nebelflix.tv"):
+    assert addon_id in version_plan and version_plan[addon_id]
+skin = (ROOT / "packages/skin.nebelflix" /
+        ("skin.nebelflix-" + version_plan["skin.nebelflix"] + ".zip"))
 with ZipFile(skin) as z:
     assert z.testzip() is None
     source = z.read("skin.nebelflix/resources/controller.py").decode("utf-8")
@@ -97,7 +99,9 @@ with ZipFile(skin) as z:
 
     compile(source, "skin.nebelflix/resources/controller.py", "exec")
 
-hybrid = ROOT / "packages/plugin.video.nebelflix.hybrid/plugin.video.nebelflix.hybrid-2026.11.15.5.zip"
+hybrid = (ROOT / "packages/plugin.video.nebelflix.hybrid" /
+          ("plugin.video.nebelflix.hybrid-" +
+           version_plan["plugin.video.nebelflix.hybrid"] + ".zip"))
 with ZipFile(hybrid) as z:
     old_service = z.read(
         "plugin.video.nebelflix.hybrid/resources/lib/nebelkind_update_status.py").decode("utf-8")
