@@ -51,3 +51,22 @@ for i in range(min(95,len(lines))):
     print("%03d %s"%(i+1,lines[i][:220]))
 with ZipFile(skin) as z:
     print("PYTHON PACKAGE FILES:", [n for n in z.namelist() if n.endswith(".py")][:80])
+
+print("LIBRARY MODULE CLASS AND METHOD SUMMARY")
+with ZipFile(skin) as z:
+    lib=z.read("skin.nebelflix/resources/library.py").decode("utf-8").replace("\\r\\n","\\n")
+ls=lib.splitlines()
+print("LIBRARY TOTAL",len(ls))
+for i,line in enumerate(ls):
+    if re.match(r"^class ",line) or re.match(r"^    def (tick|start|stop|close|load|prepare_warm|warm_status|flush_cache|cancel|shutdown|_process|_schedule|_submit|__init__)\\b",line):
+        print("METHOD",i+1,line[:180])
+for needle in ["class Widgets", "class Widget", "warm_active", "warm_paths", "def tick", "def close", "def cancel", "def flush_cache", "executor", "ThreadPoolExecutor"]:
+    matches=[i for i,l in enumerate(ls) if needle in l]
+    print("LIBRARY NEEDLE",needle,"COUNT",len(matches))
+    for i in matches[:8]:
+        print("--- line",i+1)
+        for j in range(max(0,i-5),min(len(ls),i+12)):
+            print("%04d %s"%(j+1,ls[j][:250]))
+print("CONTROLLER PREP BLOCK 777-825")
+for i in range(776,825):
+    print("%04d %s"%(i+1,lines[i][:250]))
