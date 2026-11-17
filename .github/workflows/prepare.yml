@@ -57,9 +57,6 @@ jobs:
         run: python tools/build_overrides.py
       - name: Wire safe, first-boot-gated auto-installer into Skin ZIP
         run: python tools/patch_skin_preload_installer.py
-      - name: Inspect Skin widget background task lifecycle
-        if: github.event_name == 'pull_request'
-        run: python tools/inspect_skin_controller.py
       - name: Verify Skin updater safety and built ZIP contents
         run: python tools/test_skin_auto_installer.py
       - name: Apply NebelFlix Skin dependency rules
