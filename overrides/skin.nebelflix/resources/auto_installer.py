@@ -129,7 +129,15 @@ def _cache_ready(profile=None, pid=None, prepare_flag=None):
     artwork = _read(profile / "artwork-preload-v1.json")
     if artwork.get("completed") is not True:
         return False
-    if not (profile / "widget-cache.json").is_file():
+    cache = _read(profile / "widget-cache.json")
+    try:
+        planned = int(preload.get("planned") or 0)
+    except (TypeError, ValueError):
+        return False
+    # A saved but empty/corrupt cache is NOT a finished 100-row preload.
+    # Only count actual widget source entries: a stale cached row still counts
+    # as present, unlike a missing snapshot.
+    if planned <= 0 or len(cache) < max(1, (planned * 4 + 4) // 5):
         return False
     gate = _read(profile / "auto-installer-boot-gate.json")
     if gate.get("awaiting_restart") and gate.get("prepared_pid") == pid:
