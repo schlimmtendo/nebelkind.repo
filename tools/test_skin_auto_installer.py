@@ -12,7 +12,14 @@ spec = importlib.util.spec_from_file_location("skin_auto_installer_for_test", MO
 installer = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(installer)
 
-assert installer._key("0.5.72") > installer._key("0.5.71")
+assert installer._key("0.5.73") > installer._key("0.5.72")
+assert installer._check_due(10000, 10010, first_check_in_session=True), (
+    "A Kodi restart MUST cause an immediate release check")
+assert not installer._check_due(10000, 10010, first_check_in_session=False), (
+    "A second check in the same session must respect the interval")
+assert installer._check_due(10000, 10000 + installer.INTERVAL, False)
+assert installer._check_due("corrupt state", 10010, False)
+
 assert installer._key("2026.11.15.11") > installer._key("2026.11.15.9")
 installed = {
     "skin.nebelflix": "0.5.71",
@@ -63,8 +70,8 @@ with tempfile.TemporaryDirectory() as folder:
     assert not ready(pid=401), "Deleted preload state must BLOCK"
 
 version_plan = json.loads((ROOT / "release_versions.json").read_text(encoding="utf-8"))
-assert version_plan["skin.nebelflix"] == "0.5.72"
-skin = ROOT / "packages/skin.nebelflix/skin.nebelflix-0.5.72.zip"
+assert version_plan["skin.nebelflix"] == "0.5.73"
+skin = ROOT / "packages/skin.nebelflix/skin.nebelflix-0.5.73.zip"
 with ZipFile(skin) as z:
     assert z.testzip() is None
     source = z.read("skin.nebelflix/resources/controller.py").decode("utf-8")
@@ -75,7 +82,7 @@ with ZipFile(skin) as z:
     assert "skin.nebelflix/resources/auto_installer.py" in z.namelist()
     compile(source, "skin.nebelflix/resources/controller.py", "exec")
 
-hybrid = ROOT / "packages/plugin.video.nebelflix.hybrid/plugin.video.nebelflix.hybrid-2026.11.15.4.zip"
+hybrid = ROOT / "packages/plugin.video.nebelflix.hybrid/plugin.video.nebelflix.hybrid-2026.11.15.5.zip"
 with ZipFile(hybrid) as z:
     old_service = z.read(
         "plugin.video.nebelflix.hybrid/resources/lib/nebelkind_update_status.py").decode("utf-8")

@@ -248,13 +248,25 @@ def _run_install(updates, state, state_file, monitor):
             pass
 
 
+def _check_due(last_check, now, first_check_in_session=False):
+    """Each new Kodi process checks immediately, then every 30 minutes."""
+    if first_check_in_session:
+        return True
+    try:
+        last = int(last_check or 0)
+    except (ValueError, TypeError):
+        return True
+    return now - last >= INTERVAL
+
+
 def _loop():
     import xbmc
     import xbmcaddon
     monitor = xbmc.Monitor()
     state_file = _profile() / "auto-installer-state.json"
-    if monitor.waitForAbort(15):
+    if monitor.waitForAbort(2):
         return
+    first_check_in_session = True
     while not monitor.abortRequested():
         try:
             if not _safe_to_install():
@@ -291,11 +303,12 @@ def _loop():
                     state.pop("active", None)
                     _write(state_file, state)
             now = int(time.time())
-            if now - int(state.get("last_check", 0)) < INTERVAL:
+            if not _check_due(state.get("last_check"), now, first_check_in_session):
                 if monitor.waitForAbort(30):
                     return
                 continue
             published = _manifest()
+            first_check_in_session = False
             updates = _needed(published, installed)
             _log("Startup release check: installed=%s; online=%s; pending=%s" %
                  (json.dumps(installed, sort_keys=True),
