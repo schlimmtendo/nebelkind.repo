@@ -45,3 +45,9 @@ with ZipFile(skin) as z:
 print("CONTROLLER CORE LOOP 860-1077:")
 for i in range(859,min(1078,len(lines))):
     print("%04d %s"%(i+1,lines[i][:240]))
+
+print("IMPORTS, CONTROLLER 1-94")
+for i in range(min(95,len(lines))):
+    print("%03d %s"%(i+1,lines[i][:220]))
+with ZipFile(skin) as z:
+    print("PYTHON PACKAGE FILES:", [n for n in z.namelist() if n.endswith(".py")][:80])
