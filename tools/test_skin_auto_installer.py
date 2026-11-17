@@ -84,6 +84,15 @@ with ZipFile(skin) as z:
     assert "first_full_setup and boot_gate_saved" in source
     assert "and not artwork_upgrade" not in source
     assert "skin.nebelflix/resources/auto_installer.py" in z.namelist()
+
+    dialog_files = [n for n in z.namelist() if n.endswith("/DialogProgress.xml")]
+    assert dialog_files, "A modal Kodi progress dialog must have a Skin XML layout"
+    progress_xml = z.read(dialog_files[0]).decode("utf-8")
+    import xml.etree.ElementTree as ET
+    parsed = ET.fromstring(progress_xml)
+    assert parsed.tag == "window", "Invalid modal progress window XML"
+    print("Modal Kodi progress layout:", dialog_files[0])
+
     compile(source, "skin.nebelflix/resources/controller.py", "exec")
 
 hybrid = ROOT / "packages/plugin.video.nebelflix.hybrid/plugin.video.nebelflix.hybrid-2026.11.15.5.zip"
