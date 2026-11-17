@@ -100,7 +100,7 @@
       </assets>
     </extension>
   </addon>
-  <addon id="skin.nebelflix" version="0.5.73" name="Nebelflix" provider-name="Nebelflix / Nebelflix contributors">
+  <addon id="skin.nebelflix" version="0.5.74" name="Nebelflix" provider-name="Nebelflix / Nebelflix contributors">
     <requires>
       <import addon="xbmc.gui" version="5.17.0" />
       <import addon="xbmc.python" version="3.0.0" />
