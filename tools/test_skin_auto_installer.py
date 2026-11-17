@@ -70,8 +70,8 @@ with tempfile.TemporaryDirectory() as folder:
     assert not ready(pid=401), "Deleted preload state must BLOCK"
 
 version_plan = json.loads((ROOT / "release_versions.json").read_text(encoding="utf-8"))
-assert version_plan["skin.nebelflix"] == "0.5.77"
-skin = ROOT / "packages/skin.nebelflix/skin.nebelflix-0.5.77.zip"
+assert version_plan["skin.nebelflix"] == "0.5.78"
+skin = ROOT / "packages/skin.nebelflix/skin.nebelflix-0.5.78.zip"
 with ZipFile(skin) as z:
     assert z.testzip() is None
     source = z.read("skin.nebelflix/resources/controller.py").decode("utf-8")
@@ -135,12 +135,20 @@ def builtin(command):
         installed_versions["skin.nebelflix"] = "0.5.77"
 
 mode = [0]
+settings_write_succeeds = [True]
 def jsonrpc(payload):
     req = json.loads(payload)
-    assert req["method"] == "Settings.GetSettingValue"
     assert req["params"]["setting"] == "addons.updatemode"
-    return json.dumps({"jsonrpc": "2.0", "id": req["id"],
-                       "result": {"value": mode[0]}})
+    if req["method"] == "Settings.GetSettingValue":
+        return json.dumps({"jsonrpc": "2.0", "id": req["id"],
+                           "result": {"value": mode[0]}})
+    if req["method"] == "Settings.SetSettingValue":
+        calls.append(("setting", req["params"]["value"]))
+        if settings_write_succeeds[0]:
+            mode[0] = req["params"]["value"]
+            return json.dumps({"jsonrpc": "2.0", "id": req["id"], "result": True})
+        return json.dumps({"jsonrpc": "2.0", "id": req["id"], "result": False})
+    raise AssertionError("Unexpected Kodi JSON-RPC method")
 
 fake_xbmc = SimpleNamespace(executebuiltin=builtin, executeJSONRPC=jsonrpc)
 fake_gui = SimpleNamespace(DialogProgress=lambda: Dialog())
@@ -190,15 +198,36 @@ with tempfile.TemporaryDirectory() as folder:
         assert ("builtin", "UpdateAddonRepos") not in calls
         assert ("modal_close", None) in calls
 
-        # User has 'notify only' mode: do NOT override the setting and don't
-        # show a progress bar falsely implying Kodi will install automatically.
+        # User requested automatic updating, but Kodi is still on mode 1
+        # (notify only). Correct Kodi's global preference once, verify it,
+        # and then use the native repository updater.
         calls.clear()
         mode[0] = 1
+        install_succeeds[0] = True
+        installed_versions["skin.nebelflix"] = "0.5.76"
+        assert installer._run_install(
+            {"skin.nebelflix": "0.5.77"}, {}, state_file, Monitor())
+        assert ("setting", 0) in calls
+        assert mode[0] == 0
+        assert ("builtin", "UpdateAddonRepos") in calls
+        assert ("builtin", "Quit") in calls
+
+        # Mode 2 is an explicit opt-out: do not touch it.
+        calls.clear()
+        mode[0] = 2
         assert not installer._run_install(
             {"skin.nebelflix": "0.5.77"}, {}, state_file, Monitor())
-        assert ("builtin", "UpdateAddonRepos") not in calls
-        assert ("modal_create", None) not in calls
         assert not calls
+
+        # If Kodi refuses the settings change, no fake installation is shown.
+        calls.clear()
+        mode[0] = 1
+        settings_write_succeeds[0] = False
+        assert not installer._run_install(
+            {"skin.nebelflix": "0.5.77"}, {}, state_file, Monitor())
+        assert ("setting", 0) in calls
+        assert not any(x[0] == "builtin" for x in calls)
+        assert not any(x[0] == "modal_create" for x in calls)
 
     source = MODULE.read_text(encoding="utf-8")
     assert 'InstallAddon(' not in source, "A broken built-in would cause hangs again"

@@ -249,12 +249,44 @@ def _kodi_auto_update_mode():
     return None
 
 
-def _run_install(updates, state, state_file, monitor):
-    """Native Kodi repository refresh + bounded observation. No InstallAddon.
+def _ensure_automatic_updates():
+    """Honor the user's request for automatic updates, not notification-only.
 
-    Kodi's CRepositoryUpdater calls CheckAndInstallAddonUpdates when the repo
-    check finishes and automatic updates are ON. Merely invoking InstallAddon
-    does NOT update an already-installed addon and caused our 180 s hang.
+    Mode 1 is 'notify only' even when Kodi still checks repositories. Convert
+    it to auto exactly once through Kodi's public settings API, then read it
+    back. Never override mode 2 ('never check for updates'). This affects Kodi's
+    global add-on update preference, not just NebelFlix.
+    """
+    mode = _kodi_auto_update_mode()
+    if mode == 0:
+        return True
+    if mode != 1:
+        return False
+    import xbmc
+    try:
+        request = json.dumps({
+            "jsonrpc": "2.0", "id": "nebelkind-enable-auto-updates",
+            "method": "Settings.SetSettingValue",
+            "params": {"setting": "addons.updatemode", "value": 0}})
+        response = json.loads(xbmc.executeJSONRPC(request))
+        if response.get("result") is not True:
+            _log("Kodi refused to enable automatic add-on updates: %s" %
+                 str(response.get("error", response))[:160], True)
+            return False
+        if _kodi_auto_update_mode() != 0:
+            _log("Kodi did not persist the automatic update mode", True)
+            return False
+        _log("Changed Kodi addon update mode from notify-only (1) to auto (0)")
+        return True
+    except (ValueError, TypeError, AttributeError, RuntimeError) as exc:
+        _log("Could not enable automatic addon updates: %s" % exc, True)
+        return False
+
+def _run_install(updates, state, state_file, monitor):
+    """Native Kodi repository refresh + bounded observation.
+
+    Kodi's updater installs available GitHub-hosted repository ZIPs when the
+    automatic mode is active. No direct overlay of the running skin.
     """
     import xbmc
     import xbmcgui
@@ -265,11 +297,12 @@ def _run_install(updates, state, state_file, monitor):
         return False
     mode = _kodi_auto_update_mode()
     _log("Native addon update mode: %s (0=auto, 1=notify, 2=never)" % mode)
-    if mode in (1, 2):
-        _log("Kodi automatic installation is disabled; leaving user settings untouched", True)
-        _toast("NebelFlix · Update verfügbar",
-               "Bitte in Kodi unter System > Addons automatische Updates aktivieren.", 9000)
-        return False
+    if mode != 0:
+        if not _ensure_automatic_updates():
+            _log("Automatic installation blocked by Kodi addon update setting", True)
+            _toast("NebelFlix · Update ausstehend",
+                   "Kodi kann Updates nicht automatisch installieren. Bitte Update-Modus prüfen.", 9000)
+            return False
     dialog = xbmcgui.DialogProgress()
     pause_requested = False
     successful = False
