@@ -111,7 +111,9 @@ class Dialog:
 
 class Monitor:
     def abortRequested(self): return False
-    def waitForAbort(self, duration): return False
+    def waitForAbort(self, duration):
+        # Kodi acknowledges Quit asynchronously while the modal stays shown.
+        return duration == 8 and ("builtin", "Quit") in calls
 
 def builtin(command):
     calls.append(("builtin", command))
@@ -133,6 +135,9 @@ with tempfile.TemporaryDirectory() as folder:
                                       {}, state_file, Monitor())
         assert ("builtin", "Quit") in calls
         assert calls[0][0] == "modal_create", "Nonmodal updater must never ship"
+        assert calls.index(("builtin", "UpdateAddonRepos")) < calls.index(
+            ("builtin", "InstallAddon(plugin.video.nebelflix.tv)")), \
+            "Repository refresh must happen inside the modal, before install"
         assert ("modal_progress", 100) in calls
         calls.clear()
         installed_versions["plugin.video.nebelflix.tv"] = "0.2.0"
