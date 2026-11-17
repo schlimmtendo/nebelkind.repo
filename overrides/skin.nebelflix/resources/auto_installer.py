@@ -215,20 +215,17 @@ def _resume_widget_work():
     window.clearProperty("NF.UpdatePauseReady")
 
 
-def _stop_controller_before_exit(monitor, timeout=12):
-    """Allow Skin's controller to persist its cache and close pools BEFORE Quit."""
+def _verify_idle_before_exit():
+    """Do not terminate the interpreter that owns the updater thread.
+
+    A Kodi Skin controller script owns the installer Python thread. Stopping
+    that controller before requesting Quit could destroy the updater itself.
+    Keep the controller paused and let Kodi's normal shutdown stop it.
+    """
     import xbmcgui
     window = xbmcgui.Window(10000)
-    window.setProperty("NF.StopController", "true")
-    start = time.monotonic()
-    while time.monotonic() - start < timeout:
-        if monitor.waitForAbort(0.3):
-            return False
-        if not window.getProperty("NF.Heartbeat"):
-            _log("Skin controller stopped cleanly before Kodi exit")
-            return True
-    _log("Controller shutdown acknowledgement timed out", True)
-    return False
+    return (window.getProperty("NF.UpdatePause") == "true" and
+            window.getProperty("NF.UpdatePauseReady") == "true")
 
 
 def _run_install(updates, state, state_file, monitor):
@@ -302,12 +299,12 @@ def _run_install(updates, state, state_file, monitor):
         dialog.update(95, "Updates installiert. NebelFlix wird sicher beendet ...")
         state["active"]["completed"] = True
         _write(state_file, state)
-        if not _stop_controller_before_exit(monitor):
-            dialog.update(95, "Warte auf das sichere Beenden des Skin-Controllers ...")
-            _log("Exit deferred: controller did not finish shutdown", True)
+        if not _verify_idle_before_exit():
+            dialog.update(95, "Skin-Controller noch beschäftigt. Update abgeschlossen.")
+            _log("Exit deferred: controller quiescence was lost", True)
             return False
         dialog.update(100, "Updates abgeschlossen. Kodi wird beendet ...")
-        _log("Installed versions and controller shutdown confirmed; requesting Quit")
+        _log("Installed versions confirmed and Skin controller paused; requesting Kodi Quit")
         successful = True
         if not monitor.abortRequested():
             xbmc.executebuiltin("Quit")
