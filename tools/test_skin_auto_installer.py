@@ -42,16 +42,19 @@ with tempfile.TemporaryDirectory() as folder:
     installer._write(p / "artwork-preload-v1.json", {"completed": True})
     assert not ready(), "Absent widget cache must BLOCK"
     installer._write(p / "widget-cache.json", {"nf://genre/x": {"items": []}})
+    assert not ready(), "One cached row cannot satisfy a 100-row preload"
+    installer._write(p / "widget-preload-state.json", {
+        "completed_at": 9999, "failed": 0, "planned": 1})
     assert ready(), "Prior complete boot with valid cache should permit updates"
     assert not ready(flag="true"), "Active preload must BLOCK"
     (p / "widget-cache-reset-request.json").write_text("{}")
     assert not ready(), "Pending reset must BLOCK"
     (p / "widget-cache-reset-request.json").unlink()
     installer._write(p / "widget-preload-state.json", {
-        "completed_at": 9999, "failed": 1, "planned": 100})
+        "completed_at": 9999, "failed": 1, "planned": 1})
     assert not ready(), "Failed row preload must BLOCK"
     installer._write(p / "widget-preload-state.json", {
-        "completed_at": 9999, "failed": 0, "planned": 100})
+        "completed_at": 9999, "failed": 0, "planned": 1})
     installer._write(p / "auto-installer-boot-gate.json", {
         "awaiting_restart": True, "prepared_pid": 400})
     assert not ready(pid=400), "Same first-run Kodi process must BLOCK"
