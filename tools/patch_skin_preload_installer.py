@@ -18,6 +18,9 @@ MARK = "# NEBELFLIX_SKIN_AUTOINSTALLER_V1"
 
 
 def patch(content):
+    # The shipped Windows-authored controller uses CRLF. Match anchors
+    # against LF consistently and emit a valid UTF-8 Python module.
+    content = content.replace("\r\n", "\n")
     if MARK in content:
         return content
     replacements = [
