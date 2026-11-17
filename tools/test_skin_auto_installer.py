@@ -72,7 +72,7 @@ with tempfile.TemporaryDirectory() as folder:
 version_plan = json.loads((ROOT / "release_versions.json").read_text(encoding="utf-8"))
 assert version_plan["skin.nebelflix"] == "0.5.81"
 assert version_plan["plugin.video.nebelflix.hybrid"] == "2026.11.15.6"
-assert version_plan["plugin.video.nebelflix.tv"] == "0.2.1"
+assert version_plan["plugin.video.nebelflix.tv"] == "0.2.2"
 skin = ROOT / "packages/skin.nebelflix/skin.nebelflix-0.5.81.zip"
 with ZipFile(skin) as z:
     assert z.testzip() is None
