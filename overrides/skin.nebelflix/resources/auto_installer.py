@@ -25,9 +25,7 @@ NAMES = {SKIN: "NebelFlix Skin",
          "plugin.video.nebelkindmusic": "Nebelkind Music"}
 VERSION = re.compile(r"^[0-9][A-Za-z0-9._+-]{0,47}$")
 INTERVAL = 30 * 60
-RETRY = 20 * 60
-WAIT_PER_ADDON = 180
-_BOOT = None
+RETRY = 60 * 60
 _WORKER = None
 _LOCK = threading.Lock()
 
@@ -228,8 +226,36 @@ def _verify_idle_before_exit():
             window.getProperty("NF.UpdatePauseReady") == "true")
 
 
+def _kodi_auto_update_mode():
+    """Query Kodi's REAL auto-update setting; never alter global user settings.
+
+    Kodi Omega: addons.updatemode (0=automatic, 1=notify, 2=never).
+    Unknown/unavailable setting is treated as unconfirmed, not 'disabled'.
+    """
+    import xbmc
+    try:
+        command = json.dumps({
+            "jsonrpc": "2.0", "id": "nebelkind-updates",
+            "method": "Settings.GetSettingValue",
+            "params": {"setting": "addons.updatemode"}})
+        data = json.loads(xbmc.executeJSONRPC(command))
+        result = data.get("result")
+        if isinstance(result, dict):
+            value = result.get("value")
+            if type(value) is int and value in (0, 1, 2):
+                return value
+    except (ValueError, TypeError, AttributeError, RuntimeError) as exc:
+        _log("Unable to read Kodi addons.updatemode: %s" % exc, True)
+    return None
+
+
 def _run_install(updates, state, state_file, monitor):
-    """Modal, controller-quiesced Kodi install; progress counts confirmed installs."""
+    """Native Kodi repository refresh + bounded observation. No InstallAddon.
+
+    Kodi's CRepositoryUpdater calls CheckAndInstallAddonUpdates when the repo
+    check finishes and automatic updates are ON. Merely invoking InstallAddon
+    does NOT update an already-installed addon and caused our 180 s hang.
+    """
     import xbmc
     import xbmcgui
     if not _safe_to_install():
@@ -237,102 +263,98 @@ def _run_install(updates, state, state_file, monitor):
     ordered = [aid for aid in ORDER if aid in updates]
     if not ordered:
         return False
-    total = len(ordered)
-    signature = ";".join(aid + "=" + updates[aid] for aid in ordered)
-    dialog = xbmcgui.DialogProgress()  # REAL MODAL: blocks touch and remote navigation
-    successful = False
+    mode = _kodi_auto_update_mode()
+    _log("Native addon update mode: %s (0=auto, 1=notify, 2=never)" % mode)
+    if mode in (1, 2):
+        _log("Kodi automatic installation is disabled; leaving user settings untouched", True)
+        _toast("NebelFlix · Update verfügbar",
+               "Bitte in Kodi unter System > Addons automatische Updates aktivieren.", 9000)
+        return False
+    dialog = xbmcgui.DialogProgress()
     pause_requested = False
+    successful = False
+    signature = ";".join(aid + "=" + updates[aid] for aid in ordered)
     try:
         dialog.create("NebelFlix · Auto-Installer",
-                      "Neue Addon-Versionen gefunden. Bitte warten ...")
-        _log("Opened modal Kodi update dialog for %d addons" % total)
+                      "Updates gefunden. Kodi bereitet die Installation vor ...")
         pause_requested = True
-        if not _pause_widget_work(monitor, dialog):
-            _log("Update deferred: widget tasks did not become idle", True)
+        # Before changing any addon, stop scheduling new plugin:// directory calls.
+        if not _pause_widget_work(monitor, dialog, timeout=25):
+            _log("Native update deferred: widget workers are not idle", True)
             return False
-        # Keep the modal screen open even during Kodi's repository refresh;
-        # otherwise users could start playback in the 12-second update window.
-        dialog.update(0, "Repository wird aktualisiert. Bitte warten ...")
-        _log("Refreshing Kodi repository while widget requests are paused")
-        xbmc.executebuiltin("UpdateAddonRepos")
-        if monitor.waitForAbort(12) or not _safe_to_install():
+        if not _safe_to_install():
             return False
-        if not _verify_idle_before_exit():
-            _log("Widget controller became busy while refreshing repository", True)
-            return False
-        # No ZIP is touched until all plugin-backed widget requests are quiet.
-        state["active"] = {"targets": updates, "pid": os.getpid(),
-                           "started": time.time(), "signature": signature}
+        state["active"] = {
+            "targets": dict(updates), "pid": os.getpid(),
+            "started": time.time(), "signature": signature,
+            "mechanism": "native-kodi-repository"}
         _write(state_file, state)
-        already = set()
-        for aid in ordered:
-            if monitor.abortRequested() or not _safe_to_install():
-                _log("Install aborted: Kodi shut down or cache/playback guard changed", True)
+        dialog.update(0, "Kodi sucht im Repository nach Updates ...")
+        _log("Requested native Kodi repository refresh for %s" % signature)
+        # IMPORTANT: This is the ONLY Kodi builtin that triggers our update.
+        # In auto mode, Kodi's repository updater itself installs new versions.
+        xbmc.executebuiltin("UpdateAddonRepos")
+        completed = set()
+        start = time.monotonic()
+        limit = 70
+        while time.monotonic() - start < limit:
+            if monitor.waitForAbort(2):
+                return False
+            if not _safe_to_install():
+                _log("Kodi is busy or cache was reset; no further installer actions", True)
+                return False
+            if not _verify_idle_before_exit():
+                _log("Skin lost widget pause while Kodi refreshed its repository", True)
                 return False
             current = _installed()
-            if aid in current and _key(current[aid]) >= _key(updates[aid]):
-                already.add(aid)
-                dialog.update((len(already) * 90) // total,
-                              "%d von %d Addons abgeschlossen" % (len(already), total))
-                continue
-            dialog.update((len(already) * 90) // total,
-                          "%s wird aktualisiert – bitte Kodi nicht bedienen" % NAMES[aid])
-            _log("Request native Kodi install for %s => %s" % (aid, updates[aid]))
-            xbmc.executebuiltin("InstallAddon(%s)" % aid)
-            started = time.monotonic()
-            while time.monotonic() - started < WAIT_PER_ADDON:
-                if monitor.waitForAbort(2):
-                    return False
-                if not _safe_to_install():
-                    _log("Cache or playback became active during Kodi install", True)
-                    return False
-                current = _installed()
-                if aid in current and _key(current[aid]) >= _key(updates[aid]):
-                    already.add(aid)
-                    # 90% is the maximum until controller shutdown is confirmed.
-                    dialog.update((len(already) * 90) // total,
-                                  "%s aktualisiert (%d von %d)" %
-                                  (NAMES[aid], len(already), total))
-                    _log("Confirmed installed %s %s" % (aid, current[aid]))
-                    break
-            else:
-                _log("Kodi could not confirm installation of " + aid, True)
-                state["last_attempt"] = int(time.time())
-                _write(state_file, state)
-                dialog.update((len(already) * 90) // total,
-                              "Update unvollständig. Bitte später erneut versuchen.")
-                monitor.waitForAbort(3)
-                return False
-        if len(already) != total:
+            completed = {aid for aid in ordered
+                         if aid in current and _key(current[aid]) >= _key(updates[aid])}
+            percent = 90 * len(completed) // len(ordered)
+            remaining = max(0, limit - int(time.monotonic() - start))
+            dialog.update(percent, "%d von %d Aktualisierungen bestätigt. Kodi arbeitet ... (%ds)" %
+                          (len(completed), len(ordered), remaining))
+            if len(completed) == len(ordered):
+                break
+        if len(completed) != len(ordered):
+            pending = [NAMES[aid] for aid in ordered if aid not in completed]
+            _log("Native Kodi updater timed out, not installed: " + ", ".join(pending), True)
+            dialog.update(90 * len(completed) // len(ordered),
+                          "Update ausstehend. Kodi bleibt nutzbar; später erneut versuchen.")
+            monitor.waitForAbort(2)
             return False
-        # Hold the modal screen; don't let widgets resume between update and exit.
-        dialog.update(95, "Updates installiert. NebelFlix wird sicher beendet ...")
+        dialog.update(95, "Alle Updates sind installiert. Kodi wird beendet ...")
+        _log("Confirmed all native Kodi updates: " + signature)
+        if not _verify_idle_before_exit():
+            _log("Controller not paused at install completion; aborting automatic quit", True)
+            return False
+        # Kodi handles its own addon install; close only when ALL versions match.
         state["active"]["completed"] = True
         _write(state_file, state)
-        if not _verify_idle_before_exit():
-            dialog.update(95, "Skin-Controller noch beschäftigt. Update abgeschlossen.")
-            _log("Exit deferred: controller quiescence was lost", True)
-            return False
-        dialog.update(100, "Updates abgeschlossen. Kodi wird beendet ...")
-        _log("Installed versions confirmed and Skin controller paused; requesting Kodi Quit")
+        dialog.update(100, "Installation abgeschlossen. Kodi wird beendet ...")
+        _log("Native Kodi updates confirmed, requesting clean Quit")
         successful = True
         if not monitor.abortRequested():
             xbmc.executebuiltin("Quit")
-            # Leave the modal dialog in front until Kodi acknowledges shutdown.
             if not monitor.waitForAbort(8):
-                _log("Kodi did not acknowledge Quit within 8 seconds", True)
+                _log("Kodi exit not acknowledged; releasing UI and requiring manual restart", True)
                 successful = False
                 _toast("NebelFlix · Neustart erforderlich",
-                       "Update ist installiert. Kodi bitte manuell neu starten.", 8500)
+                       "Updates sind installiert. Kodi bitte selbst neu starten.", 8500)
                 return False
         return True
     finally:
-        # On failure restore widgets; on success leave them paused until Kodi Quit.
+        # A timeout or Kodi error must NEVER leave a modal or widget pause stuck.
         if pause_requested and not successful:
-            _resume_widget_work()
+            try:
+                _resume_widget_work()
+            except Exception as exc:
+                _log("Could not clear widget pause flag: %s" % exc, True)
             if isinstance(state.get("active"), dict):
                 state.pop("active", None)
-                _write(state_file, state)
+                try:
+                    _write(state_file, state)
+                except OSError as exc:
+                    _log("Could not clear active update state: %s" % exc, True)
         try:
             dialog.close()
         except Exception:
@@ -373,26 +395,23 @@ def _loop():
                 continue
             state = _read(state_file)
             installed = _installed()
-            active = state.get("active")
-            if isinstance(active, dict) and active.get("completed"):
-                if active.get("pid") == os.getpid():
-                    _log("Completed update in current process; Kodi should be closed")
-                    xbmc.executebuiltin("Quit")
-                    return
-                state.pop("active", None)
+            # Never force-quit Kodi because a previous process left a
+            # completed/stale marker behind. That used to trap users in a loop.
+            active = state.pop("active", None)
+            if isinstance(active, dict):
+                targets = active.get("targets", {})
+                if isinstance(targets, dict):
+                    still_pending = {aid: ver for aid, ver in targets.items()
+                                     if aid not in installed or
+                                     _key(installed[aid]) < _key(ver)}
+                    if still_pending:
+                        state["last_failed_signature"] = active.get("signature", "")
+                        state["last_attempt"] = int(time.time())
+                        _log("Recovered interrupted update without forcing Kodi exit: %s" %
+                             json.dumps(still_pending), True)
+                    else:
+                        _log("Previous update finished; cleared stale update state")
                 _write(state_file, state)
-            elif isinstance(active, dict) and active.get("targets"):
-                targets = active["targets"]
-                if all(aid in installed and _key(installed[aid]) >= _key(target)
-                       for aid, target in targets.items()):
-                    _log("Interrupted install finished in Kodi: " + str(targets))
-                    if active.get("pid") == os.getpid():
-                        active["completed"] = True
-                        _write(state_file, state)
-                        xbmc.executebuiltin("Quit")
-                        return
-                    state.pop("active", None)
-                    _write(state_file, state)
             now = int(time.time())
             if not _check_due(state.get("last_check"), now, first_check_in_session):
                 if monitor.waitForAbort(30):

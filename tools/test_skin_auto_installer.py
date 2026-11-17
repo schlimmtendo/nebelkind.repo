@@ -12,7 +12,7 @@ spec = importlib.util.spec_from_file_location("skin_auto_installer_for_test", MO
 installer = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(installer)
 
-assert installer._key("0.5.75") > installer._key("0.5.74")
+assert installer._key("0.5.77") > installer._key("0.5.76")
 assert installer._check_due(10000, 10010, first_check_in_session=True), (
     "A Kodi restart MUST cause an immediate release check")
 assert not installer._check_due(10000, 10010, first_check_in_session=False), (
@@ -70,8 +70,8 @@ with tempfile.TemporaryDirectory() as folder:
     assert not ready(pid=401), "Deleted preload state must BLOCK"
 
 version_plan = json.loads((ROOT / "release_versions.json").read_text(encoding="utf-8"))
-assert version_plan["skin.nebelflix"] == "0.5.75"
-skin = ROOT / "packages/skin.nebelflix/skin.nebelflix-0.5.75.zip"
+assert version_plan["skin.nebelflix"] == "0.5.77"
+skin = ROOT / "packages/skin.nebelflix/skin.nebelflix-0.5.77.zip"
 with ZipFile(skin) as z:
     assert z.testzip() is None
     source = z.read("skin.nebelflix/resources/controller.py").decode("utf-8")
@@ -103,15 +103,20 @@ with ZipFile(hybrid) as z:
     assert "return None" in old_service
     assert "urlopen(" not in old_service, "Old Hybrid must not check for updates during preload"
 
-# Kodi API integration is device-specific; ensure the logic NEVER signals
-# success or calls Quit merely because InstallAddon was invoked.
+# The repository refresh is the ONLY supported Kodi update trigger.
+# Exercise real control flow with Kodi API doubles, without a running GUI.
 from types import SimpleNamespace
 from unittest.mock import patch
 import sys
 
 calls = []
-installed_versions = {"plugin.video.nebelflix.tv": "0.2.0"}
-update_succeeds = [True]
+install_succeeds = [True]
+installed_versions = {"skin.nebelflix": "0.5.76"}
+clock = [0]
+
+def fake_clock():
+    clock[0] += 4
+    return clock[0]
 
 class Dialog:
     def create(self, *args, **kwargs): calls.append(("modal_create", args))
@@ -121,56 +126,82 @@ class Dialog:
 class Monitor:
     def abortRequested(self): return False
     def waitForAbort(self, duration):
-        # Kodi acknowledges Quit asynchronously while the modal stays shown.
+        # Kodi confirms Quit (but only if the update is confirmed installed).
         return duration == 8 and ("builtin", "Quit") in calls
 
 def builtin(command):
     calls.append(("builtin", command))
-    if command == "InstallAddon(plugin.video.nebelflix.tv)" and update_succeeds[0]:
-        installed_versions["plugin.video.nebelflix.tv"] = "0.2.1"
+    if command == "UpdateAddonRepos" and install_succeeds[0]:
+        installed_versions["skin.nebelflix"] = "0.5.77"
 
-fake_xbmc = SimpleNamespace(executebuiltin=builtin)
+mode = [0]
+def jsonrpc(payload):
+    req = json.loads(payload)
+    assert req["method"] == "Settings.GetSettingValue"
+    assert req["params"]["setting"] == "addons.updatemode"
+    return json.dumps({"jsonrpc": "2.0", "id": req["id"],
+                       "result": {"value": mode[0]}})
+
+fake_xbmc = SimpleNamespace(executebuiltin=builtin, executeJSONRPC=jsonrpc)
 fake_gui = SimpleNamespace(DialogProgress=lambda: Dialog())
+
 with tempfile.TemporaryDirectory() as folder:
     state_file = Path(folder) / "auto-installer-state.json"
-    with patch.dict(sys.modules, {"xbmc": fake_xbmc, "xbmcgui": fake_gui}), \
-         patch.object(installer, "_safe_to_install", return_value=True), \
-         patch.object(installer, "_installed", side_effect=lambda: dict(installed_versions)), \
-         patch.object(installer, "_pause_widget_work", return_value=True), \
-         patch.object(installer, "_verify_idle_before_exit", return_value=True), \
-         patch.object(installer, "_resume_widget_work", return_value=None), \
-         patch.object(installer, "_log", return_value=None):
-        assert installer._run_install({"plugin.video.nebelflix.tv": "0.2.1"},
-                                      {}, state_file, Monitor())
-        assert ("builtin", "Quit") in calls
-        assert calls[0][0] == "modal_create", "Nonmodal updater must never ship"
-        assert calls.index(("builtin", "UpdateAddonRepos")) < calls.index(
-            ("builtin", "InstallAddon(plugin.video.nebelflix.tv)")), \
-            "Repository refresh must happen inside the modal, before install"
+    patched = [patch.dict(sys.modules, {"xbmc": fake_xbmc, "xbmcgui": fake_gui}),
+               patch.object(installer, "_safe_to_install", return_value=True),
+               patch.object(installer, "_installed", side_effect=lambda: dict(installed_versions)),
+               patch.object(installer, "_pause_widget_work", return_value=True),
+               patch.object(installer, "_verify_idle_before_exit", return_value=True),
+               patch.object(installer, "_resume_widget_work", return_value=None),
+               patch.object(installer, "_log", return_value=None),
+               patch.object(installer, "_toast", return_value=None),
+               patch.object(installer.time, "monotonic", side_effect=fake_clock)]
+    with patched[0], patched[1], patched[2], patched[3], patched[4], \
+         patched[5], patched[6], patched[7], patched[8]:
+        # Success: only Kodi's native repository refresh may change a version.
+        success_state = {}
+        assert installer._run_install({"skin.nebelflix": "0.5.77"},
+                                      success_state, state_file, Monitor())
+        assert calls[0][0] == "modal_create"
+        assert ("builtin", "UpdateAddonRepos") in calls
+        assert not any("InstallAddon" in str(x) for x in calls)
         assert ("modal_progress", 100) in calls
+        assert ("builtin", "Quit") in calls
+
+        # Timeout: native Kodi updater has not installed anything. UI unlocks,
+        # state clears, no 100% and no forced quit.
         calls.clear()
-        installed_versions["plugin.video.nebelflix.tv"] = "0.2.0"
-        update_succeeds[0] = False
-        with patch.object(installer, "WAIT_PER_ADDON", 0.01):
-            assert not installer._run_install(
-                {"plugin.video.nebelflix.tv": "0.2.1"}, {}, state_file, Monitor())
+        installed_versions["skin.nebelflix"] = "0.5.76"
+        install_succeeds[0] = False
+        failure_state = {}
+        assert not installer._run_install({"skin.nebelflix": "0.5.77"},
+                                          failure_state, state_file, Monitor())
+        assert ("builtin", "UpdateAddonRepos") in calls
+        assert ("modal_close", None) in calls
         assert ("builtin", "Quit") not in calls
-        assert ("modal_progress", 100) not in calls, "Failed install must not show 100%"
+        assert ("modal_progress", 100) not in calls
+        assert "active" not in failure_state
+
+        # Unfinished widget jobs: the native updater must NEVER run.
         calls.clear()
         with patch.object(installer, "_pause_widget_work", return_value=False):
             assert not installer._run_install(
-                {"plugin.video.nebelflix.tv": "0.2.1"}, {}, state_file, Monitor())
-        assert not [x for x in calls if x == ("builtin", "InstallAddon(plugin.video.nebelflix.tv)")], \
-            "Must never install while widgets are busy"
+                {"skin.nebelflix": "0.5.77"}, {}, state_file, Monitor())
+        assert ("builtin", "UpdateAddonRepos") not in calls
+        assert ("modal_close", None) in calls
+
+        # User has 'notify only' mode: do NOT override the setting and don't
+        # show a progress bar falsely implying Kodi will install automatically.
         calls.clear()
-        installed_versions["plugin.video.nebelflix.tv"] = "0.2.0"
-        update_succeeds[0] = True
-        with patch.object(installer, "_verify_idle_before_exit", return_value=False):
-            assert not installer._run_install(
-                {"plugin.video.nebelflix.tv": "0.2.1"}, {}, state_file, Monitor())
-        assert ("builtin", "Quit") not in calls, \
-            "Must not quit before controller stopped"
-        assert ("modal_progress", 100) not in calls
+        mode[0] = 1
+        assert not installer._run_install(
+            {"skin.nebelflix": "0.5.77"}, {}, state_file, Monitor())
+        assert ("builtin", "UpdateAddonRepos") not in calls
+        assert ("modal_create", None) not in calls
+        assert not calls
 
-
-print("PASS: modal update, widget quiescence, first-run block, partial-failure and shutdown safeguards")
+    source = MODULE.read_text(encoding="utf-8")
+    assert 'InstallAddon(' not in source, "A broken built-in would cause hangs again"
+    assert 'WAIT_PER_ADDON' not in source
+    assert 'state.pop("active", None)' in source
+    assert 'RETRY = 60 * 60' in source
