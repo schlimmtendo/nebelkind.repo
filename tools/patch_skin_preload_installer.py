@@ -15,6 +15,7 @@ PACKAGES = ROOT / "packages"
 SKIN = "skin.nebelflix"
 SCRIPT = SKIN + "/resources/controller.py"
 MARK = "# NEBELFLIX_SKIN_AUTOINSTALLER_V1"
+PAUSE_MARK = "# NEBELFLIX_INSTALL_PAUSE_V2"
 
 
 def patch(content):
@@ -83,6 +84,39 @@ def patch(content):
     compile(content, SCRIPT, "exec")
     return content
 
+def patch_pause(content):
+    """Suspend new widget work while queued addon updates are applied."""
+    if PAUSE_MARK in content:
+        return content
+    anchor = ("            if prop('StopController') == 'true':\n"
+              "                break\n")
+    if content.count(anchor) != 1:
+        raise ValueError('Unsafe pause gate: unique stop-controller anchor missing')
+    gate = (
+        "            if prop('StopController') == 'true':\n"
+        "                break\n"
+        "            " + PAUSE_MARK + "\n"
+        "            if prop('UpdatePause') == 'true':\n"
+        "                # Don't schedule new widget requests while Kodi replaces an addon.\n"
+        "                # Worker threads remove completed RPCs under the lock.\n"
+        "                try:\n"
+        "                    with widgets.lock:\n"
+        "                        inflight = len(widgets.inflight)\n"
+        "                    pending_logos = sum(1 for job in widgets.logo_jobs.values() if hasattr(job, 'done') and not job.done())\n"
+        "                    pending_artwork = sum(1 for job in widgets.artwork.jobs.values() if hasattr(job, 'done') and not job.done())\n"
+        "                    ready = inflight == 0 and pending_logos == 0 and pending_artwork == 0\n"
+        "                    prop('UpdatePauseReady', 'true' if ready else 'false')\n"
+        "                except Exception as exc:\n"
+        "                    prop('UpdatePauseReady', 'false')\n"
+        "                    log('Cannot confirm idle widget requests: %s' % exc, xbmc.LOGWARNING)\n"
+        "                continue\n"
+        "            if prop('UpdatePauseReady') == 'true':\n"
+        "                prop('UpdatePauseReady', 'false')\n"
+    )
+    content = content.replace(anchor, gate, 1)
+    compile(content, SCRIPT, 'exec')
+    return content
+
 
 def main():
     v = json.loads((ROOT / "release_versions.json").read_text(encoding="utf-8"))
@@ -96,7 +130,7 @@ def main():
     with ZipFile(path) as original:
         members = original.infolist()
         old = original.read(SCRIPT)
-        new = patch(old.decode("utf-8")).encode("utf-8")
+        new = patch_pause(patch(old.decode("utf-8"))).encode("utf-8")
         if new == old:
             print("Skin controller already has integrated updater:", path.name)
             return
@@ -109,7 +143,7 @@ def main():
             with ZipFile(temp) as check:
                 if check.testzip() is not None:
                     raise ValueError("Skin controller ZIP failed integrity verification")
-                if MARK not in check.read(SCRIPT).decode("utf-8"):
+                if MARK not in check.read(SCRIPT).decode("utf-8") or PAUSE_MARK not in check.read(SCRIPT).decode("utf-8"):
                     raise ValueError("New controller missing update gate")
             os.replace(temp, path)
         finally:
