@@ -126,7 +126,7 @@ with tempfile.TemporaryDirectory() as folder:
          patch.object(installer, "_safe_to_install", return_value=True), \
          patch.object(installer, "_installed", side_effect=lambda: dict(installed_versions)), \
          patch.object(installer, "_pause_widget_work", return_value=True), \
-         patch.object(installer, "_stop_controller_before_exit", return_value=True), \
+         patch.object(installer, "_verify_idle_before_exit", return_value=True), \
          patch.object(installer, "_resume_widget_work", return_value=None), \
          patch.object(installer, "_log", return_value=None):
         assert installer._run_install({"plugin.video.nebelflix.tv": "0.2.1"},
@@ -151,7 +151,7 @@ with tempfile.TemporaryDirectory() as folder:
         calls.clear()
         installed_versions["plugin.video.nebelflix.tv"] = "0.2.0"
         update_succeeds[0] = True
-        with patch.object(installer, "_stop_controller_before_exit", return_value=False):
+        with patch.object(installer, "_verify_idle_before_exit", return_value=False):
             assert not installer._run_install(
                 {"plugin.video.nebelflix.tv": "0.2.1"}, {}, state_file, Monitor())
         assert ("builtin", "Quit") not in calls, \
