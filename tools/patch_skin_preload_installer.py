@@ -32,7 +32,8 @@ def patch(content):
             "    boot_gate_saved = False\n"
         ),
         (
-            "    prop('BackgroundCacheNotice', 'false')\n",
+            "    prop('BackgroundCacheNotice', 'false')\n"
+            "    if prepare_started is None and planned - ready >= max(12, int(planned * 0.35)):\n",
             "    prop('BackgroundCacheNotice', 'false')\n"
             "    # " + MARK + "  No updater launch during the first widget preload.\n"
             "    if prepare_started is None:\n"
@@ -44,6 +45,7 @@ def patch(content):
             "                log('Skin AutoInstaller blocked: cache not ready or same first boot')\n"
             "        except Exception as exc:\n"
             "            log('Skin AutoInstaller deferred: %s' % exc, xbmc.LOGWARNING)\n"
+            "    if prepare_started is None and planned - ready >= max(12, int(planned * 0.35)):\n"
         ),
         (
             "                        library.write('artwork-preload-v1.json', {'completed': True, 'failed_images': widgets.artwork.failures})\n",
