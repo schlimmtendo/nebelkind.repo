@@ -82,4 +82,45 @@ with ZipFile(hybrid) as z:
     assert "def run_startup_check():" in old_service
     assert "return None" in old_service
     assert "urlopen(" not in old_service, "Old Hybrid must not check for updates during preload"
-print("PASS: fresh cache blocked, reset/error blocked, new process permitted; live ZIP packaging verified")
+
+# Kodi API integration is device-specific; ensure the logic NEVER signals
+# success or calls Quit merely because InstallAddon was invoked.
+from types import SimpleNamespace
+from unittest.mock import patch
+import sys
+
+calls = []
+installed_versions = {"plugin.video.nebelflix.tv": "0.2.0"}
+class Dialog:
+    def create(self, *args, **kwargs): calls.append(("create", args))
+    def update(self, *args, **kwargs): calls.append(("update", args))
+    def close(self): calls.append(("close", None))
+class Monitor:
+    def abortRequested(self): return False
+    def waitForAbort(self, duration): return False
+def builtin(command):
+    calls.append(("builtin", command))
+    if command == "InstallAddon(plugin.video.nebelflix.tv)" and update_succeeds[0]:
+        installed_versions["plugin.video.nebelflix.tv"] = "0.2.1"
+fake_xbmc = SimpleNamespace(executebuiltin=builtin)
+fake_gui = SimpleNamespace(DialogProgressBG=lambda: Dialog())
+with tempfile.TemporaryDirectory() as folder:
+    state_file = Path(folder) / "auto-installer-state.json"
+    update_succeeds = [True]
+    with patch.dict(sys.modules, {"xbmc": fake_xbmc, "xbmcgui": fake_gui}), \
+         patch.object(installer, "_safe_to_install", return_value=True), \
+         patch.object(installer, "_installed", side_effect=lambda: dict(installed_versions)), \
+         patch.object(installer, "_toast", return_value=None), \
+         patch.object(installer, "_log", return_value=None):
+        assert installer._run_install({"plugin.video.nebelflix.tv": "0.2.1"},
+                                      {}, state_file, Monitor())
+        assert ("builtin", "Quit") in calls
+        calls.clear()
+        installed_versions["plugin.video.nebelflix.tv"] = "0.2.0"
+        update_succeeds[0] = False
+        with patch.object(installer, "WAIT_PER_ADDON", 0.01):
+            assert not installer._run_install(
+                {"plugin.video.nebelflix.tv": "0.2.1"}, {}, state_file, Monitor())
+        assert ("builtin", "Quit") not in calls, "Failed install must NEVER quit Kodi"
+
+print("PASS: fresh cache blocked, reset/error blocked, new process permitted; real-install completion check and failure guard verified")
