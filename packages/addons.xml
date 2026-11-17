@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <addons>
-  <addon id="plugin.video.nebelflix.hybrid" version="2026.11.15.5" name="Nebelkind Hybrid" provider-name="Nebelkind">
+  <addon id="plugin.video.nebelflix.hybrid" version="2026.11.15.6" name="Nebelkind Hybrid" provider-name="Nebelkind">
     <requires>
       <import addon="xbmc.python" version="3.0.0" />
       <import addon="script.module.requests" />
@@ -38,7 +38,7 @@
       </assets>
     </extension>
   </addon>
-  <addon id="plugin.video.nebelflix.tv" name="Nebelflix TV" version="0.2.0" provider-name="TitanX Lab">
+  <addon id="plugin.video.nebelflix.tv" name="Nebelflix TV" version="0.2.1" provider-name="TitanX Lab">
     <requires>
       <import addon="xbmc.python" version="3.0.0" />
       <import addon="plugin.video.vavoo.tv.plus" version="2.0.8" />
@@ -100,7 +100,7 @@
       </assets>
     </extension>
   </addon>
-  <addon id="skin.nebelflix" version="0.5.80" name="Nebelflix" provider-name="Nebelflix / Nebelflix contributors">
+  <addon id="skin.nebelflix" version="0.5.81" name="Nebelflix" provider-name="Nebelflix / Nebelflix contributors">
     <requires>
       <import addon="xbmc.gui" version="5.17.0" />
       <import addon="xbmc.python" version="3.0.0" />
