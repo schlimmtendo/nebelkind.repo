@@ -82,7 +82,7 @@ with ZipFile(skin) as z:
     assert "skin.nebelflix/resources/auto_installer.py" in z.namelist()
     compile(source, "skin.nebelflix/resources/controller.py", "exec")
 
-hybrid = ROOT / "packages/plugin.video.nebelflix.hybrid/plugin.video.nebelflix.hybrid-2026.11.15.4.zip"
+hybrid = ROOT / "packages/plugin.video.nebelflix.hybrid/plugin.video.nebelflix.hybrid-2026.11.15.5.zip"
 with ZipFile(hybrid) as z:
     old_service = z.read(
         "plugin.video.nebelflix.hybrid/resources/lib/nebelkind_update_status.py").decode("utf-8")
