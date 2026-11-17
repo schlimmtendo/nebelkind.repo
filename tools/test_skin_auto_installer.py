@@ -12,7 +12,7 @@ spec = importlib.util.spec_from_file_location("skin_auto_installer_for_test", MO
 installer = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(installer)
 
-assert installer._key("0.5.76") > installer._key("0.5.75")
+assert installer._key("0.5.77") > installer._key("0.5.76")
 assert installer._check_due(10000, 10010, first_check_in_session=True), (
     "A Kodi restart MUST cause an immediate release check")
 assert not installer._check_due(10000, 10010, first_check_in_session=False), (
@@ -70,8 +70,8 @@ with tempfile.TemporaryDirectory() as folder:
     assert not ready(pid=401), "Deleted preload state must BLOCK"
 
 version_plan = json.loads((ROOT / "release_versions.json").read_text(encoding="utf-8"))
-assert version_plan["skin.nebelflix"] == "0.5.76"
-skin = ROOT / "packages/skin.nebelflix/skin.nebelflix-0.5.76.zip"
+assert version_plan["skin.nebelflix"] == "0.5.77"
+skin = ROOT / "packages/skin.nebelflix/skin.nebelflix-0.5.77.zip"
 with ZipFile(skin) as z:
     assert z.testzip() is None
     source = z.read("skin.nebelflix/resources/controller.py").decode("utf-8")
@@ -111,7 +111,7 @@ import sys
 
 calls = []
 install_succeeds = [True]
-installed_versions = {"skin.nebelflix": "0.5.75"}
+installed_versions = {"skin.nebelflix": "0.5.76"}
 clock = [0]
 
 def fake_clock():
@@ -132,7 +132,7 @@ class Monitor:
 def builtin(command):
     calls.append(("builtin", command))
     if command == "UpdateAddonRepos" and install_succeeds[0]:
-        installed_versions["skin.nebelflix"] = "0.5.76"
+        installed_versions["skin.nebelflix"] = "0.5.77"
 
 mode = [0]
 def jsonrpc(payload):
@@ -160,7 +160,7 @@ with tempfile.TemporaryDirectory() as folder:
          patched[5], patched[6], patched[7], patched[8]:
         # Success: only Kodi's native repository refresh may change a version.
         success_state = {}
-        assert installer._run_install({"skin.nebelflix": "0.5.76"},
+        assert installer._run_install({"skin.nebelflix": "0.5.77"},
                                       success_state, state_file, Monitor())
         assert calls[0][0] == "modal_create"
         assert ("builtin", "UpdateAddonRepos") in calls
@@ -171,10 +171,10 @@ with tempfile.TemporaryDirectory() as folder:
         # Timeout: native Kodi updater has not installed anything. UI unlocks,
         # state clears, no 100% and no forced quit.
         calls.clear()
-        installed_versions["skin.nebelflix"] = "0.5.75"
+        installed_versions["skin.nebelflix"] = "0.5.76"
         install_succeeds[0] = False
         failure_state = {}
-        assert not installer._run_install({"skin.nebelflix": "0.5.76"},
+        assert not installer._run_install({"skin.nebelflix": "0.5.77"},
                                           failure_state, state_file, Monitor())
         assert ("builtin", "UpdateAddonRepos") in calls
         assert ("modal_close", None) in calls
@@ -186,7 +186,7 @@ with tempfile.TemporaryDirectory() as folder:
         calls.clear()
         with patch.object(installer, "_pause_widget_work", return_value=False):
             assert not installer._run_install(
-                {"skin.nebelflix": "0.5.76"}, {}, state_file, Monitor())
+                {"skin.nebelflix": "0.5.77"}, {}, state_file, Monitor())
         assert ("builtin", "UpdateAddonRepos") not in calls
         assert ("modal_close", None) in calls
 
@@ -195,7 +195,7 @@ with tempfile.TemporaryDirectory() as folder:
         calls.clear()
         mode[0] = 1
         assert not installer._run_install(
-            {"skin.nebelflix": "0.5.76"}, {}, state_file, Monitor())
+            {"skin.nebelflix": "0.5.77"}, {}, state_file, Monitor())
         assert ("builtin", "UpdateAddonRepos") not in calls
         assert ("modal_create", None) not in calls
         assert not calls
