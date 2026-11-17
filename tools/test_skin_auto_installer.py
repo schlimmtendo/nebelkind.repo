@@ -70,8 +70,8 @@ with tempfile.TemporaryDirectory() as folder:
     assert not ready(pid=401), "Deleted preload state must BLOCK"
 
 version_plan = json.loads((ROOT / "release_versions.json").read_text(encoding="utf-8"))
-assert version_plan["skin.nebelflix"] == "0.5.79"
-skin = ROOT / "packages/skin.nebelflix/skin.nebelflix-0.5.79.zip"
+assert version_plan["skin.nebelflix"] == "0.5.80"
+skin = ROOT / "packages/skin.nebelflix/skin.nebelflix-0.5.80.zip"
 with ZipFile(skin) as z:
     assert z.testzip() is None
     source = z.read("skin.nebelflix/resources/controller.py").decode("utf-8")
