@@ -67,14 +67,6 @@ jobs:
         run: python tools/check_repository_consistency.py
       - name: Validate full release and retire only superseded ZIPs
         run: python tools/prune_verified_releases.py
-      - name: Export NebelFlix 0.5.76 for local test only
-        if: github.event_name == 'pull_request'
-        uses: actions/upload-artifact@v4
-        with:
-          name: NebelFlix-0.5.76-lokale-Installation
-          path: packages/skin.nebelflix/skin.nebelflix-0.5.76.zip
-          if-no-files-found: error
-          retention-days: 14
       - name: Publish verified files in a single atomic commit
         if: github.event_name != 'pull_request'
         id: publish
