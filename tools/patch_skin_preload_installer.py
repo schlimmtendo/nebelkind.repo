@@ -88,27 +88,27 @@ def patch_pause(content):
     """Suspend new widget work while queued addon updates are applied."""
     if PAUSE_MARK in content:
         return content
-    anchor = ("            if prop('StopController') == 'true':\\n"
-              "                break\\n")
+    anchor = ("            if prop('StopController') == 'true':\n"
+              "                break\n")
     if content.count(anchor) != 1:
         raise ValueError('Unsafe pause gate: unique stop-controller anchor missing')
     gate = (
-        "            if prop('StopController') == 'true':\\n"
-        "                break\\n"
-        "            " + PAUSE_MARK + "\\n"
-        "            if prop('UpdatePause') == 'true':\\n"
-        "                # Don't schedule new widget requests while Kodi replaces an addon.\\n"
-        "                # Worker threads remove completed RPCs under the lock.\\n"
-        "                try:\\n"
-        "                    with widgets.lock:\\n"
-        "                        inflight = len(widgets.inflight)\\n"
-        "                    prop('UpdatePauseReady', 'true' if inflight == 0 else 'false')\\n"
-        "                except Exception as exc:\\n"
-        "                    prop('UpdatePauseReady', 'false')\\n"
-        "                    log('Cannot confirm idle widget requests: %s' % exc, xbmc.LOGWARNING)\\n"
-        "                continue\\n"
-        "            if prop('UpdatePauseReady') == 'true':\\n"
-        "                prop('UpdatePauseReady', 'false')\\n"
+        "            if prop('StopController') == 'true':\n"
+        "                break\n"
+        "            " + PAUSE_MARK + "\n"
+        "            if prop('UpdatePause') == 'true':\n"
+        "                # Don't schedule new widget requests while Kodi replaces an addon.\n"
+        "                # Worker threads remove completed RPCs under the lock.\n"
+        "                try:\n"
+        "                    with widgets.lock:\n"
+        "                        inflight = len(widgets.inflight)\n"
+        "                    prop('UpdatePauseReady', 'true' if inflight == 0 else 'false')\n"
+        "                except Exception as exc:\n"
+        "                    prop('UpdatePauseReady', 'false')\n"
+        "                    log('Cannot confirm idle widget requests: %s' % exc, xbmc.LOGWARNING)\n"
+        "                continue\n"
+        "            if prop('UpdatePauseReady') == 'true':\n"
+        "                prop('UpdatePauseReady', 'false')\n"
     )
     content = content.replace(anchor, gate, 1)
     compile(content, SCRIPT, 'exec')
