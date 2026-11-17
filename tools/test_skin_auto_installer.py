@@ -122,12 +122,12 @@ fake_xbmc = SimpleNamespace(executebuiltin=builtin)
 fake_gui = SimpleNamespace(DialogProgress=lambda: Dialog())
 with tempfile.TemporaryDirectory() as folder:
     state_file = Path(folder) / "auto-installer-state.json"
-    with patch.dict(sys.modules, {"xbmc": fake_xbmc, "xbmcgui": fake_gui}), \\
-         patch.object(installer, "_safe_to_install", return_value=True), \\
-         patch.object(installer, "_installed", side_effect=lambda: dict(installed_versions)), \\
-         patch.object(installer, "_pause_widget_work", return_value=True), \\
-         patch.object(installer, "_stop_controller_before_exit", return_value=True), \\
-         patch.object(installer, "_resume_widget_work", return_value=None), \\
+    with patch.dict(sys.modules, {"xbmc": fake_xbmc, "xbmcgui": fake_gui}), \
+         patch.object(installer, "_safe_to_install", return_value=True), \
+         patch.object(installer, "_installed", side_effect=lambda: dict(installed_versions)), \
+         patch.object(installer, "_pause_widget_work", return_value=True), \
+         patch.object(installer, "_stop_controller_before_exit", return_value=True), \
+         patch.object(installer, "_resume_widget_work", return_value=None), \
          patch.object(installer, "_log", return_value=None):
         assert installer._run_install({"plugin.video.nebelflix.tv": "0.2.1"},
                                       {}, state_file, Monitor())
@@ -146,7 +146,7 @@ with tempfile.TemporaryDirectory() as folder:
         with patch.object(installer, "_pause_widget_work", return_value=False):
             assert not installer._run_install(
                 {"plugin.video.nebelflix.tv": "0.2.1"}, {}, state_file, Monitor())
-        assert not [x for x in calls if x == ("builtin", "InstallAddon(plugin.video.nebelflix.tv)")], \\
+        assert not [x for x in calls if x == ("builtin", "InstallAddon(plugin.video.nebelflix.tv)")], \
             "Must never install while widgets are busy"
         calls.clear()
         installed_versions["plugin.video.nebelflix.tv"] = "0.2.0"
@@ -154,7 +154,7 @@ with tempfile.TemporaryDirectory() as folder:
         with patch.object(installer, "_stop_controller_before_exit", return_value=False):
             assert not installer._run_install(
                 {"plugin.video.nebelflix.tv": "0.2.1"}, {}, state_file, Monitor())
-        assert ("builtin", "Quit") not in calls, \\
+        assert ("builtin", "Quit") not in calls, \
             "Must not quit before controller stopped"
         assert ("modal_progress", 100) not in calls
 
