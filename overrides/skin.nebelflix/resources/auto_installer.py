@@ -250,6 +250,16 @@ def _run_install(updates, state, state_file, monitor):
         if not _pause_widget_work(monitor, dialog):
             _log("Update deferred: widget tasks did not become idle", True)
             return False
+        # Keep the modal screen open even during Kodi's repository refresh;
+        # otherwise users could start playback in the 12-second update window.
+        dialog.update(0, "Repository wird aktualisiert. Bitte warten ...")
+        _log("Refreshing Kodi repository while widget requests are paused")
+        xbmc.executebuiltin("UpdateAddonRepos")
+        if monitor.waitForAbort(12) or not _safe_to_install():
+            return False
+        if not _verify_idle_before_exit():
+            _log("Widget controller became busy while refreshing repository", True)
+            return False
         # No ZIP is touched until all plugin-backed widget requests are quiet.
         state["active"] = {"targets": updates, "pid": os.getpid(),
                            "started": time.time(), "signature": signature}
@@ -308,6 +318,13 @@ def _run_install(updates, state, state_file, monitor):
         successful = True
         if not monitor.abortRequested():
             xbmc.executebuiltin("Quit")
+            # Leave the modal dialog in front until Kodi acknowledges shutdown.
+            if not monitor.waitForAbort(8):
+                _log("Kodi did not acknowledge Quit within 8 seconds", True)
+                successful = False
+                _toast("NebelFlix · Neustart erforderlich",
+                       "Update ist installiert. Kodi bitte manuell neu starten.", 8500)
+                return False
         return True
     finally:
         # On failure restore widgets; on success leave them paused until Kodi Quit.
@@ -393,9 +410,6 @@ def _loop():
             if updates:
                 signature = ";".join(aid + "=" + updates[aid] for aid in ORDER if aid in updates)
                 if signature != state.get("last_failed_signature") or now - int(state.get("last_attempt", 0)) >= RETRY:
-                    xbmc.executebuiltin("UpdateAddonRepos")
-                    if monitor.waitForAbort(12):
-                        return
                     if _safe_to_install():
                         result = _run_install(updates, state, state_file, monitor)
                         if not result:
