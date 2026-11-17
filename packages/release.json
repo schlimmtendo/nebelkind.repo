@@ -7,7 +7,7 @@
     },
     {
       "id": "plugin.video.nebelflix.tv",
-      "version": "0.2.2"
+      "version": "0.2.3"
     },
     {
       "id": "plugin.video.nebelkindmusic",
@@ -15,7 +15,7 @@
     },
     {
       "id": "skin.nebelflix",
-      "version": "0.5.81"
+      "version": "0.5.82"
     }
   ]
 }
