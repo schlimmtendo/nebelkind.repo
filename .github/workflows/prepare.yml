@@ -13,6 +13,8 @@ on:
       - 'tools/prune_verified_releases.py'
       - 'tools/test_release_pipeline.py'
       - 'tools/test_update_monitor.py'
+      - 'tools/patch_hybrid_upnext_picker.py'
+      - 'tools/test_hybrid_upnext_picker.py'
       - 'tools/patch_skin_user_layout.py'
       - 'tools/test_skin_user_layout.py'
       - 'tools/patch_firetv_cache_io.py'
@@ -63,6 +65,10 @@ jobs:
         run: python tools/import_upload.py
       - name: Build changed addon ZIPs from Github source overrides
         run: python tools/build_overrides.py
+      - name: Make Hybrid Up Next use the normal full-screen search and source list
+        run: python tools/patch_hybrid_upnext_picker.py
+      - name: Verify Hybrid Up Next source selection for both handoff paths
+        run: python tools/test_hybrid_upnext_picker.py
       - name: Patch NebelFlix TV guide Back and Backspace handling
         run: python tools/patch_tv_guide_back.py
       - name: Verify TV guide remote and keyboard navigation
