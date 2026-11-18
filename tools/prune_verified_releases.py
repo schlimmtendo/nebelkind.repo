@@ -15,7 +15,6 @@ ROOT = Path(__file__).resolve().parents[1]
 PACKAGES = ROOT / "packages"
 ALLOWED = {
     "repository.nebelkind",
-    "skin.nebelflix",
     "plugin.video.nebelflix.hybrid",
     "plugin.video.nebelflix.tv",
     "plugin.video.nebelkindmusic",

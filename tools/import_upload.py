@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Expand one owner-uploaded Nebelkind addon bundle on GitHub Actions.
 
-Between one and four known addon ZIPs are accepted. No arbitrary extraction.
+Between one and three known addon ZIPs are accepted. No arbitrary extraction.
 Upload nebelkind-paket.zip to the repo root on main.
 """
 from io import BytesIO
@@ -14,7 +14,6 @@ from zipfile import ZipFile, BadZipFile
 ROOT = Path(__file__).resolve().parents[1]
 UPLOAD = ROOT / "nebelkind-paket.zip"
 ALLOWED = {
-    "skin.nebelflix",
     "plugin.video.nebelflix.hybrid",
     "plugin.video.nebelflix.tv",
     "plugin.video.nebelkindmusic",
@@ -50,8 +49,8 @@ def main():
     pending = []
     with ZipFile(UPLOAD) as bundle:
         files = [x for x in bundle.infolist() if not x.is_dir()]
-        if not 1 <= len(files) <= 4:
-            raise ValueError("Bundle must contain between one and four addon ZIPs")
+        if not 1 <= len(files) <= 3:
+            raise ValueError("Bundle must contain between one and three addon ZIPs")
         seen = set()
         for item in files:
             path = item.filename

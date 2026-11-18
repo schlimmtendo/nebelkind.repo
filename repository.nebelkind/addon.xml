@@ -9,10 +9,10 @@
     </dir>
   </extension>
   <extension point="xbmc.addon.metadata">
-    <summary lang="de_DE">NebelFlix Skin und die zugehörigen Nebelkind-Addons</summary>
-    <description lang="de_DE">Offizielle Nebelkind Repo für NebelFlix Skin, NebelFlix Hybrid, NebelFlix TV und Nebelkind Musik. Teststände werden ebenfalls bereitgestellt; Versionsänderungen steuern das automatische Kodi-Update.</description>
-    <summary lang="en_GB">NebelFlix skin and related Nebelkind add-ons</summary>
-    <description lang="en_GB">Official Nebelkind repository with the NebelFlix skin and its related add-ons.</description>
+    <summary lang="de_DE">Nebelkind Hybrid, NebelFlix TV und Nebelkind Musik</summary>
+    <description lang="de_DE">Offizielles Nebelkind Repo für Nebelkind Hybrid, NebelFlix TV und Nebelkind Musik. Der NebelFlix-Skin wird hier nicht mehr angeboten.</description>
+    <summary lang="en_GB">Nebelkind video, TV and music add-ons</summary>
+    <description lang="en_GB">Official Nebelkind repository for Hybrid, TV and Music. The NebelFlix skin is no longer distributed here.</description>
     <platform>all</platform><assets><icon>icon.png</icon><fanart>fanart.jpg</fanart></assets>
   </extension>
 </addon>

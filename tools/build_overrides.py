@@ -20,7 +20,6 @@ PACKAGES = ROOT / "packages"
 OVERRIDES = ROOT / "overrides"
 VERSION_FILE = ROOT / "release_versions.json"
 ALLOWED = {
-    "skin.nebelflix",
     "plugin.video.nebelflix.hybrid",
     "plugin.video.nebelflix.tv",
     "plugin.video.nebelkindmusic",

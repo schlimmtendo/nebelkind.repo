@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Publish only NebelFlix Skin and three related Nebelkind add-ons.
+"""Publish only three Nebelkind add-ons, without the skin.
 All uploaded packages are public immediately. Kodi auto-updates require higher versions.
 """
 import hashlib
@@ -14,7 +14,7 @@ from zipfile import ZipFile, ZIP_DEFLATED
 ROOT=Path(__file__).resolve().parents[1]
 PACKAGES=ROOT/'packages'
 REPO_ID='repository.nebelkind'
-ALLOWED={REPO_ID,'skin.nebelflix','plugin.video.nebelflix.hybrid','plugin.video.nebelflix.tv','plugin.video.nebelkindmusic'}
+ALLOWED={REPO_ID,'plugin.video.nebelflix.hybrid','plugin.video.nebelflix.tv','plugin.video.nebelkindmusic'}
 VERSION=re.compile(r'^[0-9][0-9A-Za-z.+_-]*$')
 
 

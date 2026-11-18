@@ -15,16 +15,8 @@ on:
       - 'tools/test_update_monitor.py'
       - 'tools/patch_hybrid_upnext_picker.py'
       - 'tools/test_hybrid_upnext_picker.py'
-      - 'tools/patch_skin_user_layout.py'
-      - 'tools/test_skin_user_layout.py'
-      - 'tools/patch_firetv_cache_io.py'
-      - 'tools/test_firetv_cache_io.py'
-      - 'tools/patch_firetv_tv_brand.py'
-      - 'tools/test_firetv_tv_brand.py'
       - 'tools/patch_tv_guide_back.py'
       - 'tools/test_tv_guide_back.py'
-      - 'tools/patch_skin_preload_installer.py'
-      - 'tools/test_skin_auto_installer.py'
       - 'tools/check_repository_consistency.py'
       - 'overrides/**'
       - 'release_versions.json'
@@ -73,22 +65,6 @@ jobs:
         run: python tools/patch_tv_guide_back.py
       - name: Verify TV guide remote and keyboard navigation
         run: python tools/test_tv_guide_back.py
-      - name: Optimize Fire TV widget/artwork load and NebelFlix TV icon
-        run: python tools/patch_firetv_tv_brand.py
-      - name: Test Fire TV load limits and independent channel placeholder
-        run: python tools/test_firetv_tv_brand.py
-      - name: Optimize Fire TV title-logo cache I/O
-        run: python tools/patch_firetv_cache_io.py
-      - name: Test Fire TV visible-only logo refresh and bounded disk writes
-        run: python tools/test_firetv_cache_io.py
-      - name: Restore user-approved NebelFlix VOD layout from uploaded profile
-        run: python tools/patch_skin_user_layout.py
-      - name: Verify exact user-provided layout and retain previous skin behavior
-        run: python tools/test_skin_user_layout.py
-      - name: Wire safe, first-boot-gated auto-installer into Skin ZIP
-        run: python tools/patch_skin_preload_installer.py
-      - name: Verify Skin updater safety and built ZIP contents
-        run: python tools/test_skin_auto_installer.py
       - name: Apply NebelFlix Skin dependency rules
         run: python tools/enforce_skin_dependency.py
       - name: Validate addon ZIPs and rebuild repository

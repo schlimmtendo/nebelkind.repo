@@ -15,4 +15,4 @@ spec = importlib.util.spec_from_file_location("legacy_hybrid_update", FILE)
 legacy = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(legacy)
 assert legacy.run_startup_check() is None
-print("PASS: Hybrid legacy update loop disabled; Skin owns updates after preload")
+print("PASS: Hybrid legacy update loop disabled; Kodi handles repository updates")

@@ -21,41 +21,41 @@ retire = load("prune_verified_releases.py", "nebelkind_prune_verified")
 with TemporaryDirectory(prefix="nebelkind-publish-test-") as folder:
     base = Path(folder)
     packs = base / "packages"
-    addon_id = "skin.nebelflix"
+    addon_id = "plugin.video.nebelflix.hybrid"
     addon_dir = packs / addon_id
     addon_dir.mkdir(parents=True)
-    old = addon_dir / (addon_id + "-0.5.70.zip")
+    old = addon_dir / (addon_id + "-2026.11.15.6.zip")
     with ZipFile(old, "w", ZIP_DEFLATED) as z:
         z.writestr(addon_id + "/addon.xml",
-                   '<addon id="skin.nebelflix" version="0.5.70">'
+                   '<addon id="plugin.video.nebelflix.hybrid" version="2026.11.15.6">'
                    '<extension point="xbmc.addon.metadata"><assets>'
-                   '<icon>resources/nebelflix-icon.png</icon>'
+                   '<icon>resources/icon.png</icon>'
                    '<fanart>resources/missing.jpg</fanart><screenshot/>'
                    '</assets></extension></addon>')
-        z.writestr(addon_id + "/xml/Home.xml", "<home>OLD</home>")
-        z.writestr(addon_id + "/resources/nebelflix-icon.png", b"TEST-IMAGE")
+        z.writestr(addon_id + "/resources/lib/player.py", "old player")
+        z.writestr(addon_id + "/resources/icon.png", b"TEST-IMAGE")
 
     overrides.ROOT = base
     overrides.PACKAGES = packs
     overrides.OVERRIDES = base / "overrides"
     overrides.VERSION_FILE = base / "release_versions.json"
     overrides.VERSION_FILE.write_text("{}")
-    patch = overrides.OVERRIDES / addon_id / "xml/Home.xml"
+    patch = overrides.OVERRIDES / addon_id / "resources/lib/player.py"
     patch.parent.mkdir(parents=True)
-    patch.write_text("<home>FIXED</home>")
+    patch.write_text("fixed player")
 
     overrides.main()  # test fix: same version stays available manually
     with ZipFile(old) as z:
-        assert z.read(addon_id + "/xml/Home.xml") == b"<home>FIXED</home>"
-        assert ET.fromstring(z.read(addon_id + "/addon.xml")).get("version") == "0.5.70"
+        assert z.read(addon_id + "/resources/lib/player.py") == b"fixed player"
+        assert ET.fromstring(z.read(addon_id + "/addon.xml")).get("version") == "2026.11.15.6"
 
-    overrides.VERSION_FILE.write_text(json.dumps({addon_id: "0.5.71"}))
+    overrides.VERSION_FILE.write_text(json.dumps({addon_id: "2026.11.15.7"}))
     overrides.main()  # release fix: newer version becomes installable
-    newest = addon_dir / (addon_id + "-0.5.71.zip")
+    newest = addon_dir / (addon_id + "-2026.11.15.7.zip")
     with ZipFile(newest) as z:
         assert z.testzip() is None
-        assert z.read(addon_id + "/xml/Home.xml") == b"<home>FIXED</home>"
-        assert ET.fromstring(z.read(addon_id + "/addon.xml")).get("version") == "0.5.71"
+        assert z.read(addon_id + "/resources/lib/player.py") == b"fixed player"
+        assert ET.fromstring(z.read(addon_id + "/addon.xml")).get("version") == "2026.11.15.7"
 
     # Kodi browses artwork via separate packages/<id>/<asset> URLs.
     # The index must reference only URLs that are actually published.
@@ -64,23 +64,23 @@ with TemporaryDirectory(prefix="nebelkind-publish-test-") as folder:
     artwork.PACKAGES = packs
     with ZipFile(newest) as z:
         addon_meta = ET.fromstring(z.read(addon_id + "/addon.xml"))
-    artwork.publish_metadata_artwork({addon_id: ("0.5.71", addon_meta)})
-    icon = packs / addon_id / "resources/nebelflix-icon.png"
+    artwork.publish_metadata_artwork({addon_id: ("2026.11.15.7", addon_meta)})
+    icon = packs / addon_id / "resources/icon.png"
     assert icon.read_bytes() == b"TEST-IMAGE", "Metadata artwork was not published"
     assets = addon_meta.find("./extension[@point='xbmc.addon.metadata']/assets")
     assert len(assets) == 1 and assets[0].tag == "icon", "Broken artwork metadata was not removed"
 
     manifest = ET.Element("addons")
-    ET.SubElement(manifest, "addon", {"id": addon_id, "version": "0.5.71"})
+    ET.SubElement(manifest, "addon", {"id": addon_id, "version": "2026.11.15.7"})
     (packs / "addons.xml").write_bytes(ET.tostring(manifest))
     (packs / "release.json").write_text(json.dumps({
-        "schema": 1, "addons": [{"id": addon_id, "version": "0.5.71"}]
+        "schema": 1, "addons": [{"id": addon_id, "version": "2026.11.15.7"}]
     }))
     retire.ROOT = base
     retire.PACKAGES = packs
 
     # Corrupt newer archive must block all retirement (no old ZIP loss).
-    corrupt = addon_dir / (addon_id + "-0.5.72.zip")
+    corrupt = addon_dir / (addon_id + "-2026.11.15.8.zip")
     corrupt.write_bytes(b"not a zip file")
     try:
         retire.main()
