@@ -111,6 +111,17 @@ def main():
         raise ValueError('Missing staged skin ZIP')
     with ZipFile(package) as archive:
         assert archive.testzip() is None
+        # This script is invoked for EVERY repository release. Once the
+        # approved layout is embedded, do not compare the modified file
+        # against its old pre-release checksum or attempt another migration.
+        # Verify that the embedded default is still exactly user-approved;
+        # never silently replace newer personalized defaults.
+        if MARK.encode('utf-8') in archive.read(LIB):
+            current = json.loads(archive.read(DEFAULT))
+            if fingerprint(current) != PROFILE_LAYOUT_SHA:
+                raise ValueError('Previously approved Skin layout changed unexpectedly')
+            print('Approved Skin layout already embedded; leaving it unchanged')
+            return
         for member, expected in BASE_HASHES.items():
             raw = archive.read(member)
             actual = hashlib.sha256(raw).hexdigest()
