@@ -89,38 +89,15 @@
       </dir>
     </extension>
     <extension point="xbmc.addon.metadata">
-      <summary lang="de_DE">NebelFlix Skin und die zugehörigen Nebelkind-Addons</summary>
-      <description lang="de_DE">Offizielle Nebelkind Repo für NebelFlix Skin, NebelFlix Hybrid, NebelFlix TV und Nebelkind Musik. Teststände werden ebenfalls bereitgestellt; Versionsänderungen steuern das automatische Kodi-Update.</description>
-      <summary lang="en_GB">NebelFlix skin and related Nebelkind add-ons</summary>
-      <description lang="en_GB">Official Nebelkind repository with the NebelFlix skin and its related add-ons.</description>
+      <summary lang="de_DE">Nebelkind Hybrid, NebelFlix TV und Nebelkind Musik</summary>
+      <description lang="de_DE">Offizielles Nebelkind Repo für Nebelkind Hybrid, NebelFlix TV und Nebelkind Musik. Der NebelFlix-Skin wird hier nicht mehr angeboten.</description>
+      <summary lang="en_GB">Nebelkind video, TV and music add-ons</summary>
+      <description lang="en_GB">Official Nebelkind repository for Hybrid, TV and Music. The NebelFlix skin is no longer distributed here.</description>
       <platform>all</platform>
       <assets>
         <icon>icon.png</icon>
         <fanart>fanart.jpg</fanart>
       </assets>
-    </extension>
-  </addon>
-  <addon id="skin.nebelflix" version="0.5.84" name="Nebelflix" provider-name="Nebelflix / Nebelflix contributors">
-    <requires>
-      <import addon="xbmc.gui" version="5.17.0" />
-      <import addon="xbmc.python" version="3.0.0" />
-      <import addon="plugin.video.multitrailer" />
-    </requires>
-    <extension point="xbmc.gui.skin" debugging="false">
-      <res width="1920" height="1080" aspect="16:9" default="true" folder="xml" />
-    </extension>
-    <extension point="xbmc.addon.metadata">
-      <summary lang="de_DE">Filmische Startseite mit Overlay-Navigation und vollständigen Kodi-Werkzeugen.</summary>
-      <summary lang="en_GB">Cinematic home with overlay navigation and complete Kodi tools.</summary>
-      <description lang="de_DE">Nebelflix mit modularen Reitern und Widgets, manuellen deutschen Spotlight-Trailern, Weiterschauen, Meine Liste und eigenem Intro. Vollständige Kodi-Systemzugänge ohne Games.</description>
-      <platform>all</platform>
-      <license>CC BY-SA 4.0, GPL-2.0-or-later</license>
-      <assets>
-        <icon>resources/nebelflix-icon.png</icon>
-      </assets>
-    </extension>
-    <extension point="xbmc.python.pluginsource" library="resources/provider.py">
-      <provides>video</provides>
     </extension>
   </addon>
 </addons>
