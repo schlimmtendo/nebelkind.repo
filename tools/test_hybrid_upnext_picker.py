@@ -10,7 +10,7 @@ from zipfile import ZipFile
 
 ROOT = Path(__file__).resolve().parents[1]
 ADDON = "plugin.video.nebelflix.hybrid"
-VERSION = "2026.11.15.7"
+VERSION = json.loads((ROOT / "release_versions.json").read_text(encoding="utf-8"))["plugin.video.nebelflix.hybrid"]
 NEXT = ADDON + "/resources/lib/next_episode.py"
 PLAYER = ADDON + "/resources/lib/player.py"
 SOURCES = ADDON + "/resources/lib/sources.py"
@@ -135,3 +135,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+

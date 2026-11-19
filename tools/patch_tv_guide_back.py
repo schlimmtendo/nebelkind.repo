@@ -13,7 +13,7 @@ import tempfile
 ROOT = Path(__file__).resolve().parents[1]
 AID = "plugin.video.nebelflix.tv"
 SOURCE = AID + "/resources/lib/guide.py"
-VERSION = "0.2.3"
+VERSION = json.loads((ROOT / "release_versions.json").read_text(encoding="utf-8"))["plugin.video.nebelflix.tv"]
 MARK = "ACTION_PARENT_DIR=9"
 
 
@@ -68,3 +68,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+

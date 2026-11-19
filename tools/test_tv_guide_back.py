@@ -1,12 +1,14 @@
 #!/usr/bin/env python3
 """Regression checks for Kodi TV guide Back button / Backspace navigation."""
 import ast
+import json
 from pathlib import Path
 from zipfile import ZipFile
 
 ROOT = Path(__file__).resolve().parents[1]
 AID = "plugin.video.nebelflix.tv"
-ARCHIVE = ROOT / "packages" / AID / (AID + "-0.2.3.zip")
+VERSION=json.loads((ROOT / "release_versions.json").read_text(encoding="utf-8"))[AID]
+ARCHIVE = ROOT / "packages" / AID / (AID + "-" + VERSION + ".zip")
 SOURCE = AID + "/resources/lib/guide.py"
 
 with ZipFile(ARCHIVE) as z:
@@ -28,8 +30,12 @@ with ZipFile(ARCHIVE) as z:
     handler = next(n for n in cls.body if isinstance(n, ast.FunctionDef) and n.name == "onAction")
     handlers = ast.unparse(handler)
     assert "(ACTION_PARENT_DIR, ACTION_PREVIOUS_MENU, ACTION_NAV_BACK)" in handlers
-    assert "self.close()" in handlers
-    assert "self.onClick(15)" in handlers, "Guide context-menu shortcut must remain intact"
+    assert "self.setFocusId(16)" in handlers
+    assert "self.context_menu()" in handlers, "Guide context menu must offer explicit favorite actions"
     assert "elif controlId == 16" in ast.unparse(next(
         n for n in cls.body if isinstance(n, ast.FunctionDef) and n.name == "onClick"))
 print("PASS: TV guide handles Backspace/ParentDir, Back, remote navigation, context menu and Zurueck")
+
+
+import runpy
+runpy.run_path(str(ROOT / "tools/test_revision_20261119.py"), run_name="__main__")

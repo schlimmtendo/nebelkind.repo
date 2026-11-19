@@ -9,3 +9,4 @@ never block Hybrid's service thread, never perform background update checks.
 
 def run_startup_check():
     return None
+

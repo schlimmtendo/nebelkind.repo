@@ -1,0 +1,218 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<settings>
+    <category label="Allgemein">
+        <setting id="hosts.mode" type="enum" label="Standard-Aktion" values="Dialog|Quellenliste|Autoplay" default="1" />
+        <setting id="movie.play.mode" type="enum" label="Filme: Standard-Aktion" values="Wie Standard|Dialog|Quellenliste|Autoplay" default="0" />
+        <setting id="series.play.mode" type="enum" label="Serien: Standard-Aktion" values="Wie Standard|Dialog|Quellenliste|Autoplay" default="0" />
+        <setting id="source.list.view" type="enum" label="Quellenliste: Darstellung" values="Poster-Liste|Klassisches Kodi-Verzeichnis" default="0" />
+        <setting id="source.list.sort" type="enum" label="Quellenliste: Sortierung" values="Beste Qualität zuerst (4K bis SD)|1080p bevorzugen|Originalreihenfolge" default="0" />
+        <setting id="source.list.migrated" type="bool" label="Quellenliste einmalig aktiviert" default="false" visible="false" />
+        <setting id="hybrid.fast.search" type="bool" label="Schnellsuche: ab 3 Quellen nach ca. 10 Sekunden stoppen" default="true" />
+        <setting id="scrapers.timeout" type="slider" label="Zeitlimit für Indexseiten" default="35" range="10,60" option="int" />
+        <setting id="fanart" type="bool" label="Fanart verwenden" default="true" />
+        <setting id="navigator.menu.search" type="bool" label="Such-Einträge ganz oben im Menü anzeigen" default="false" />
+        <setting id="bold_labels" type="bool" label="Lesbarkeit erhöhen (Fettschrift)" default="true" />
+        <setting type="lsep" label="TMDB-Filter (Filme)" />
+        <setting label="Genres ausschließen..." type="action" action="RunPlugin(plugin://plugin.video.nebelflix.hybrid/?action=settings&amp;subaction=filterGenres)" />
+        <setting default="" id="filter.genres" type="text" label="Ausgeschlossene Genres" visible="false" />
+        <setting label="Länder ausschließen..." type="action" action="RunPlugin(plugin://plugin.video.nebelflix.hybrid/?action=settings&amp;subaction=filterCountries)" />
+        <setting default="" id="filter.countries" type="text" label="Ausgeschlossene Länder" visible="false" />
+        <setting type="lsep" label="Einstellungen RequestHandler" />
+        <setting default="" id="flaresolverr_url" type="text" label="FlareSolverr URL (Cloudflare-Bypass)" />
+        <setting default="true" id="bypassDNSlock" type="bool" label="DNS-Sperre umgehen (DoH)" />
+        <setting default="10" id="requestTimeout" label="Timeout für HTTP-Anfragen in Sekunden" option="int" range="1,1,60" type="slider" />
+        <setting default="360" id="cacheTime" label="Cachezeit für Webseiten (HtmlCache) in Minuten" option="int" range="120,30,1440" type="slider" />
+        <setting default="true" id="volatileHtmlCache" type="bool" label="HTML Inhalte werden auch im RAM zwischengespeichert" visible="true" />
+        <setting default="3" id="cacheDeltaDay" label="Html Cache nach Tage löschen" option="int" range="1,1,7" type="slider" />
+        <setting id="delHtmlCache" label="[COLOR red]Html Cache einmalig bei Neustart löschen[/COLOR]" type="bool" default="false" />
+        <setting type="sep" />
+        <setting type="lsep" label="ResolveURL Auto-Update" />
+        <setting id="githubUpdateResolver" type="bool" label="ResolveURL Update bei jedem Kodi-Start erzwingen" default="false" />
+        <setting id="status.debug" type="bool" label="Debug" default="false" />
+    </category>
+    <category label="MovieScout Remote-Scraper (zusatzlich)">
+        <setting type="lsep" label="Separate MovieScout-Engine (optional)" />
+        <setting id="mscout.enable" type="bool" default="true" label="MovieScout-Scraper zur Hybrid-Suche hinzufuegen" />
+        <setting id="mscout.autoupdate" type="bool" default="true" label="Alle Remote-Scraper bei jedem Kodi-Start im Hintergrund aktualisieren" />
+        <setting id="mscout.autoplay.quality" type="enum" label="Autoplay: Qualitaetsauswahl" values="Beste verfuegbare zuerst (4K &gt; 1080p &gt; 720p)|Datensparend (SD zuerst)|Originalreihenfolge / zuerst gefundener Link|1080p bevorzugen" default="0" />
+        <setting id="mscout.autoplay.allow4k" type="bool" label="Autoplay: 4K beruecksichtigen (auch wenn die allgemeine Grenze niedriger ist)" default="true" />
+        <setting type="text" label="MovieScout-Module starten automatisch; keine Update-Dialoge" />
+        <setting type="action" label="MovieScout-Scraper verwalten und aktualisieren" action="RunPlugin(plugin://plugin.video.nebelflix.hybrid/?action=movieScoutManager)" />
+        <setting type="text" label="Hinweis: Remote-Python-Code wird bei Neustart aktualisiert" />
+    </category>
+    <category label="Indexseiten (DE)">
+        <setting type="lsep" label="Domain-Verwaltung" />
+        <setting id="delegate_domains_to_sxmanager" type="bool" default="false" label="Automatische Domain-Pruefung an sxManager uebergeben (wenn installiert)" />
+        <setting type="text" label="[COLOR blue]ACHTUNG:  Die folgenden Optionen werden sofort[/COLOR]" />
+        <setting type="text" label="[COLOR blue]und für [B]alle[/B] Indexseiten ausgeführt![/COLOR]" />
+        <setting type="sep" />
+        <setting label="Alle Quellen aktivieren" type="action" action="RunPlugin(plugin://plugin.video.nebelflix.hybrid/?action=settings&amp;subaction=toggleGerman&amp;setting=true)" option="" />
+        <setting label="Alle Quellen deaktivieren" type="action" action="RunPlugin(plugin://plugin.video.nebelflix.hybrid/?action=settings&amp;subaction=toggleGerman&amp;setting=false)" option="" />
+        <setting type="sep" />
+        <setting id="provider.aniworld" type="bool" label="ANIWORLD   |   [B][COLOR green]Serien[/COLOR][/B]" default="true" />
+        <setting id="provider.aniworld.domain" label="[B][COLOR red]PluginError oder Domain nicht erreichbar[/COLOR][/B]" type="text" default="" visible="!eq(2,ok)" />
+        <setting id="provider.aniworld.priority" label="Provider Priorität (je kleiner um so höher die Priorität)" type="text" default="100" />
+        <setting id="provider.aniworld.health" label="HealthStatus" type="text" default="ok" visible="false" />
+        <setting type="sep" />
+        <setting id="provider.burningseries" type="bool" label="BURNINGSERIES   |   [B][COLOR green]Serien[/COLOR][/B]" default="true" />
+        <setting id="provider.burningseries.domain" label="[B][COLOR red]PluginError oder Domain nicht erreichbar[/COLOR][/B]" type="text" default="" visible="!eq(2,ok)" />
+        <setting id="provider.burningseries.priority" label="Provider Priorität (je kleiner um so höher die Priorität)" type="text" default="100" />
+        <setting id="provider.burningseries.health" label="HealthStatus" type="text" default="ok" visible="false" />
+        <setting type="sep" />
+        <setting id="provider.einschalten" type="bool" label="EINSCHALTEN   |   [B][COLOR blue]Filme &amp; Serien[/COLOR][/B]" default="true" />
+        <setting id="provider.einschalten.domain" label="[B][COLOR red]PluginError oder Domain nicht erreichbar[/COLOR][/B]" type="text" default="" visible="!eq(2,ok)" />
+        <setting id="provider.einschalten.priority" label="Provider Priorität (je kleiner um so höher die Priorität)" type="text" default="100" />
+        <setting id="provider.einschalten.health" label="HealthStatus" type="text" default="ok" visible="false" />
+        <setting type="sep" />
+        <setting id="provider.filmpalast" type="bool" label="FILMPALAST   |  [B][COLOR blue] Filme &amp; Serien[/COLOR][/B]" default="true" />
+        <setting id="provider.filmpalast.domain" label="[B][COLOR red]PluginError oder Domain nicht erreichbar[/COLOR][/B]" type="text" default="" visible="!eq(2,ok)" />
+        <setting id="provider.filmpalast.priority" label="Provider Priorität (je kleiner um so höher die Priorität)" type="text" default="100" />
+        <setting id="provider.filmpalast.health" label="HealthStatus" type="text" default="ok" visible="false" />
+        <setting type="sep" />
+        <setting id="provider.filmo" type="bool" label="FILMO  |  Filme" default="true" />
+        <setting id="provider.filmo.domain" type="text" label="Filmo-Domain" default="" />
+        <setting id="provider.filmo.priority" type="text" label="Provider Priorität" default="100" />
+        <setting id="provider.filmo.health" type="text" label="HealthStatus" default="ok" visible="false" />
+        <setting type="sep" />
+        <setting id="provider.hdfilme" type="bool" label="HDFILME   |  [B][COLOR blue] Filme &amp; Serien[/COLOR][/B]" default="true" />
+        <setting id="provider.hdfilme.domain" label="[B][COLOR red]PluginError oder Domain nicht erreichbar[/COLOR][/B]" type="text" default="" visible="!eq(2,ok)" />
+        <setting id="provider.hdfilme.priority" label="Provider Priorität (je kleiner um so höher die Priorität)" type="text" default="100" />
+        <setting id="provider.hdfilme.health" label="HealthStatus" type="text" default="ok" visible="false" />
+        <setting type="sep" />
+        <setting id="provider.huhu" type="bool" label="HUHU  |   [B][COLOR blue]Filme &amp; Serien[/COLOR][/B]" default="true" />
+        <setting id="provider.huhu.domain" label="[B][COLOR red]PluginError oder Domain nicht erreichbar[/COLOR][/B]" type="text" default="" visible="!eq(2,ok)" />
+        <setting id="provider.huhu.priority" label="Provider Priorität (je kleiner um so höher die Priorität)" type="text" default="100" />
+        <setting id="provider.huhu.health" label="HealthStatus" type="text" default="ok" visible="false" />
+        <setting type="sep" />
+        <setting id="provider.kinoger" type="bool" label="KINOGER   |   [B][COLOR blue]Filme &amp; Serien[/COLOR][/B]" default="true" />
+        <setting id="provider.kinoger.domain" label="[B][COLOR red]PluginError oder Domain nicht erreichbar[/COLOR][/B]" type="text" default="" visible="!eq(2,ok)" />
+        <setting id="provider.kinoger.priority" label="Provider Priorität (je kleiner um so höher die Priorität)" type="text" default="100" />
+        <setting id="provider.kinoger.health" label="HealthStatus" type="text" default="ok" visible="false" />
+        <setting type="sep" />
+        <setting id="provider.kinoking" type="bool" label="KINOKING   |   [B][COLOR blue]Filme &amp; Serien[/COLOR][/B]" default="true" />
+        <setting id="provider.kinoking.domain" label="[B][COLOR red]PluginError oder Domain nicht erreichbar[/COLOR][/B]" type="text" default="" visible="!eq(2,ok)" />
+        <setting id="provider.kinoking.priority" label="Provider Priorität (je kleiner um so höher die Priorität)" type="text" default="100" />
+        <setting id="provider.kinoking.health" label="HealthStatus" type="text" default="ok" visible="false" />
+        <setting type="sep" />
+        <setting id="provider.kinokiste" type="bool" label="KINOKISTE   |   [B][COLOR blue]Filme &amp; Serien[/COLOR][/B]" default="true" />
+        <setting id="provider.kinokiste.domain" label="[B][COLOR red]PluginError oder Domain nicht erreichbar[/COLOR][/B]" type="text" default="" visible="!eq(2,ok)" />
+        <setting id="provider.kinokiste.priority" label="Provider Priorität (je kleiner um so höher die Priorität)" type="text" default="100" />
+        <setting id="provider.kinokiste.health" label="HealthStatus" type="text" default="ok" visible="false" />
+        <setting type="sep" />
+        <setting id="provider.kkiste" type="bool" label="KKISTE   |   [B][COLOR blue]Filme &amp; Serien[/COLOR][/B]" default="true" />
+        <setting id="provider.kkiste.domain" label="[B][COLOR red]PluginError oder Domain nicht erreichbar[/COLOR][/B]" type="text" default="" visible="!eq(2,ok)" />
+        <setting id="provider.kkiste.priority" label="Provider Priorität (je kleiner um so höher die Priorität)" type="text" default="100" />
+        <setting id="provider.kkiste.health" label="HealthStatus" type="text" default="ok" visible="false" />
+        <setting type="sep" />
+        <setting id="provider.kool" type="bool" label="KOOL  |   [B][COLOR blue]Filme &amp; Serien[/COLOR][/B]" default="false" />
+        <setting id="provider.kool.domain" label="[B][COLOR red]PluginError oder Domain nicht erreichbar[/COLOR][/B]" type="text" default="" visible="!eq(2,ok)" />
+        <setting id="provider.kool.priority" label="Provider Priorität (je kleiner um so höher die Priorität)" type="text" default="100" />
+        <setting id="provider.kool.health" label="HealthStatus" type="text" default="ok" visible="false" />
+    </category>
+    <category label="Indexseiten 2 (DE)">
+        <setting type="text" label="[COLOR blue]ACHTUNG:  Die folgenden Optionen werden sofort[/COLOR]" />
+        <setting type="text" label="[COLOR blue]und für [B]alle[/B] Indexseiten ausgeführt![/COLOR]" />
+        <setting type="sep" />
+        <setting label="Alle Quellen aktivieren" type="action" action="RunPlugin(plugin://plugin.video.nebelflix.hybrid/?action=settings&amp;subaction=toggleGerman&amp;setting=true)" option="" />
+        <setting label="Alle Quellen deaktivieren" type="action" action="RunPlugin(plugin://plugin.video.nebelflix.hybrid/?action=settings&amp;subaction=toggleGerman&amp;setting=false)" option="" />
+        <setting type="sep" />
+        <setting id="provider.megakino" type="bool" label="MEGAKINO   |   [B][COLOR blue]Filme &amp; Serien[/COLOR][/B]" default="true" />
+        <setting id="provider.megakino.domain" label="[B][COLOR red]PluginError oder Domain nicht erreichbar[/COLOR][/B]" type="text" default="" visible="!eq(2,ok)" />
+        <setting id="provider.megakino.priority" label="Provider Priorität (je kleiner um so höher die Priorität)" type="text" default="100" />
+        <setting id="provider.megakino.health" label="HealthStatus" type="text" default="ok" visible="false" />
+        <setting type="sep" />
+        <setting id="provider.meinecloud" type="bool" label="MEINECLOUD   |   [B][COLOR blue]Filme &amp; Serien[/COLOR][/B]" default="true" />
+        <setting id="provider.meinecloud.domain" label="[B][COLOR red]PluginError oder Domain nicht erreichbar[/COLOR][/B]" type="text" default="" visible="!eq(2,ok)" />
+        <setting id="provider.meinecloud.priority" label="Provider Priorität (je kleiner um so höher die Priorität)" type="text" default="100" />
+        <setting id="provider.meinecloud.health" label="HealthStatus" type="text" default="ok" visible="false" />
+        <setting type="sep" />
+        <setting id="provider.moflix" type="bool" label="MOFLIX-STREAM   |   [B][COLOR blue]Filme &amp; Serien[/COLOR][/B]" default="true" />
+        <setting id="provider.moflix.domain" label="[B][COLOR red]PluginError oder Domain nicht erreichbar[/COLOR][/B]" type="text" default="" visible="!eq(2,ok)" />
+        <setting id="provider.moflix.priority" label="Provider Priorität (je kleiner um so höher die Priorität)" type="text" default="100" />
+        <setting id="provider.moflix.health" label="HealthStatus" type="text" default="ok" visible="false" />
+        <setting type="sep" />
+        <setting id="provider.movie2k" type="bool" label="MOVIE2k   |   [B][COLOR blue]Filme &amp; Serien[/COLOR][/B]" default="true" />
+        <setting id="provider.movie2k.domain" label="[B][COLOR red]PluginError oder Domain nicht erreichbar[/COLOR][/B]" type="text" default="" visible="!eq(2,ok)" />
+        <setting id="provider.movie2k.priority" label="Provider Priorität (je kleiner um so höher die Priorität)" type="text" default="100" />
+        <setting id="provider.movie2k.health" label="HealthStatus" type="text" default="ok" visible="false" />
+        <setting type="sep" />
+        <setting id="provider.netzkino" type="bool" label="NETZKINO   |   [B][COLOR red]Filme[/COLOR][/B]" default="false" />
+        <setting id="provider.netzkino.domain" label="[B][COLOR red]PluginError oder Domain nicht erreichbar[/COLOR][/B]" type="text" default="" visible="!eq(2,ok)" />
+        <setting id="provider.netzkino.priority" label="Provider Priorität (je kleiner um so höher die Priorität)" type="text" default="100" />
+        <setting id="provider.netzkino.health" label="HealthStatus" type="text" default="ok" visible="false" />
+        <setting type="sep" />
+        <setting id="provider.serienstream" type="bool" label="SERIENSTREAM   |   [B][COLOR green]Serien[/COLOR][/B]" default="true" />
+        <setting id="provider.serienstream.domain" label="[B][COLOR red]PluginError oder Domain nicht erreichbar[/COLOR][/B]" type="text" default="" visible="!eq(2,ok)" />
+        <setting id="provider.serienstream.priority" label="Provider Priorität (je kleiner um so höher die Priorität)" type="text" default="100" />
+        <setting id="provider.serienstream.health" label="HealthStatus" type="text" default="ok" visible="false" />
+        <setting type="sep" />
+        <setting id="provider.filmpro" type="bool" label="FILMPRO (MOD, experimentell)" default="false" />
+        <setting id="provider.filmpro.domain" type="text" label="Filmpro-Domain" default="" />
+        <setting id="provider.filmpro.priority" type="text" label="Filmpro-Prioritaet" default="100" />
+        <setting id="provider.filmpro.health" type="text" default="ok" visible="false" />
+        <setting id="provider.streamcloud" type="bool" label="STREAMCLOUD (MOD, experimentell)" default="false" />
+        <setting id="provider.streamcloud.domain" type="text" label="Streamcloud-Domain" default="" />
+        <setting id="provider.streamcloud.priority" type="text" label="Streamcloud-Prioritaet" default="100" />
+        <setting id="provider.streamcloud.health" type="text" default="ok" visible="false" />
+        <setting id="provider.vavoo" type="bool" label="VAVOO   |   [B][COLOR blue]Filme &amp; Serien[/COLOR][/B]" default="true" />
+        <setting id="provider.vavoo.domain" label="[B][COLOR red]PluginError oder Domain nicht erreichbar[/COLOR][/B]" type="text" default="" visible="!eq(2,ok)" />
+        <setting id="provider.vavoo.priority" label="Provider Priorität (je kleiner um so höher die Priorität)" type="text" default="100" />
+        <setting id="provider.vavoo.health" label="HealthStatus" type="text" default="ok" visible="false" />
+        <setting type="sep" />
+    </category>
+    <category label="Wiedergabe">
+        <setting id="progress.dialog" type="enum" label="Fortschrittsdialog" values="Vordergrund|Hintergrund" default="0" />
+        <setting id="hybrid.probe.mode" type="enum" label="Stream-Metadaten" values="Schnell (Qualitaetsangabe der Quelle)|Aufloesung und Bitrate ermitteln (max. 4s)" default="0" />
+        <setting type="lsep" label="Dateinanbieter-Filter" />
+        <setting id="hosts.quality" type="enum" label="Höchste Qualität" values="4K|1440p|1080p|720p|480p" default="2" />
+        <setting id="deduped" type="bool" label="Doppelte Anbieter/Hoster Kombination ausfiltern" default="true" />
+        <setting id="hosts.sort" type="enum" label="zusätzlich Streams sortieren" values="Aus|nach Provider|Priorität Provider|Priorität Resolver" default="0" />
+        <setting id="hosts.limit" type="bool" label="Limit Hosteranzahl" default="False" />
+        <setting id="hosts.limit.num" type="slider" label="Liste begrenzen auf:" default="15" range="5,50" option="int" visible="eq(-1,true)" />
+        <setting id="hosts.filter" type="text" label="Hoster ausschließen (Liste)" default="" />
+        <setting type="lsep" label="Bei Wiedergabe-Start..." />
+        <setting id="bookmarks" type="bool" label="Fortsetzen" default="true" />
+        <setting id="bookmarks.auto" type="bool" label="Automatisch Fortsetzen" default="false" enable="!eq(-1,false)" />
+        <setting type="lsep" label="Serien - Folgewechsel (xShip Mod)" />
+        <setting id="series.upnext.enabled" type="bool" label="NebelFlix Up Next intern: Naechste Folge bei 90 % einblenden" default="true" />
+        <setting id="series.next.autoplay" type="bool" label="Nach dem echten Folgenende naechste Episode automatisch starten" default="true" />
+    </category>
+    <category label="Konten">
+        <setting type="lsep" label="Konto SerienStream.to" />
+        <setting id="serienstream.user" type="text" label="Email" default="" />
+        <setting id="serienstream.pass" type="text" option="hidden" label="Password" default="" />
+        <setting type="lsep" label="Konto Aniworld.io" />
+        <setting type="lsep" label="Konto FlimmerStube.com (xShip Mod)" />
+        <setting id="flimmerstube.user" type="text" label="Email" default="" />
+        <setting id="flimmerstube.pass" type="text" option="hidden" label="Passwort" default="" />
+        <setting id="aniworld.user" type="text" label="Email" default="" />
+        <setting id="aniworld.pass" type="text" option="hidden" label="Password" default="" />
+        <setting type="lsep" label="TMDb" />
+        <setting id="api.tmdb" type="text" option="" label="persönlicher API-Key" default="" />
+        <setting type="lsep" label="TRAKT" />
+        <setting id="api.trakt" type="text" option="hidden" label="API-Key" default="" />
+        <setting type="lsep" label="FANART.TV" />
+        <setting id="api.fanart.tv" type="text" label="API-Key" option="hidden" default="" />
+        <setting type="sep" />
+        <setting type="action" label="Konten einmalig aus installierter xShip Mod uebernehmen" action="RunPlugin(plugin://plugin.video.nebelflix.hybrid/?action=importXshipAccounts)" />
+    </category>
+    <category label="Untertitel / Recaptcha">
+        <setting type="lsep" label="Untertitel" />
+        <setting id="subtitles" type="bool" label="Untertitel aktivieren" default="false" />
+        <setting type="text" label="[COLOR blue]Konto auf opensubtitles.org einrichten und[CR]die Zugandsdaten unter Einstellungen / Konten eintragen![CR][/COLOR]" visible="!eq(-1,false)" />
+        <setting type="lsep" label="Konto opensubtitles.org" />
+        <setting id="subtitles.os_user" type="text" label="UserName" default="" />
+        <setting id="subtitles.os_pass" type="text" option="hidden" label="Password" default="" />
+        <setting type="sep" />
+        <setting id="subtitles.lang.1" type="select" label="Hauptsprache" values="Afrikaans|Albanian|Arabic|Armenian|Basque|Bengali|Bosnian|Breton|Bulgarian|Burmese|Catalan|Chinese|Croatian|Czech|Danish|Dutch|English|Esperanto|Estonian|Finnish|French|Galician|Georgian|German|Greek|Hebrew|Hindi|Hungarian|Icelandic|Indonesian|Italian|Japanese|Kazakh|Khmer|Korean|Latvian|Lithuanian|Luxembourgish|Macedonian|Malay|Malayalam|Manipuri|Mongolian|Montenegrin|Norwegian|Occitan|Persian|Polish|Portuguese|Portuguese(Brazil)|Romanian|Russian|Serbian|Sinhalese|Slovak|Slovenian|Spanish|Swahili|Swedish|Syriac|Tagalog|Tamil|Telugu|Thai|Turkish|Ukrainian|Urdu" enable="!eq(-3,false)" default="German" />
+        <setting id="subtitles.utf" type="bool" label="Untertitel nach UTF-8 umwandeln" default="true" />
+        <setting type="lsep" label="Captcha Dienste" />
+        <setting id="captcha.provider" type="labelenum" label="Auswahl Captcha Solver" values="9kw|2captcha" default="9kw" />
+        <setting id="captcha.timeout" type="slider" label="Captcha Timeout (in Sekunden)" option="int" range="120,10,240" default="120" />
+        <setting type="lsep" label="2Captcha" />
+        <setting id="2captcha.pass" type="text" option="hidden" label="API Schlüssel" default="" />
+        <setting type="lsep" label="9kw.eu" />
+        <setting id="9kw.selfsolve" type="bool" label="Self Solving aktivieren" default="false" />
+        <setting id="9kw.pass" type="text" option="hidden" label="API Schlüssel" default="" />
+    </category>
+</settings>

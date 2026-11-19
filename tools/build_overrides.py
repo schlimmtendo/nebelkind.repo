@@ -124,6 +124,9 @@ def build(addon_id, intended_version):
                 xml = ET.fromstring(checked.read(addon_id + "/addon.xml"))
                 if xml.get("id") != addon_id or xml.get("version") != version:
                     raise ValueError("Output addon version mismatch")
+            # Windows cannot replace a ZIP while the source handle is open
+            # (same-version tests deliberately target the original filename).
+            z.close()
             os.replace(temp, output)
         finally:
             if os.path.exists(temp):
@@ -145,3 +148,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
