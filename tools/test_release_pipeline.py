@@ -101,8 +101,9 @@ assert skin in overrides.ALLOWED and skin in retire.ALLOWED
 builder = load('build_repository.py', 'skin_release_builder')
 checker = load('check_repository_consistency.py', 'skin_release_checker')
 assert skin in builder.ALLOWED and skin in checker.EXPECTED
-archive = TOOLS.parent / 'packages' / skin / (skin + '-0.5.74.zip')
-assert archive.is_file(), 'Initial skin release is missing'
+archives = list((TOOLS.parent / 'packages' / skin).glob(skin + '-*.zip'))
+assert archives, 'Skin release is missing'
+archive = max(archives, key=lambda p: builder.version_key(p.stem[len(skin)+1:]))
 with ZipFile(archive) as z:
     assert z.testzip() is None
     for name in z.namelist():
@@ -110,7 +111,7 @@ with ZipFile(archive) as z:
         assert not set(Path(name).parts) & {'userdata', 'addon_data', '__pycache__'}
         assert not name.endswith(('.pyc', '.log', '.bak'))
     xml = ET.fromstring(z.read(skin + '/addon.xml'))
-    assert xml.get('version') == '0.5.74'
+    assert archive.name == skin+'-'+xml.get('version')+'.zip'
     assert not xml.findall("./requires/import[@addon='plugin.video.nebelflix.hybrid']")
     assert 'skin.nebelflix' in z.read(skin+'/resources/revisions_updater.py').decode()
     settings = ET.fromstring(z.read(skin+'/xml/Custom_1190_NebelflixSettings.xml'))
@@ -124,4 +125,3 @@ with ZipFile(archive) as z:
         a,b,cw,ch = rect(c)
         assert x+w <= a or a+cw <= x or y+h <= b or b+ch <= y, 'Diagnosis button overlaps '+c.get('id')
 print('PASS: skin package, update integration, no profile data, and settings button layout')
-
