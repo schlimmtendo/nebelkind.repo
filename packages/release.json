@@ -12,6 +12,10 @@
     {
       "id": "plugin.video.nebelkindmusic",
       "version": "5.0.1"
+    },
+    {
+      "id": "skin.nebelflix",
+      "version": "0.5.74"
     }
   ]
 }
