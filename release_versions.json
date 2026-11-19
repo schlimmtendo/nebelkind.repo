@@ -1,5 +1,6 @@
 {
   "plugin.video.nebelflix.hybrid": "2026.11.19.1",
   "plugin.video.nebelflix.tv": "0.2.4",
-  "plugin.video.nebelkindmusic": "5.0.1"
+  "plugin.video.nebelkindmusic": "5.0.1",
+  "skin.nebelflix": "0.5.74"
 }

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Publish only three Nebelkind add-ons, without the skin.
+"""Publish four Nebelkind add-ons, including the standalone skin.
 All uploaded packages are public immediately. Kodi auto-updates require higher versions.
 """
 import hashlib
@@ -14,7 +14,7 @@ from zipfile import ZipFile, ZIP_DEFLATED
 ROOT=Path(__file__).resolve().parents[1]
 PACKAGES=ROOT/'packages'
 REPO_ID='repository.nebelkind'
-ALLOWED={REPO_ID,'plugin.video.nebelflix.hybrid','plugin.video.nebelflix.tv','plugin.video.nebelkindmusic'}
+ALLOWED={REPO_ID,'plugin.video.nebelflix.hybrid','plugin.video.nebelflix.tv','plugin.video.nebelkindmusic','skin.nebelflix'}
 VERSION=re.compile(r'^[0-9][0-9A-Za-z.+_-]*$')
 
 
@@ -185,3 +185,4 @@ def main():
 if __name__=='__main__':
     try:main()
     except Exception as e:sys.exit(f'Kodi repository build failed: {e}')
+

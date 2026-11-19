@@ -23,6 +23,7 @@ ALLOWED = {
     "plugin.video.nebelflix.hybrid",
     "plugin.video.nebelflix.tv",
     "plugin.video.nebelkindmusic",
+    "skin.nebelflix",
 }
 VERSION = re.compile(r"^[0-9][0-9A-Za-z.+_-]*$")
 

@@ -1,33 +1,22 @@
-# 🌫️ Nebelkind Repo
+# Nebelkind Repo
 
-Offizielles Kodi-Repository für **Nebelkind Hybrid**, **NebelFlix TV** und **Nebelkind Musik**.
+Kodi-Repository fuer Nebelkind Hybrid (2026.11.19.1), NebelFlix TV (0.2.4),
+Nebelkind Musik (5.0.1) und Nebelflix Skin (0.5.74).
 
-**Der NebelFlix-Skin (`skin.nebelflix`) wird hier nicht mehr angeboten.** Er ist aus der aktuellen Kodi-Addon-Liste und den Downloads entfernt. Bereits lokal installierte Skins werden dadurch nicht deinstalliert.
+Der Skin ist wieder im Kodi-Katalog und im Revisions Updater enthalten.
+Skin-Updates ersetzen ausschliesslich die ausgelieferten Dateien unter
+addons/skin.nebelflix. Einstellungen, Widgets, bereits geladene Inhalte,
+Favoriten und Verlauf unter userdata bleiben erhalten. Eine abgeschlossene
+Widget-Vorbereitung wird durch eine normale Skin-Revision nicht zurueckgesetzt.
+Kodi laedt ein vollstaendiges Addon-ZIP; eine Neueinrichtung ist nicht erforderlich.
 
-## Verbleibende Add-ons
+0.5.74: getrennte Hub-Zustaende, begrenzte Widget-Starts, kleinere Kachelbilder,
+Katalog-Metadaten mit kurzem Abruf, Ladezeiten-Diagnose und korrigiertes
+Settings-Layout: Ladezeiten & Diagnose steht rechts neben Hybrid einstellen.
 
-| Add-on | Version |
-| --- | --- |
-| `plugin.video.nebelflix.hybrid` – Nebelkind Hybrid | 2026.11.19.1 |
-| `plugin.video.nebelflix.tv` – NebelFlix TV | 0.2.4 |
-| `plugin.video.nebelkindmusic` – Nebelkind Musik | 5.0.1 |
+Installation: repository.nebelkind installieren, dann unter Look and Feel / Skin
+Nebelflix waehlen. Fuer Filme und Serien wird Hybrid zur Laufzeit benoetigt;
+die Addons bleiben ohne zyklische Skin-Abhaengigkeiten installierbar.
 
-Der Repository-Installer `repository.nebelkind` bleibt erhalten. Diese drei Add-ons haben keine Pflicht-Abhängigkeit vom Skin. Externe Kodi-Abhängigkeiten können weiterhin erforderlich sein.
-
-## Installation
-
-- Downloadseite: https://schlimmtendo.github.io/
-- Repo-Installer: `packages/repository.nebelkind/repository.nebelkind-1.0.0.zip`
-- Kodi-Katalog: `packages/addons.xml` und `packages/addons.xml.md5`
-- Versionsübersicht: `packages/release.json`
-
-Bei Veröffentlichungen werden nur die drei unterstützten Add-ons indexiert. Paketimport und ZIP-Build akzeptieren keine neuen Skin-Pakete mehr.
-
-**Veröffentlichungen nur nach ausdrücklicher Freigabe des Repository-Inhabers.** Änderungen können zuerst lokal oder in einem Testbranch vorbereitet werden. Nur `main` veröffentlicht die Live-Repository-Daten.
-
-Persönliche Kodi-Einstellungen, Zugangsdaten und private Dateien gehören nicht in dieses öffentliche Repo. Das frühere Skin-Paket bleibt in älteren Git-Commits der Versionshistorie auffindbar, wird aber vom aktuellen Repository nicht mehr ausgeliefert.
-
-
-## Revision vom 19.11.2026
-
-Hybrid: Quellenlayout, Abbruch und begrenzte Worker. TV: Favoritenansicht, Kontextmenü, Guide-Rückkehr und kleinere Senderseiten. Musik: unveränderte Funktionen mit höherer Wartungsversion für den Revisions-Updater-Test. Der Skin bleibt separat.
+Veröffentlichungen nur nach ausdrücklicher Freigabe des Inhabers.
+Persönliche Kodi-Profile und Zugangsdaten werden nicht veröffentlicht.

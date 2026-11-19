@@ -18,6 +18,7 @@ EXPECTED = {
     "plugin.video.nebelflix.hybrid",
     "plugin.video.nebelflix.tv",
     "plugin.video.nebelkindmusic",
+    "skin.nebelflix",
 }
 
 
@@ -41,17 +42,17 @@ def check():
     items = root.findall("addon")
     addon_ids = [x.get("id") for x in items]
     if set(addon_ids) != EXPECTED or len(addon_ids) != len(EXPECTED):
-        fail("Expected exactly the repo installer and three uniquely named addons")
+        fail("Expected exactly the repo installer and four uniquely named addons")
     nodes = dict(zip(addon_ids, items))
 
     version_manifest = json.loads((PACKAGES / "release.json").read_text(encoding="utf-8"))
     if version_manifest.get("schema") != 1:
         fail("Unsupported release.json schema")
     entries = version_manifest.get("addons")
-    if not isinstance(entries, list) or len(entries) != 3:
-        fail("Version manifest must contain three addons")
+    if not isinstance(entries, list) or len(entries) != 4:
+        fail("Version manifest must contain four addons")
     versions = {entry.get("id"): entry.get("version") for entry in entries}
-    if len(versions) != 3:
+    if len(versions) != 4:
         fail("Duplicate ID in release.json")
     for addon_id in EXPECTED - {"repository.nebelkind"}:
         if nodes[addon_id].get("version") != versions.get(addon_id):
@@ -110,8 +111,9 @@ def check():
         seen.add(node)
     for node in graph:
         walk(node)
-    print("PASS: 3 addon ZIPs, installer, repository index, hashes, metadata artwork, dependencies, and cycle checks")
+    print("PASS: 4 addon ZIPs, installer, repository index, hashes, metadata artwork, dependencies, and cycle checks")
 
 
 if __name__ == "__main__":
     check()
+

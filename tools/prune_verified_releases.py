@@ -18,6 +18,7 @@ ALLOWED = {
     "plugin.video.nebelflix.hybrid",
     "plugin.video.nebelflix.tv",
     "plugin.video.nebelkindmusic",
+    "skin.nebelflix",
 }
 
 
@@ -71,3 +72,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
