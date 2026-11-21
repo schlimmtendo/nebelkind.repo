@@ -103,7 +103,7 @@
       </assets>
     </extension>
   </addon>
-  <addon id="skin.nebelflix" version="0.5.76" name="Nebelflix" provider-name="Nebelflix / Nebelflix contributors">
+  <addon id="skin.nebelflix" version="0.5.77" name="Nebelflix" provider-name="Nebelflix / Nebelflix contributors">
     <requires>
       <import addon="xbmc.gui" version="5.17.0" />
       <import addon="xbmc.python" version="3.0.0" />
@@ -121,7 +121,7 @@
       <assets>
         <icon>resources/nebelflix-icon.png</icon>
       </assets>
-      <news>Unabhängige Hubs, gespeicherte Widgets, Setup nach Cache-Reset, Trailer-Korrekturen und manuell scrollbarerer Beschreibungstext. Persönliche Daten bleiben erhalten.</news>
+      <news>Einrichtungsbuttons zentriert und kontrastreich. Schrittgebundene Bestätigung schützt die Leistungsauswahl vor alten Antworten; Fernbedienungsnavigation korrigiert.</news>
     </extension>
     <extension point="xbmc.python.pluginsource" library="resources/provider.py">
       <provides>video</provides>
