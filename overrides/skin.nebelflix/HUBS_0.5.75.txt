@@ -1,0 +1,123 @@
+Nebelflix 0.5.75 - lokale Revision, nicht veroeffentlicht
+
+Eigenstaendige Kodi-Fenster pro Hub, durchgehende Widget-Reihen.
+Keine Weitere-/Vorherige-Widgets-Buttons. Persoenliche Layouts bleiben erhalten.
+Pro gespeicherter Topbar-Belegung genau ein Button.
+
+Gespeicherte Ergebnisse werden in einem Python-Aufruf direkt in native Listen
+uebernommen. Keine einzelnen Python-Provider pro Cache-Reihe und keine
+zusaetzlichen dynamischen Content-Elemente, die native Listen wieder leeren.
+Nicht gespeicherte / veraltete Inhalte werden im Controller ueber einen begrenzten
+Hintergrundpool geladen. GUI-Aenderungen erfolgen nach Abschluss im Controller.
+Fehler behalten vorhandene Inhalte; eine erste fehlgeschlagene Quelle bekommt
+eine Wiederholen-Kachel. Hybrid-Quellen werden nach fuenf Minuten neu geprueft.
+
+Neben dem Namen dreht sich ein Ladesymbol. Noch leere, ladende Reihen haben
+Fokusziele fuer die Fernbedienung. Nach dem Laden geht der Fokus in ihre Liste;
+bei leerem Ergebnis zur Topbar. Zurueck aus einer Reihe fuehrt zur aktiven Topbar.
+Hauefige Bedienaktionen verwenden den bereits importierten Controller.
+
+Das Intro startet in der leichten Bootstrap-Sequenz. Vorhandene Einstellungen
+zum Ueberspringen bleiben wirksam. Setup uebernimmt vorhandene Zuordnungen.
+BuildGuard-Cachebereinigung wurde nur lokal deaktiviert; persoenliche Daten
+sind niemals Teil des Skin-Pakets.
+
+Revisions-Updater: Katalogabfrage im Hintergrund ohne globale Bediensperre.
+Running gilt erst nach gefundenen Updates. Aktive Skin-Dateien werden einzeln
+ersetzt, unveraenderte Fonts bleiben geladen; Rueckgaengigmachen bei Fehlern.
+Alte Updater mit Windows-Ordnerfehler brauchen einmal den lokalen Hotfix.
+
+Pruefung 20.11.2026: 85 gezielte Tests; XML/Python-Validierung.
+Aufnahme NEBELFLIX.mp4: bei 60 Sekunden noch keine geladenen ersten Reihen.
+Windows-Kaltstart nach Umbau: 36 gespeicherte Home-Reihen gemeinsam in 4859 ms
+wiederhergestellt (nur Restore-Zeit, nicht gesamte Kodi-Startzeit). Intro sichtbar;
+Film-Hub mit mehreren vollstaendigen Reihen im Live-Test sichtbar.
+Physischer Fire-TV-Test und vollstaendige Wiedergabepruefung bleiben offen.
+
+Trailer-/Logo-Korrektur, 20.11.2026:
+Manuelle Trailer getrennt von Spotlight-Automatik, Suche im Hintergrund mit
+sofortiger Rueckmeldung, 30-Sekunden-Frist und Verwerfen verspaeteter Ergebnisse
+nach Seitenwechsel. Wiedergabefehler melden statt ohne Rueckmeldung abzubrechen.
+Fehlende Logos fuer sichtbare Kacheln nachladen (eine Anfrage gleichzeitig),
+Deutsch vor Englisch, persistent speichern; Text bleibt, wenn kein Logo existiert.
+Logfehler Index out of range: keine getListItem-Zugriffe auf fremde Kodi-Listen.
+Logo-Aktualisierung nutzt gespeicherte Quellen und erhaelt die Auswahlposition.
+Die letzten Korrekturen wurden ohne Desktop-Steuerung vorbereitet und geprueft.
+Neustart erforderlich; echte Trailer-Wiedergabe dieser Fassung nicht live verifiziert.
+
+Klick-/Trailer-Folgekorrektur, Log 14:00 Uhr:
+Die bisherigen direkt eingefuegten Container hatten keinen List-Provider;
+Kodi fuehrte deshalb deren XML-onclick nicht aus. Nun werden vorhandene
+Ergebnisse in eigenschaftsgestuetzte statische Kodi-Eintraege geschrieben.
+Jeder sichtbare Eintrag hat eine eigene Klickaktion mit festem Reihen-/Itemindex.
+Weiter/Zurueck, Titelidentitaet und Logos bleiben Teil der gespeicherten Daten.
+Keine individuellen Python-Provider und kein Netzabruf zum Anzeigen des Cache.
+Die Formatkennung ist erhoeht, damit alte Fensterdaten neu initialisiert werden.
+
+Der Trailer wurde laut Log gefunden, aber nach wenigen Zehntelsekunden beendet.
+Reset der Spotlight-Automatik darf nur noch deren eigenen Wiedergabe-Token stoppen,
+niemals einen manuell gestarteten Trailer. Regressionstest fuer fremden Token.
+85 gezielte Tests und Strukturpruefung erfolgreich. Finaler Wiedergabe-/Klicktest
+steht noch aus: ausdruecklich keine Desktop-Steuerung, Kodi muss neu starten.
+Historische Restore-Messung oben bezieht sich auf die vorherige Listenfassung.
+
+Vollstaendige Vorbereitung nach Cache-Leerung, 20.11.2026:
+Alter und aktueller Kodi-Log geprueft; Reset von 155 Dateien um 14:51:30.
+Eigenes Vollbildfenster 1194 fuer den Vorbereitungsfortschritt wiederhergestellt.
+Alle konfigurierten Discovery-Quellen aller Hubs werden dedupliziert vorbereitet,
+Ergebnisse persistent gespeichert, erste Bilder im Rahmen des Geraetebudgets
+vorgeladen und beim Rendern aus dem lokalen Artwork-Cache wiederverwendet.
+Persoenlicher Verlauf und Meine Liste bleiben unveraendert und werden aktuell
+vom zustaendigen Addon gelesen. Keine Version loescht persoenliche Einstellungen.
+Nach komplettem Erfolg: Abschluss zuerst speichern, einmal RestartApp auf
+Windows/Linux. Fire TV/Android: Hinweis zum manuellen erneuten Oeffnen, kein
+Geraete-Neustart. Keine Neustartschleife; normale Starts verwenden den Cache.
+Bei Abbruch/Fehlern kein Neustart und kein falscher Erfolgsstatus; naechster Start
+setzt anhand der bereits gespeicherten Quellen fort. Updater in dieser Sitzung
+zurueckgestellt. Sechs gezielte Vorbereitungstests und Skin-Validierung bestanden.
+End-to-End-Vorbereitung/Neustart dieser Fassung noch nicht live ausgefuehrt.
+
+Setup nach Cache-Leerung: Der abgeschlossene Setup-Status wird beim Widget-Reset
+gezielt als offen markiert. Vorhandene Layouts, Listen und Verlauf bleiben erhalten.
+Auch ein extern komplett geleerter Discovery-Cache startet den Assistenten erneut.
+Danach folgt die vollstaendige Hub-Vorbereitung; normale Starts mit Cache zeigen
+den Assistenten nicht erneut. Zwei gezielte Regressionstests bestanden.
+
+Startablauf und Setup-Oberflaeche, 20.11.2026:
+Logs: vollstaendige gespeicherte Daten fuer Filme/Serien/Neu-und-beliebt vorhanden,
+aber erste sichtbare Reihe in Neu-und-beliebt erst nach rund 121 Sekunden.
+Ursache: zirkulaere Sichtbarkeit (versteckte Eltern warteten auf NumItems der
+noch nicht aktualisierten statischen Listen). Snapshot-TileCount entsperrt nun
+Reihen unabhaengig von Kodis erstem Renderdurchlauf. Leermeldung erst nach
+abgeschlossenen Quellen; keine Merkliste-Meldung mehr auf anderen Hubs.
+
+Klare Phasen: Setup -> gesamte Vorbereitung -> einmaliger Neustart -> Cache.
+Bootstrap startet bei Setup/ausstehender Vorbereitung keine Widget-Hydration.
+Eine Vollflaechen-Sperre haelt die Bereiche verborgen, bis sie freigegeben sind.
+Normale Starts befuellen gespeicherte inaktive Hubs waehrend des Intros, ohne
+Netzwerkabfragen und ohne den aktiven Spotlight-Inhalt zu ueberschreiben.
+Die Reihen werden erst nach abgeschlossenem Snapshot-Eintrag freigegeben.
+
+Neuer nativer Vollbild-Assistent mit drei erklaerten Seiten: Daten behalten,
+Leistungsprofile, Vorbereitung und Neustart. Grosse Fernbedienungs-Buttons,
+keine Spaeter-Option. Manueller Aufruf fordert ebenfalls Vorbereitung an.
+106 eindeutige gezielte Tests bestanden (39 Start-/Hub-Lebenszyklus inklusive
+31 bestehender Hub-Tests, 30 Performance/TV, 12 Trailer/Logo, 14 Updater,
+5 Hybrid-Layout/Metadaten, 6 komplette Vorbereitung). Validierung 159 XML-/Playlist-
+Dateien und 26 Custom-Fenster. Neue Oberflaeche und End-to-End-Ablauf dieser
+letzten Fassung nicht live getestet. Keine Desktop-Steuerung, keine Publikation.
+
+Trailer-Korrektur nach Log 22:27-22:34, 20.11.2026:
+MultiTrailer fand den Filmtrailer nach ca. 1,8 Sekunden; danach folgten sofortige
+CloseFile-Aufrufe und wiederholt Late/invisible spotlight playback rejected.
+Manuelle Vorschau besitzt nun eigene PlaybackOwner-/Token-Felder und durchlaeuft
+nicht mehr die Ablehnungslogik fuer automatische Spotlight-Wiedergabe.
+Automatische Fokus-Abbrueche stoppen nur die Automatik; ein danach gestarteter
+Film darf nicht durch veraltete Trailer-Zustaende gestoppt werden.
+Start-Hinweis Trailer wird gesucht entfernt. Exakte TMDB-Film-/Serien-ID ueber
+MultiTrailer, deutsche Trailer zuerst, englische erst nach fehlenden/unaufloesbaren
+deutschen Kandidaten. Einzelne Resolver-/Metadatenfehler verhindern Ersatz nicht.
+Keine unscharfe YouTube-Titelsuche, keine lokalen Proxy-Manifeste. Sprachwahl
+und Wiedergabestart werden ohne Stream-URLs protokolliert. Vorschauen gelangen
+nicht in den Film-/Serienverlauf. 115 eindeutige gezielte Tests und Skin-Pruefung
+bestanden. Echte Wiedergabe der letzten Fassung nicht live getestet.

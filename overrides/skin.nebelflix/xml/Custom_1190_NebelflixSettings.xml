@@ -1,0 +1,294 @@
+<?xml version='1.0' encoding='utf-8'?>
+<window id="1190" type="window">
+  <defaultcontrol always="true">1200</defaultcontrol>
+  <backgroundcolor>FF141414</backgroundcolor>
+  <controls>
+    <control type="image">
+      <width>1920</width>
+      <height>1080</height>
+      <texture>nebelflix/background.png</texture>
+      <aspectratio>stretch</aspectratio>
+    </control>
+    <control type="label">
+      <left>190</left>
+      <top>90</top>
+      <width>1500</width>
+      <height>100</height>
+      <label>Nebelflix Settings</label>
+      <font>NFTitle</font>
+      <textcolor>FFFFFFFF</textcolor>
+      <aligny>center</aligny>
+    </control>
+    <control type="radiobutton" id="1200">
+      <left>230</left>
+      <top>225</top>
+      <width>1460</width>
+      <height>80</height>
+      <label>Intro beim Kodi-Start überspringen</label>
+      <font>NFHeading</font>
+      <texturefocus border="14">nebelflix/button-focus.png</texturefocus>
+      <texturenofocus>nebelflix/background.png</texturenofocus>
+      <textcolor>FFFFFFFF</textcolor>
+      <focusedcolor>FF141414</focusedcolor>
+      <textureradioonfocus>nebelflix/toggle-on.png</textureradioonfocus>
+      <textureradioonnofocus>nebelflix/toggle-on.png</textureradioonnofocus>
+      <textureradioofffocus>nebelflix/toggle-off.png</textureradioofffocus>
+      <textureradiooffnofocus>nebelflix/toggle-off.png</textureradiooffnofocus>
+      <radiowidth>58</radiowidth>
+      <radioheight>32</radioheight>
+      <selected>Skin.HasSetting(NFDisableIntro)</selected>
+      <onclick>Skin.ToggleSetting(NFDisableIntro)</onclick>
+      <onup>1210</onup>
+      <ondown>1201</ondown>
+      <onback>PreviousMenu</onback>
+    </control>
+    <control type="radiobutton" id="1201">
+      <left>230</left>
+      <top>313</top>
+      <width>1460</width>
+      <height>80</height>
+      <label>Medientitel statt Clearlogo</label>
+      <font>NFHeading</font>
+      <texturefocus border="14">nebelflix/button-focus.png</texturefocus>
+      <texturenofocus>nebelflix/background.png</texturenofocus>
+      <textcolor>FFFFFFFF</textcolor>
+      <focusedcolor>FF141414</focusedcolor>
+      <textureradioonfocus>nebelflix/toggle-on.png</textureradioonfocus>
+      <textureradioonnofocus>nebelflix/toggle-on.png</textureradioonnofocus>
+      <textureradioofffocus>nebelflix/toggle-off.png</textureradioofffocus>
+      <textureradiooffnofocus>nebelflix/toggle-off.png</textureradiooffnofocus>
+      <radiowidth>58</radiowidth>
+      <radioheight>32</radioheight>
+      <selected>Skin.HasSetting(NFHideClearlogo)</selected>
+      <onclick>Skin.ToggleSetting(NFHideClearlogo)</onclick>
+      <onup>1200</onup>
+      <ondown>1202</ondown>
+      <onback>PreviousMenu</onback>
+    </control>
+    <control type="radiobutton" id="1202">
+      <left>230</left>
+      <top>401</top>
+      <width>1460</width>
+      <height>80</height>
+      <label>Weiterschauen ausblenden</label>
+      <font>NFHeading</font>
+      <texturefocus border="14">nebelflix/button-focus.png</texturefocus>
+      <texturenofocus>nebelflix/background.png</texturenofocus>
+      <textcolor>FFFFFFFF</textcolor>
+      <focusedcolor>FF141414</focusedcolor>
+      <textureradioonfocus>nebelflix/toggle-on.png</textureradioonfocus>
+      <textureradioonnofocus>nebelflix/toggle-on.png</textureradioonnofocus>
+      <textureradioofffocus>nebelflix/toggle-off.png</textureradioofffocus>
+      <textureradiooffnofocus>nebelflix/toggle-off.png</textureradiooffnofocus>
+      <radiowidth>58</radiowidth>
+      <radioheight>32</radioheight>
+      <selected>Skin.HasSetting(NFHideContinue)</selected>
+      <onclick>Skin.ToggleSetting(NFHideContinue)</onclick>
+      <onup>1201</onup>
+      <ondown>1203</ondown>
+      <onback>PreviousMenu</onback>
+    </control>
+    <control type="radiobutton" id="1203">
+      <left>230</left>
+      <top>489</top>
+      <width>1460</width>
+      <height>80</height>
+      <label>Top 10 ausblenden</label>
+      <font>NFHeading</font>
+      <texturefocus border="14">nebelflix/button-focus.png</texturefocus>
+      <texturenofocus>nebelflix/background.png</texturenofocus>
+      <textcolor>FFFFFFFF</textcolor>
+      <focusedcolor>FF141414</focusedcolor>
+      <textureradioonfocus>nebelflix/toggle-on.png</textureradioonfocus>
+      <textureradioonnofocus>nebelflix/toggle-on.png</textureradioonnofocus>
+      <textureradioofffocus>nebelflix/toggle-off.png</textureradioofffocus>
+      <textureradiooffnofocus>nebelflix/toggle-off.png</textureradiooffnofocus>
+      <radiowidth>58</radiowidth>
+      <radioheight>32</radioheight>
+      <selected>Skin.HasSetting(NFHideTop10)</selected>
+      <onclick>Skin.ToggleSetting(NFHideTop10)</onclick>
+      <onup>1202</onup>
+      <ondown>1204</ondown>
+      <onback>PreviousMenu</onback>
+    </control>
+    <control type="radiobutton" id="1204">
+      <left>230</left>
+      <top>577</top>
+      <width>1460</width>
+      <height>80</height>
+      <label>Trailer im Spotlight automatisch starten</label>
+      <font>NFHeading</font>
+      <texturefocus border="14">nebelflix/button-focus.png</texturefocus>
+      <texturenofocus>nebelflix/background.png</texturenofocus>
+      <textcolor>FFFFFFFF</textcolor>
+      <focusedcolor>FF141414</focusedcolor>
+      <textureradioonfocus>nebelflix/toggle-on.png</textureradioonfocus>
+      <textureradioonnofocus>nebelflix/toggle-on.png</textureradioonnofocus>
+      <textureradioofffocus>nebelflix/toggle-off.png</textureradioofffocus>
+      <textureradiooffnofocus>nebelflix/toggle-off.png</textureradiooffnofocus>
+      <radiowidth>58</radiowidth>
+      <radioheight>32</radioheight>
+      <selected>!Skin.HasSetting(NFDisableAutoTrailer)</selected>
+      <onclick>Skin.ToggleSetting(NFDisableAutoTrailer)</onclick>
+      <onup>1203</onup>
+      <ondown>1212</ondown>
+      <onback>PreviousMenu</onback>
+    </control>
+    <control type="button" id="1210">
+      <left>230</left>
+      <top>840</top>
+      <width>420</width>
+      <height>56</height>
+      <label>Nebelflix-Intro ansehen</label>
+      <font>NFBody</font>
+      <textcolor>FFFFFFFF</textcolor>
+      <focusedcolor>FF141414</focusedcolor>
+      <align>center</align>
+      <texturefocus>nebelflix/button-focus.png</texturefocus>
+      <texturenofocus>nebelflix/pill-dark.png</texturenofocus>
+      <onclick>RunScript(skin.nebelflix,intro)</onclick>
+      <onup>1215</onup>
+      <ondown>1211</ondown>
+      <onleft>1211</onleft>
+      <onright>1211</onright>
+    </control>
+    <control type="button" id="1211">
+      <left>680</left>
+      <top>840</top>
+      <width>420</width>
+      <height>56</height>
+      <label>Nebelflix Hybrid einstellen</label>
+      <font>NFBody</font>
+      <textcolor>FFFFFFFF</textcolor>
+      <focusedcolor>FF141414</focusedcolor>
+      <align>center</align>
+      <texturefocus>nebelflix/button-focus.png</texturefocus>
+      <texturenofocus>nebelflix/pill-dark.png</texturenofocus>
+      <onclick>Addon.OpenSettings(plugin.video.nebelflix.hybrid)</onclick>
+      <onup>1215</onup>
+      <ondown>1200</ondown>
+      <onleft>1210</onleft>
+      <onright>1216</onright>
+    </control>
+    <control type="button" id="1212">
+      <left>230</left>
+      <top>690</top>
+      <width>870</width>
+      <height>64</height>
+      <label>Einrichtung &amp; Widgets verwalten</label>
+      <font>NFBody</font>
+      <textcolor>FFFFFFFF</textcolor>
+      <focusedcolor>FF141414</focusedcolor>
+      <align>center</align>
+      <texturefocus>nebelflix/button-focus.png</texturefocus>
+      <texturenofocus>nebelflix/pill-dark.png</texturenofocus>
+      <onclick>RunScript(skin.nebelflix,setup_menu)</onclick>
+      <onup>1204</onup>
+      <ondown>1215</ondown>
+      <onleft>1212</onleft>
+      <onright>1213</onright>
+    </control>
+    <control type="button" id="1213">
+      <left>1130</left>
+      <top>690</top>
+      <width>560</width>
+      <height>64</height>
+      <label>Widget-Cache leeren</label>
+      <font>NFBody</font>
+      <textcolor>FFFFFFFF</textcolor>
+      <focusedcolor>FF141414</focusedcolor>
+      <align>center</align>
+      <texturefocus>nebelflix/button-focus.png</texturefocus>
+      <texturenofocus>nebelflix/pill-dark.png</texturenofocus>
+      <onclick>RunScript(skin.nebelflix,clear_widget_cache)</onclick>
+      <onup>1204</onup>
+      <ondown>1216</ondown>
+      <onleft>1212</onleft>
+      <onright>1212</onright>
+    </control>
+    <control type="button" id="1215">
+      <left>230</left>
+      <top>765</top>
+      <width>870</width>
+      <height>64</height>
+      <label>Nebelflix TV verwalten</label>
+      <font>NFBody</font>
+      <textcolor>FFFFFFFF</textcolor>
+      <focusedcolor>FF141414</focusedcolor>
+      <align>center</align>
+      <texturefocus>nebelflix/button-focus.png</texturefocus>
+      <texturenofocus>nebelflix/pill-dark.png</texturenofocus>
+      <onclick>RunScript(skin.nebelflix,manage_tv)</onclick>
+      <onup>1212</onup>
+      <ondown>1210</ondown>
+      <onleft>1214</onleft>
+      <onright>1214</onright>
+    </control>
+    <control type="button" id="1214">
+      <left>1130</left>
+      <top>765</top>
+      <width>560</width>
+      <height>64</height>
+      <label>Wiedergabeverlauf verwalten</label>
+      <font>NFBody</font>
+      <textcolor>FFFFFFFF</textcolor>
+      <focusedcolor>FF141414</focusedcolor>
+      <align>center</align>
+      <texturefocus>nebelflix/button-focus.png</texturefocus>
+      <texturenofocus>nebelflix/pill-dark.png</texturenofocus>
+      <onclick>RunScript(skin.nebelflix,manage_history)</onclick>
+      <onup>1213</onup>
+      <ondown>1216</ondown>
+      <onleft>1215</onleft>
+      <onright>1215</onright>
+    </control>
+    <control type="label">
+      <left>230</left>
+      <top>910</top>
+      <width>1460</width>
+      <height>42</height>
+      <label>Automatische Trailer starten nach 3 Sekunden und stoppen beim Verlassen.</label>
+      <font>NFSmall</font>
+      <textcolor>FFBBBBBB</textcolor>
+      <aligny>center</aligny>
+    </control>
+    <control type="label">
+      <left>230</left>
+      <top>950</top>
+      <width>1460</width>
+      <height>40</height>
+      <label>Widget-Cache und Hybrid-Verlauf werden getrennt verwaltet; Favoriten und Einstellungen bleiben erhalten.</label>
+      <font>NFSmall</font>
+      <textcolor>FFB5B5B5</textcolor>
+      <aligny>center</aligny>
+    </control>
+    <control type="label">
+      <left>230</left>
+      <top>995</top>
+      <width>1500</width>
+      <height>48</height>
+      <label>Esc / Zurück schließt dieses Menü. Einstellungen werden gespeichert.</label>
+      <font>NFSmall</font>
+      <textcolor>FFB5B5B5</textcolor>
+      <aligny>center</aligny>
+    </control>
+    <control type="button" id="1216">
+      <left>1130</left>
+      <top>840</top>
+      <width>560</width>
+      <height>56</height>
+      <label>Ladezeiten &amp; Diagnose</label>
+      <font>NFBody</font>
+      <textcolor>FFFFFFFF</textcolor>
+      <focusedcolor>FF141414</focusedcolor>
+      <align>center</align>
+      <texturefocus>nebelflix/button-focus.png</texturefocus>
+      <texturenofocus>nebelflix/pill-dark.png</texturenofocus>
+      <onclick>RunScript(skin.nebelflix,timing_debug)</onclick>
+      <onup>1214</onup>
+      <ondown>1210</ondown>
+      <onleft>1211</onleft>
+      <onright>1211</onright>
+    </control>
+  </controls>
+</window>

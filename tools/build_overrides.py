@@ -8,6 +8,7 @@ All work stays in the Actions worktree until the workflow's final commit.
 """
 from __future__ import annotations
 import json
+import gzip
 import os
 from pathlib import Path, PurePosixPath
 import re
@@ -68,12 +69,24 @@ def files_for(addon_id):
         return {}
     result = {}
     for file in sorted(directory.rglob("*")):
-        if not file.is_file() or file.name == ".gitkeep":
+        if (not file.is_file() or file.name == ".gitkeep"
+                or "__pycache__" in file.parts or file.suffix in (".pyc", ".pyo")):
             continue
         rel = file.relative_to(directory).as_posix()
         if any(p in ("..", ".") for p in PurePosixPath(rel).parts) or rel.startswith("/"):
             raise ValueError("Unsafe override file: " + rel)
-        result[addon_id + "/" + rel] = file.read_bytes()
+        data = file.read_bytes()
+        if rel.endswith(".xml.gz"):
+            # Large generated Kodi layouts are stored compressed in source only.
+            # The installed archive always contains ordinary XML.
+            import io
+            with gzip.GzipFile(fileobj=io.BytesIO(data)) as compressed:
+                data = compressed.read(12_000_001)
+            if len(data) > 12_000_000:
+                raise ValueError("Oversized compressed XML override")
+            ET.fromstring(data)
+            rel = rel[:-3]
+        result[addon_id + "/" + rel] = data
     return result
 
 

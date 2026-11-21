@@ -13,6 +13,7 @@ import xbmcaddon
 import xbmcgui
 import xbmcvfs
 from resources.lib.quality_policy import source_quality
+from resources.lib.source_schedule import provider_label
 
 ADDON_ID = 'plugin.video.nebelflix.hybrid'
 BACK_ACTIONS = (9, 10, 92, 216, 247)
@@ -90,7 +91,7 @@ class HybridSourceList(xbmcgui.WindowXMLDialog):
         lst.reset()
         for index, src in enumerate(self.entries):
             quality, quality_group, quality_color = QUALITY[source_quality(src)]
-            provider = _plain(src.get('provider') or 'Unbekannt')
+            provider = _plain(provider_label(src.get('provider')))
             host = _plain(src.get('source') or 'Unbekannt')
             detail = _plain(src.get('info') or '')
             probe = src.get('_probe') if isinstance(src.get('_probe'), dict) else {}

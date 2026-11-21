@@ -1,0 +1,240 @@
+<?xml version='1.0' encoding='utf-8'?>
+<window type="dialog" id="1194">
+  <onunload>SetProperty(NF.SkipPreload,true,Home)</onunload>
+  <zorder>10</zorder>
+  <controls>
+    <control type="group">
+      <control type="image">
+        <left>0</left>
+        <top>0</top>
+        <width>1920</width>
+        <height>1080</height>
+        <texture>special://skin/media/splash.jpg</texture>
+        <aspectratio>stretch</aspectratio>
+      </control>
+      <control type="image">
+        <left>0</left>
+        <top>0</top>
+        <width>1920</width>
+        <height>1080</height>
+        <texture colordiffuse="C8000000">nebelflix/white.png</texture>
+        <aspectratio>stretch</aspectratio>
+      </control>
+      <control type="image">
+        <left>610</left>
+        <top>490</top>
+        <width>700</width>
+        <height>170</height>
+        <texture>nebelflix/widget-preload-logo.png</texture>
+        <aspectratio>keep</aspectratio>
+      </control>
+      <control type="label">
+        <left>240</left>
+        <top>675</top>
+        <width>1440</width>
+        <height>65</height>
+        <label>$INFO[Window(Home).Property(NF.PreloadStatus)]</label>
+        <font>NFBody</font>
+        <textcolor>FFFFFFFF</textcolor>
+        <align>center</align>
+      </control>
+      <control type="image">
+        <left>570</left>
+        <top>770</top>
+        <width>780</width>
+        <height>26</height>
+        <texture colordiffuse="66FFFFFF">nebelflix/white.png</texture>
+      </control>
+      <control type="image">
+        <left>570</left>
+        <top>770</top>
+        <width>39</width>
+        <height>26</height>
+        <texture colordiffuse="FFE50914">nebelflix/white.png</texture>
+        <visible>String.IsEqual(Window(Home).Property(NF.PreloadFill01),true)</visible>
+      </control>
+      <control type="image">
+        <left>609</left>
+        <top>770</top>
+        <width>39</width>
+        <height>26</height>
+        <texture colordiffuse="FFE50914">nebelflix/white.png</texture>
+        <visible>String.IsEqual(Window(Home).Property(NF.PreloadFill02),true)</visible>
+      </control>
+      <control type="image">
+        <left>648</left>
+        <top>770</top>
+        <width>39</width>
+        <height>26</height>
+        <texture colordiffuse="FFE50914">nebelflix/white.png</texture>
+        <visible>String.IsEqual(Window(Home).Property(NF.PreloadFill03),true)</visible>
+      </control>
+      <control type="image">
+        <left>687</left>
+        <top>770</top>
+        <width>39</width>
+        <height>26</height>
+        <texture colordiffuse="FFE50914">nebelflix/white.png</texture>
+        <visible>String.IsEqual(Window(Home).Property(NF.PreloadFill04),true)</visible>
+      </control>
+      <control type="image">
+        <left>726</left>
+        <top>770</top>
+        <width>39</width>
+        <height>26</height>
+        <texture colordiffuse="FFE50914">nebelflix/white.png</texture>
+        <visible>String.IsEqual(Window(Home).Property(NF.PreloadFill05),true)</visible>
+      </control>
+      <control type="image">
+        <left>765</left>
+        <top>770</top>
+        <width>39</width>
+        <height>26</height>
+        <texture colordiffuse="FFE50914">nebelflix/white.png</texture>
+        <visible>String.IsEqual(Window(Home).Property(NF.PreloadFill06),true)</visible>
+      </control>
+      <control type="image">
+        <left>804</left>
+        <top>770</top>
+        <width>39</width>
+        <height>26</height>
+        <texture colordiffuse="FFE50914">nebelflix/white.png</texture>
+        <visible>String.IsEqual(Window(Home).Property(NF.PreloadFill07),true)</visible>
+      </control>
+      <control type="image">
+        <left>843</left>
+        <top>770</top>
+        <width>39</width>
+        <height>26</height>
+        <texture colordiffuse="FFE50914">nebelflix/white.png</texture>
+        <visible>String.IsEqual(Window(Home).Property(NF.PreloadFill08),true)</visible>
+      </control>
+      <control type="image">
+        <left>882</left>
+        <top>770</top>
+        <width>39</width>
+        <height>26</height>
+        <texture colordiffuse="FFE50914">nebelflix/white.png</texture>
+        <visible>String.IsEqual(Window(Home).Property(NF.PreloadFill09),true)</visible>
+      </control>
+      <control type="image">
+        <left>921</left>
+        <top>770</top>
+        <width>39</width>
+        <height>26</height>
+        <texture colordiffuse="FFE50914">nebelflix/white.png</texture>
+        <visible>String.IsEqual(Window(Home).Property(NF.PreloadFill10),true)</visible>
+      </control>
+      <control type="image">
+        <left>960</left>
+        <top>770</top>
+        <width>39</width>
+        <height>26</height>
+        <texture colordiffuse="FFE50914">nebelflix/white.png</texture>
+        <visible>String.IsEqual(Window(Home).Property(NF.PreloadFill11),true)</visible>
+      </control>
+      <control type="image">
+        <left>999</left>
+        <top>770</top>
+        <width>39</width>
+        <height>26</height>
+        <texture colordiffuse="FFE50914">nebelflix/white.png</texture>
+        <visible>String.IsEqual(Window(Home).Property(NF.PreloadFill12),true)</visible>
+      </control>
+      <control type="image">
+        <left>1038</left>
+        <top>770</top>
+        <width>39</width>
+        <height>26</height>
+        <texture colordiffuse="FFE50914">nebelflix/white.png</texture>
+        <visible>String.IsEqual(Window(Home).Property(NF.PreloadFill13),true)</visible>
+      </control>
+      <control type="image">
+        <left>1077</left>
+        <top>770</top>
+        <width>39</width>
+        <height>26</height>
+        <texture colordiffuse="FFE50914">nebelflix/white.png</texture>
+        <visible>String.IsEqual(Window(Home).Property(NF.PreloadFill14),true)</visible>
+      </control>
+      <control type="image">
+        <left>1116</left>
+        <top>770</top>
+        <width>39</width>
+        <height>26</height>
+        <texture colordiffuse="FFE50914">nebelflix/white.png</texture>
+        <visible>String.IsEqual(Window(Home).Property(NF.PreloadFill15),true)</visible>
+      </control>
+      <control type="image">
+        <left>1155</left>
+        <top>770</top>
+        <width>39</width>
+        <height>26</height>
+        <texture colordiffuse="FFE50914">nebelflix/white.png</texture>
+        <visible>String.IsEqual(Window(Home).Property(NF.PreloadFill16),true)</visible>
+      </control>
+      <control type="image">
+        <left>1194</left>
+        <top>770</top>
+        <width>39</width>
+        <height>26</height>
+        <texture colordiffuse="FFE50914">nebelflix/white.png</texture>
+        <visible>String.IsEqual(Window(Home).Property(NF.PreloadFill17),true)</visible>
+      </control>
+      <control type="image">
+        <left>1233</left>
+        <top>770</top>
+        <width>39</width>
+        <height>26</height>
+        <texture colordiffuse="FFE50914">nebelflix/white.png</texture>
+        <visible>String.IsEqual(Window(Home).Property(NF.PreloadFill18),true)</visible>
+      </control>
+      <control type="image">
+        <left>1272</left>
+        <top>770</top>
+        <width>39</width>
+        <height>26</height>
+        <texture colordiffuse="FFE50914">nebelflix/white.png</texture>
+        <visible>String.IsEqual(Window(Home).Property(NF.PreloadFill19),true)</visible>
+      </control>
+      <control type="image">
+        <left>1311</left>
+        <top>770</top>
+        <width>39</width>
+        <height>26</height>
+        <texture colordiffuse="FFE50914">nebelflix/white.png</texture>
+        <visible>String.IsEqual(Window(Home).Property(NF.PreloadFill20),true)</visible>
+      </control>
+      <control type="label">
+        <left>570</left>
+        <top>815</top>
+        <width>780</width>
+        <height>52</height>
+        <label>$INFO[Window(Home).Property(NF.PreloadCount)]</label>
+        <font>NFSmall</font>
+        <textcolor>FFDDDDDD</textcolor>
+        <align>center</align>
+      </control>
+      <control type="label">
+        <left>320</left>
+        <top>907</top>
+        <width>1280</width>
+        <height>50</height>
+        <label>Beim ersten Start werden die konfigurierten Widget-Reihen vorbereitet.</label>
+        <font>NFSmall</font>
+        <textcolor>FFDDDDDD</textcolor>
+        <align>center</align>
+      </control>
+      <control type="label">
+        <left>320</left>
+        <top>960</top>
+        <width>1280</width>
+        <height>44</height>
+        <label>Achtung: Je nach System kann das länger dauern.</label>
+        <font>NFSmall</font>
+        <textcolor>FFF1BF72</textcolor>
+        <align>center</align>
+      </control>
+    </control>
+  </controls>
+</window>

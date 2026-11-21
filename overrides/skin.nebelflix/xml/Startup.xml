@@ -1,0 +1,6 @@
+<?xml version='1.0' encoding='utf-8'?>
+<window>
+  <onload>SetProperty(NF.StartupIntroPending,true,Home)</onload>
+  <onload>RunScript(special://skin/resources/bootstrap.py)</onload>
+  <controls />
+</window>

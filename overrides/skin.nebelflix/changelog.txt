@@ -1,0 +1,82 @@
+0.5.75 local follow-up: explicit asynchronous trailers with feedback; persistent background logos; fix Kodi Index out of range during logo refresh.
+0.5.75
+Independent native hubs, continuous rows with remote-safe topbar navigation, cached startup, per-row loading, preserving setup assistant, Windows active-skin file updates with rollback.
+
+0.5.72 | 2026-11-18 | Adaptive Leistungsprofile für Android/kleinen RAM und Desktop. Gemeinsames Anfragebudget, priorisierter Start statt Komplettvorladen, begrenzte Bild-/Logoaufträge und Bildcache. Controller befüllt Widget- und Spotlight-Listen direkt. Update-Sperre umfasst alte Reiteranfragen; unabhängige Spotlight-Hybrid-Aufrufe entfernt.
+0.5.71 | 2026-11-18 | Revisions Updater: direkte Repo-Prüfung, Erststart-Sperre bis zum echten Kodi-Neustart, geprüfte Pakete mit Sicherung und Wiederherstellung, Fortschrittsfenster und Skin-Reload nach bestätigtem Abschluss. Nur lokal vorbereitet; keine Veröffentlichung.
+0.5.63: Eigene, passende LiveTV-Kategorie-Bilder (Programm, ARD/ZDF, Private, Sport, Kinder usw.). Original-Home-Navigation unverändert.
+0.5.57 | 2026-11-14 | Top-10-Rangnummern 1–10 auf Startseite, Filme und Serien korrigiert. Breite fuer grosse Zahlen und zweistellige Platzierung angepasst; separate Rangangabe aus der Skin-Widgetliste statt abgeschnittener Kodi-Label. Fokusnavigation unveraendert.
+
+0.5.51 | 2026-11-10 | Gemeinsamer Hybrid-Verlauf, 15-Minuten-Abschlussregel,
+gezielte Kontextmenü-Entfernung mit Löschbestätigung, Verlaufsverwaltung im Skin.
+
+0.5.46 - Genres als Widget-Reihen: alle Filmgenres, alle Seriengenres, gemischte Startseiten-Genres. Separate Genres/Streaming-Reiter entfernt. Widgets mit echter Seiten-Navigation und Zurück-Karte.
+0.5.45 (2026-11-09): Direkte Hybrid-Suche nach Reiter, neue Genres-/Streaming-Widgettabs, bestehende Widget-Profile schonend erweitert, veraltete TMDbHelper-WidgetMarker entfernt.
+[B]0.8.5[/B]
+• Updated language files from Transifex
+
+[B]0.8.3[/B]
+• Updated language files from Transifex
+
+[B]0.8.2[/B]
+• Updated language files from Transifex
+
+[B]0.8.1[/B]
+• Updated language files from Transifex
+
+[B]0.7.13[/B]
+• Updated language files from Transifex
+
+[B]0.7.12[/B]
+• Updated language files from Transifex
+
+[B]0.7.11[/B]
+• Updated language files from Transifex
+
+[B]0.7.10[/B]
+• Updated language files from Transifex
+
+[B]0.7.8[/B]
+• Updated language files from Transifex
+
+[B]0.7.7[/B]
+• Updated language files from Transifex
+
+[B]0.7.3[/B]
+• Updated language files from Transifex
+
+[B]0.7.1[/B]
+• Updated language files from Transifex
+
+[B]0.6.2[/B]
+• Updated language files from Transifex
+
+[B]0.6.1[/B]
+• Updated language files from Transifex
+
+﻿[B]0.0.1[/B]
+• Initial commit
+[B]0.5.27[/B]
+• Added randomized TMDB Helper discovery and provider rows to Nebelflix tabs.
+• Added a full-screen Nebelflix Vavoo guide with current and next programme details.
+• Restyled Kodi's shutdown menu in Nebelflix design and corrected TV spotlight selection.
+
+[B]0.5.28[/B]
+• Made carousel loading lazy after the first four rows to keep tab changes responsive.
+• Added short-lived local caching for TMDB Helper provider and random discovery rows.
+• Stop the current spotlight trailer at tab selection and defer focus until the new page is ready.
+• Replaced synthetic nf:// tile paths with local artwork paths to avoid repeated Kodi protocol warnings.
+
+[B]0.5.29[/B]
+• Fixed series playback navigation: close the detail modal before opening TMDB Helper seasons.
+• Defer focus until the selected page's Spotlight content is available.
+
+[B]0.5.30[/B]
+• Added an original Nebelflix two-hit logo sting, timed to the N zoom in the intro.
+
+[B]0.5.38[/B]
+- Add-on-Starter als Widget-Quelle für Video- und Musik-Add-ons; mehrere Add-ons als direkte Icon-Startkacheln.
+- Trailer-Aktionen auf Film- und Serieninhalte mit TMDB-ID beschränkt; Live-TV und andere Nicht-TMDB-Einträge zeigen keinen Trailer.
+- Echte Kodi-PVR-Sendergruppen öffnen beim Anwählen den nativen TV-Guide für die ausgewählte Gruppe.
+- Vavoo-Gruppen öffnen direkt die eigene Vollbild-EPG-Ansicht statt die Sender in der Home-Reihe zu laden.
+

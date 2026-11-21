@@ -1,0 +1,14 @@
+<?xml version='1.0' encoding='utf-8'?>
+<window type="window" id="1115">
+  <defaultcontrol always="false">204</defaultcontrol>
+  <backgroundcolor>FF141414</backgroundcolor>
+  <onload>SetProperty(NF.HubSlot,4)</onload>
+  <onload>SetProperty(NF.Segment,0)</onload>
+  <onload>SetProperty(NF.TopbarControl,204)</onload>
+  <onload condition="String.IsEmpty(Window.Property(NF.LayoutSignature)) | [String.IsEmpty(Window(Home).Property(NF.Heartbeat)) + String.IsEmpty(Window(Home).Property(NF.ControllerStarting))]">RunScript(special://skin/resources/bootstrap.py,hub,4,0)</onload>
+  <controls>
+    <include content="NFHubControls">
+      <param name="segment">0</param>
+    </include>
+  </controls>
+</window>

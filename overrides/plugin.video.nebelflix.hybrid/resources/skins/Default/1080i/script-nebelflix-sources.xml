@@ -8,13 +8,13 @@
       <posy>0</posy>
       <width>1920</width>
       <height>1080</height>
-      <texture>source_bg.png</texture>
+      <texture colordiffuse="FF100B12">source_quality_bar.png</texture>
     </control>
     <control type="label">
       <posx>35</posx>
-      <posy>12</posy>
+      <posy>10</posy>
       <width>1450</width>
-      <height>58</height>
+      <height>50</height>
       <font>font24</font>
       <textcolor>FFFFFFFF</textcolor>
       <label>$INFO[Window.Property(nf.title)]</label>
@@ -22,9 +22,9 @@
     </control>
     <control type="label">
       <posx>35</posx>
-      <posy>73</posy>
+      <posy>70</posy>
       <width>1450</width>
-      <height>40</height>
+      <height>36</height>
       <font>font16</font>
       <align>left</align>
       <textcolor>FFFFFFFF</textcolor>
@@ -44,20 +44,20 @@
       <height>36</height>
       <font>font13</font>
       <textcolor>FFE6B54D</textcolor>
-      <label>NEBELFLIX  |  QUELLENAUSWAHL</label>
+      <label>NEBELFLIX | QUELLEN</label>
     </control>
     <control type="image">
       <posx>20</posx>
-      <posy>95</posy>
+      <posy>122</posy>
       <width>1465</width>
-      <height>920</height>
+      <height>884</height>
       <texture>source_panel.png</texture>
     </control>
     <control type="list" id="500">
       <posx>20</posx>
-      <posy>135</posy>
+      <posy>144</posy>
       <width>1455</width>
-      <height>865</height>
+      <height>832</height>
       <pagecontrol>502</pagecontrol>
       <onleft>500</onleft>
       <onright>500</onright>
@@ -354,9 +354,9 @@
     </control>
     <control type="label">
       <posx>35</posx>
-      <posy>12</posy>
+      <posy>10</posy>
       <width>1450</width>
-      <height>58</height>
+      <height>50</height>
       <font>font20</font>
       <textcolor>FFEEEEEE</textcolor>
       <label>$INFO[Window.Property(nf.title)]</label>

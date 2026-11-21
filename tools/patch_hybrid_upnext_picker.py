@@ -93,6 +93,7 @@ def main():
                 if (b"NEBELFLIX_UPNEXT_MANUAL_SOURCES_V1"
                         not in verify_zip.read(PLAYER)):
                     raise ValueError("Up Next patch missing")
+            source_zip.close()  # Windows: release original archive before replacing it.
             os.replace(temp, archive_path)
         finally:
             if os.path.exists(temp):

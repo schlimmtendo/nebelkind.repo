@@ -6,6 +6,7 @@ import sys
 import xbmcgui
 import re,json,random,time,threading,traceback
 from resources.lib.search_workers import SearchExecutor
+from resources.lib.source_schedule import fair_provider_order
 from resources.lib import load_timing
 from resources.lib import log_utils, control
 from resources.lib.utils import get_titles
@@ -425,7 +426,7 @@ class sources:
                     _provider_obj.tmdb_id = getattr(self, '_mscout_tmdb_id', '')
             sourceDict = [(i[0], i[1], i[1].priority) for i in self.provider_sources]
             random.shuffle(sourceDict)
-            sourceDict = sorted(sourceDict, key=lambda i: int(i[2]))    # Reihenfolge Provider
+            sourceDict = fair_provider_order(sourceDict)
 
             futures = {self.executor.submit(self._getSource, titles, year, season, episode, imdb, provider[0], provider[1]): provider[0] for provider in sourceDict}
 
@@ -542,6 +543,15 @@ class sources:
         finally:
             progressDialog.close()
             self._collecting = False
+            scout_futures = [f for f, name in locals().get('futures', {}).items()
+                             if name.startswith('MS-')]
+            if scout_futures:
+                scout_stats = [s for name, s in self.scraper_stats.copy().items()
+                               if name.startswith('MS-')]
+                log_utils.log('MovieScout Suche: %d geplant, %d gestartet, %d fertig, %d Quellen' % (
+                    len(scout_futures), len(scout_stats),
+                    sum(s['status'] != 'RUNNING' for s in scout_stats),
+                    sum(s['count'] for s in scout_stats)), log_utils.LOGINFO)
             for future in locals().get('futures', {}):
                 future.cancel()
             load_timing.record('hybrid','source.search',search_started,count=len(self.sources))

@@ -1,0 +1,110 @@
+<?xml version='1.0' encoding='utf-8'?>
+<window type="dialog" id="1195">
+  <defaultcontrol always="true">1900</defaultcontrol>
+  <onunload>SetProperty(NF.SetupClosed,true,Home)</onunload>
+  <zorder>11</zorder>
+  <controls>
+    <control type="image">
+      <left>0</left>
+      <top>0</top>
+      <width>1920</width>
+      <height>1080</height>
+      <texture colordiffuse="FF141414">nebelflix/white.png</texture>
+    </control>
+    <control type="image">
+      <left>110</left>
+      <top>70</top>
+      <width>550</width>
+      <height>125</height>
+      <texture>nebelflix/widget-preload-logo.png</texture>
+      <aspectratio>keep</aspectratio>
+    </control>
+    <control type="label">
+      <left>110</left>
+      <top>220</top>
+      <width>1600</width>
+      <height>45</height>
+      <font>NFSmall</font>
+      <textcolor>FFE50914</textcolor>
+      <label>EINRICHTUNG · SCHRITT $INFO[Window(Home).Property(NF.SetupStep)] VON 3</label>
+    </control>
+    <control type="label">
+      <left>110</left>
+      <top>285</top>
+      <width>1690</width>
+      <height>70</height>
+      <font>NFHeading</font>
+      <textcolor>FFFFFFFF</textcolor>
+      <label>$INFO[Window(Home).Property(NF.SetupTitle)]</label>
+    </control>
+    <control type="textbox">
+      <left>110</left>
+      <top>380</top>
+      <width>1660</width>
+      <height>270</height>
+      <font>NFBody</font>
+      <textcolor>FFDDDDDD</textcolor>
+      <label>$INFO[Window(Home).Property(NF.SetupBody)]</label>
+    </control>
+    <control type="button" id="1900">
+      <left>200</left>
+      <top>675</top>
+      <width>1520</width>
+      <height>72</height>
+      <font>NFBody</font>
+      <label>$INFO[Window(Home).Property(NF.SetupOption0)]</label>
+      <visible>Integer.IsGreater(Window(Home).Property(NF.SetupCount),0)</visible>
+      <texturefocus>nebelflix/button-focus.png</texturefocus>
+      <texturenofocus>nebelflix/pill-dark.png</texturenofocus>
+      <textcolor>FFFFFFFF</textcolor>
+      <focusedcolor>FF141414</focusedcolor>
+      <align>center</align>
+      <onclick>SetProperty(NF.SetupChoice,0,Home)</onclick>
+      <onup>1900</onup>
+      <onleft>1900</onleft>
+      <onright>1900</onright>
+      <ondown condition="Integer.IsGreater(Window(Home).Property(NF.SetupCount),1)">1901</ondown>
+      <ondown>1900</ondown>
+    </control>
+    <control type="button" id="1901">
+      <left>200</left>
+      <top>765</top>
+      <width>1520</width>
+      <height>72</height>
+      <font>NFBody</font>
+      <label>$INFO[Window(Home).Property(NF.SetupOption1)]</label>
+      <visible>Integer.IsGreater(Window(Home).Property(NF.SetupCount),1)</visible>
+      <texturefocus>nebelflix/button-focus.png</texturefocus>
+      <texturenofocus>nebelflix/pill-dark.png</texturenofocus>
+      <textcolor>FFFFFFFF</textcolor>
+      <focusedcolor>FF141414</focusedcolor>
+      <align>center</align>
+      <onclick>SetProperty(NF.SetupChoice,1,Home)</onclick>
+      <onup>1900</onup>
+      <onleft>1900</onleft>
+      <onright>1900</onright>
+      <ondown condition="Integer.IsGreater(Window(Home).Property(NF.SetupCount),2)">1902</ondown>
+      <ondown>1900</ondown>
+    </control>
+    <control type="button" id="1902">
+      <left>200</left>
+      <top>855</top>
+      <width>1520</width>
+      <height>72</height>
+      <font>NFBody</font>
+      <label>$INFO[Window(Home).Property(NF.SetupOption2)]</label>
+      <visible>Integer.IsGreater(Window(Home).Property(NF.SetupCount),2)</visible>
+      <texturefocus>nebelflix/button-focus.png</texturefocus>
+      <texturenofocus>nebelflix/pill-dark.png</texturenofocus>
+      <textcolor>FFFFFFFF</textcolor>
+      <focusedcolor>FF141414</focusedcolor>
+      <align>center</align>
+      <onclick>SetProperty(NF.SetupChoice,2,Home)</onclick>
+      <onup>1901</onup>
+      <onleft>1900</onleft>
+      <onright>1900</onright>
+      <ondown condition="Integer.IsGreater(Window(Home).Property(NF.SetupCount),3)">1902</ondown>
+      <ondown>1900</ondown>
+    </control>
+  </controls>
+</window>
