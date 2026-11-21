@@ -58,13 +58,19 @@
       <texturenofocus>nebelflix/pill-dark.png</texturenofocus>
       <textcolor>FFFFFFFF</textcolor>
       <focusedcolor>FF141414</focusedcolor>
+      <disabledcolor>FFDDDDDD</disabledcolor>
       <align>center</align>
-      <onclick>SetProperty(NF.SetupChoice,0,Home)</onclick>
+      <aligny>center</aligny>
+      <textoffsetx>0</textoffsetx>
+      <textoffsety>0</textoffsety>
       <onup>1900</onup>
       <onleft>1900</onleft>
       <onright>1900</onright>
+      <onclick condition="String.IsEqual(Window(Home).Property(NF.SetupInputReady),true) + String.IsEqual(Window(Home).Property(NF.SetupStep),1)">SetProperty(NF.SetupChoice,1:0,Home)</onclick>
+      <onclick condition="String.IsEqual(Window(Home).Property(NF.SetupInputReady),true) + String.IsEqual(Window(Home).Property(NF.SetupStep),2)">SetProperty(NF.SetupChoice,2:0,Home)</onclick>
+      <onclick condition="String.IsEqual(Window(Home).Property(NF.SetupInputReady),true) + String.IsEqual(Window(Home).Property(NF.SetupStep),3)">SetProperty(NF.SetupChoice,3:0,Home)</onclick>
       <ondown condition="Integer.IsGreater(Window(Home).Property(NF.SetupCount),1)">1901</ondown>
-      <ondown>1900</ondown>
+      <ondown condition="!Integer.IsGreater(Window(Home).Property(NF.SetupCount),1)">1900</ondown>
     </control>
     <control type="button" id="1901">
       <left>200</left>
@@ -78,13 +84,19 @@
       <texturenofocus>nebelflix/pill-dark.png</texturenofocus>
       <textcolor>FFFFFFFF</textcolor>
       <focusedcolor>FF141414</focusedcolor>
+      <disabledcolor>FFDDDDDD</disabledcolor>
       <align>center</align>
-      <onclick>SetProperty(NF.SetupChoice,1,Home)</onclick>
+      <aligny>center</aligny>
+      <textoffsetx>0</textoffsetx>
+      <textoffsety>0</textoffsety>
       <onup>1900</onup>
       <onleft>1900</onleft>
       <onright>1900</onright>
+      <onclick condition="String.IsEqual(Window(Home).Property(NF.SetupInputReady),true) + String.IsEqual(Window(Home).Property(NF.SetupStep),1)">SetProperty(NF.SetupChoice,1:1,Home)</onclick>
+      <onclick condition="String.IsEqual(Window(Home).Property(NF.SetupInputReady),true) + String.IsEqual(Window(Home).Property(NF.SetupStep),2)">SetProperty(NF.SetupChoice,2:1,Home)</onclick>
+      <onclick condition="String.IsEqual(Window(Home).Property(NF.SetupInputReady),true) + String.IsEqual(Window(Home).Property(NF.SetupStep),3)">SetProperty(NF.SetupChoice,3:1,Home)</onclick>
       <ondown condition="Integer.IsGreater(Window(Home).Property(NF.SetupCount),2)">1902</ondown>
-      <ondown>1900</ondown>
+      <ondown condition="!Integer.IsGreater(Window(Home).Property(NF.SetupCount),2)">1900</ondown>
     </control>
     <control type="button" id="1902">
       <left>200</left>
@@ -98,13 +110,19 @@
       <texturenofocus>nebelflix/pill-dark.png</texturenofocus>
       <textcolor>FFFFFFFF</textcolor>
       <focusedcolor>FF141414</focusedcolor>
+      <disabledcolor>FFDDDDDD</disabledcolor>
       <align>center</align>
-      <onclick>SetProperty(NF.SetupChoice,2,Home)</onclick>
+      <aligny>center</aligny>
+      <textoffsetx>0</textoffsetx>
+      <textoffsety>0</textoffsety>
       <onup>1901</onup>
       <onleft>1900</onleft>
       <onright>1900</onright>
+      <onclick condition="String.IsEqual(Window(Home).Property(NF.SetupInputReady),true) + String.IsEqual(Window(Home).Property(NF.SetupStep),1)">SetProperty(NF.SetupChoice,1:2,Home)</onclick>
+      <onclick condition="String.IsEqual(Window(Home).Property(NF.SetupInputReady),true) + String.IsEqual(Window(Home).Property(NF.SetupStep),2)">SetProperty(NF.SetupChoice,2:2,Home)</onclick>
+      <onclick condition="String.IsEqual(Window(Home).Property(NF.SetupInputReady),true) + String.IsEqual(Window(Home).Property(NF.SetupStep),3)">SetProperty(NF.SetupChoice,3:2,Home)</onclick>
       <ondown condition="Integer.IsGreater(Window(Home).Property(NF.SetupCount),3)">1902</ondown>
-      <ondown>1900</ondown>
+      <ondown condition="!Integer.IsGreater(Window(Home).Property(NF.SetupCount),3)">1900</ondown>
     </control>
   </controls>
 </window>
