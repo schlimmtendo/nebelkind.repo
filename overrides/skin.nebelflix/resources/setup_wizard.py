@@ -7,6 +7,7 @@ def choose(home,monitor,step,title,body,options):
     # Close the input gate before changing any labels or accepting a new page.
     # Kodi executes native button actions asynchronously; an answer left over
     # from the preceding page must never select the performance profile.
+    home.clearProperty('NF.SetupLaunchRequested')
     home.setProperty('NF.SetupInputReady','false')
     home.setProperty('NF.SetupStep',str(step))
     home.setProperty('NF.SetupTitle',title)
@@ -43,7 +44,7 @@ def run(home,monitor,existing=False):
         first=choose(home,monitor,1,'Dein Nebelflix wird vorbereitet',
             ('Deine vorhandenen Reiter, Widget-Zuordnungen, Listen und dein Verlauf bleiben erhalten.' if existing else
              'Die Nebelflix-Vorlage richtet deine Startseite und die Bereiche Filme, Serien und Live TV ein.')+
-            '[CR][CR]1. Leistung einstellen[CR]2. Inhalte aller Bereiche speichern[CR]3. Kodi einmal neu starten'+
+            '[CR][CR]1. Leistung einstellen[CR]2. Inhalte aller Bereiche speichern[CR]3. Direkt zur Oberfläche wechseln'+
             '[CR][CR]Während dieser Einrichtung werden im Hintergrund keine Widget-Reihen geladen.',
             ['Weiter zur Leistungseinstellung'])
         if first is None:return None
@@ -53,12 +54,10 @@ def run(home,monitor,existing=False):
             '[CR][CR]Beibehalten: deine bisherige Leistungseinstellung wird weiter verwendet.',
             ['Automatisch erkennen (empfohlen)','Sparsam – Fire TV / wenig Arbeitsspeicher','Bisherige Leistungseinstellung behalten'])
         if profile is None:return None
-        android=xbmc.getCondVisibility('System.Platform.Android')
         last=choose(home,monitor,3,'Jetzt werden alle Bereiche gespeichert',
             'Nebelflix lädt die konfigurierten Widget-Quellen aller Hubs und speichert die Ergebnisse auf diesem Gerät.'+
             '[CR][CR]Ein Fortschrittsbalken zeigt, welche Reihe gerade vorbereitet wird. Dies kann beim ersten Mal einige Minuten dauern.'+
-            '[CR][CR]'+('Nach Abschluss bitte Kodi einmal beenden und erneut öffnen.' if android else
-             'Nach erfolgreichem Abschluss startet Kodi einmal automatisch neu.')+
+            '[CR][CR]Nach erfolgreichem Abschluss öffnet sich direkt deine Oberfläche. Ein Neustart ist nicht nötig.'+
             '[CR][CR]Danach erscheinen gespeicherte Inhalte ohne erneute Quellensuche. Neue Inhalte werden später im Hintergrund aktualisiert.',
             ['Vorbereitung starten'])
         return profile if last is not None else None

@@ -31,7 +31,7 @@ def required(rows,force=False):
 
 
 def run(api,force=False):
-    """Return true only when a supported application restart was requested."""
+    """Prepare saved data; the caller continues without restarting Kodi."""
     rows=plan(library.layout())
     if not required(rows,force):return False
     api.prop('Revisions.Deferred','true')
@@ -85,19 +85,30 @@ def run(api,force=False):
         if not complete:
             if not cancelled:api.notification('%s Reihen vorbereitet, %s Quellen nicht erreichbar. Vorbereitung wird beim naechsten Start fortgesetzt.'%(done-failed,failed))
             return False
-        # Persist completion BEFORE restarting. Ordinary launches never restart again.
         library.preload_finished(len(rows),0)
-        supported=xbmc.getCondVisibility('System.Platform.Windows') or xbmc.getCondVisibility('System.Platform.Linux')
-        android=xbmc.getCondVisibility('System.Platform.Android')
-        if supported and not android:
-            api.prop('PreloadStatus','Vorbereitung fertig - Kodi startet einmal neu ...')
-            state['restart_requested_at']=time.time();library.write(STATE,state)
-            if not api.MONITOR.waitForAbort(1):xbmc.executebuiltin('RestartApp')
-            return True
-        api.notification('Alle Hubs gespeichert. Bitte Kodi einmal beenden und erneut oeffnen.')
+        api.prop('PreloadStatus','Vorbereitung fertig – Oberfläche wird geöffnet ...')
+        restore_surface(api)
         return False
+
     finally:
         for future in jobs:future.cancel()
         pool.shutdown(wait=False);art.close()
         api.prop('PrepareWidgets','')
         xbmc.executebuiltin('Dialog.Close(1194)')
+
+
+def restore_surface(api):
+    """Commit all prepared snapshots behind the overlay before revealing Home."""
+    import bootstrap
+    import hub_protocol
+    config=library.layout()
+    home=api.WIN
+    for slot,tab in enumerate(config.get('tabs',[])[:12]):
+        window=home if slot==0 else xbmcgui.Window(hub_protocol.window_id(slot)+10000)
+        # A manual rerun can retain the same layout but have different contents.
+        window.clearProperty('NF.LayoutSignature')
+        bootstrap.configure(window,home,library.ROOT,tab,slot)
+    api.prop('StartupBlocked','')
+    xbmc.executebuiltin('Dialog.Close(1190)')
+    xbmc.executebuiltin('ActivateWindow(Home)')
+    xbmc.executebuiltin('SetFocus(200)')
