@@ -3,7 +3,7 @@
   "addons": [
     {
       "id": "plugin.video.nebelflix.hybrid",
-      "version": "2026.11.19.1"
+      "version": "2026.11.21.1"
     },
     {
       "id": "plugin.video.nebelflix.tv",
@@ -15,7 +15,7 @@
     },
     {
       "id": "skin.nebelflix",
-      "version": "0.5.74"
+      "version": "0.5.76"
     }
   ]
 }

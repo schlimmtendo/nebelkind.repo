@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <addons>
-  <addon id="plugin.video.nebelflix.hybrid" version="2026.11.19.1" name="Nebelkind Hybrid" provider-name="Nebelkind">
+  <addon id="plugin.video.nebelflix.hybrid" version="2026.11.21.1" name="Nebelkind Hybrid" provider-name="Nebelkind">
     <requires>
       <import addon="xbmc.python" version="3.0.0" />
       <import addon="script.module.requests" />
@@ -36,7 +36,7 @@
         <screenshot>resources/media/screenshot-02.jpg</screenshot>
         <screenshot>resources/media/screenshot-04.jpg</screenshot>
       </assets>
-      <news>Quellenkopf korrigiert; begrenzte und abbrechbare Quellensuche; Ladezeit-Diagnose.</news>
+      <news>Faire MovieScout-Suchreihenfolge, eindeutige Herkunftsanzeige, Start-/Suchdiagnose sowie Quellenlayout und schnellere Metadatenvorbereitung.</news>
     </extension>
   </addon>
   <addon id="plugin.video.nebelflix.tv" name="Nebelflix TV" version="0.2.4" provider-name="TitanX Lab">
@@ -103,7 +103,7 @@
       </assets>
     </extension>
   </addon>
-  <addon id="skin.nebelflix" version="0.5.74" name="Nebelflix" provider-name="Nebelflix / Nebelflix contributors">
+  <addon id="skin.nebelflix" version="0.5.76" name="Nebelflix" provider-name="Nebelflix / Nebelflix contributors">
     <requires>
       <import addon="xbmc.gui" version="5.17.0" />
       <import addon="xbmc.python" version="3.0.0" />
@@ -121,6 +121,7 @@
       <assets>
         <icon>resources/nebelflix-icon.png</icon>
       </assets>
+      <news>Unabhängige Hubs, gespeicherte Widgets, Setup nach Cache-Reset, Trailer-Korrekturen und manuell scrollbarerer Beschreibungstext. Persönliche Daten bleiben erhalten.</news>
     </extension>
     <extension point="xbmc.python.pluginsource" library="resources/provider.py">
       <provides>video</provides>
