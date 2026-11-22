@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <addons>
-  <addon id="plugin.video.nebelflix.hybrid" version="2026.11.22.2" name="Nebelkind Hybrid" provider-name="Nebelkind">
+  <addon id="plugin.video.nebelflix.hybrid" version="2026.11.22.3" name="Nebelkind Hybrid" provider-name="Nebelkind">
     <requires>
       <import addon="xbmc.python" version="3.0.0" />
       <import addon="script.module.requests" />
@@ -105,7 +105,7 @@
       </assets>
     </extension>
   </addon>
-  <addon id="skin.nebelflix" version="0.5.84" name="Nebelflix" provider-name="Nebelflix / Nebelflix contributors">
+  <addon id="skin.nebelflix" version="0.5.85" name="Nebelflix" provider-name="Nebelflix / Nebelflix contributors">
     <requires>
       <import addon="xbmc.gui" version="5.17.0" />
       <import addon="xbmc.python" version="3.0.0" />
