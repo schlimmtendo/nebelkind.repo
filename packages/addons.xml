@@ -62,7 +62,7 @@
       <news>Widgets und EPG-Einstieg für Vavoo TV Plus. Automatische Favoritenpflege nach geänderten Senderlisten, ohne Vavoo-Dateien zu verändern. Alter eigener Guide entfernt.</news>
     </extension>
   </addon>
-  <addon id="plugin.video.nebelkindmusic" name="[B][COLOR skyblue]Nebelkind[/COLOR][COLOR gold] Musik[/COLOR][/B]" version="5.1.3" provider-name="NebelKind">
+  <addon id="plugin.video.nebelkindmusic" name="[B][COLOR skyblue]Nebelkind[/COLOR][COLOR gold] Musik[/COLOR][/B]" version="5.1.6" provider-name="NebelKind">
     <requires>
       <import addon="xbmc.python" version="3.0.0" />
       <import addon="plugin.video.youtube" />
