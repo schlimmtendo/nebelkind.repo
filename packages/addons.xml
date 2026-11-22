@@ -62,7 +62,7 @@
       <news>Widgets und EPG-Einstieg für Vavoo TV Plus. Automatische Favoritenpflege nach geänderten Senderlisten, ohne Vavoo-Dateien zu verändern. Alter eigener Guide entfernt.</news>
     </extension>
   </addon>
-  <addon id="plugin.video.nebelkindmusic" name="[B][COLOR skyblue]Nebelkind[/COLOR][COLOR gold] Musik[/COLOR][/B]" version="5.1.4" provider-name="NebelKind">
+  <addon id="plugin.video.nebelkindmusic" name="[B][COLOR skyblue]Nebelkind[/COLOR][COLOR gold] Musik[/COLOR][/B]" version="5.1.5" provider-name="NebelKind">
     <requires>
       <import addon="xbmc.python" version="3.0.0" />
       <import addon="plugin.video.youtube" />
@@ -81,7 +81,7 @@
         <icon>icon.png</icon>
         <fanart>fanart.jpg</fanart>
       </assets>
-      <news>5.1.4: Abspielreihenfolge Normal, Zufall oder Rückwärts auswählbar. Playlist-Cover und Song-Metadaten werden pro Musikvideo gesetzt, auch nach vorheriger Filmwiedergabe.</news>
+      <news>5.1.5: Rücknahme der Playlist-Änderungen aus 5.1.4. Vorherigen Wiedergabeweg aus 5.1.3 wiederhergestellt.</news>
     </extension>
   </addon>
   <addon id="repository.nebelkind" name="Nebelkind Repo" version="1.0.0" provider-name="Nebelkind">
