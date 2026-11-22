@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <addons>
-  <addon id="plugin.video.nebelflix.hybrid" version="2026.11.21.1" name="Nebelkind Hybrid" provider-name="Nebelkind">
+  <addon id="plugin.video.nebelflix.hybrid" version="2026.11.22.1" name="Nebelkind Hybrid" provider-name="Nebelkind">
     <requires>
       <import addon="xbmc.python" version="3.0.0" />
       <import addon="script.module.requests" />
@@ -36,32 +36,33 @@
         <screenshot>resources/media/screenshot-02.jpg</screenshot>
         <screenshot>resources/media/screenshot-04.jpg</screenshot>
       </assets>
-      <news>Faire MovieScout-Suchreihenfolge, eindeutige Herkunftsanzeige, Start-/Suchdiagnose sowie Quellenlayout und schnellere Metadatenvorbereitung.</news>
+      <news>Fehlgeschlagene Wiedergaben beenden Wächter und Folgenvorbereitung. Begrenzte Resolver-Laufzeiten; manuelle Quellenwahl ohne versteckte Massen-Fallbacks.</news>
     </extension>
   </addon>
-  <addon id="plugin.video.nebelflix.tv" name="Nebelflix TV" version="0.2.4" provider-name="TitanX Lab">
+  <addon id="plugin.video.nebelflix.tv" name="Nebelflix TV" version="0.2.5" provider-name="TitanX Lab">
     <requires>
       <import addon="xbmc.python" version="3.0.0" />
-      <import addon="plugin.video.vavoo.tv.plus" version="2.0.8" />
+      <import addon="plugin.video.vavoo.tv.plus" version="2.0.11" />
+      <import addon="script.module.requests" version="2.27.1" />
     </requires>
     <extension point="xbmc.python.pluginsource" library="default.py">
       <provides>video</provides>
     </extension>
     <extension point="xbmc.service" library="service.py" start="startup" />
     <extension point="xbmc.addon.metadata">
-      <summary lang="de_DE">Vavoo-TV-Plus-Sendergruppen mit eigenem Programmführer, XMLTV-EPG und Senderlogos.</summary>
-      <description lang="de_DE">Eigenständiger TV-Guide für Vavoo TV Plus ab 2.0.8. Liest dessen Sendergruppen und Abspielwege direkt, kombiniert XMLTV-Programmdaten aus mehreren Quellen und speichert Senderlogos. Kein binärer PVR-Client; Vavoo übernimmt die Wiedergabe.</description>
-      <description lang="en_GB">Live TV guide for Vavoo TV Plus with channel groups, merged XMLTV schedules, and cached logos. Not a native PVR client.</description>
+      <summary lang="de_DE">Vavoo-TV-Plus-Widgets, Favoritenpflege und Einstieg in Vavoos eigenen Programmführer.</summary>
+      <description lang="de_DE">Widget- und Senderverwaltung für Vavoo TV Plus. Öffnet dessen eigenen EPG und aktualisiert/repariert Favoriten nach geänderten Senderlisten über die installierte Vavoo-Logik. Keine Änderungen an Vavoo-Dateien und keine eigene EPG-Oberfläche.</description>
+      <description lang="en_GB">Widget- und Senderverwaltung für Vavoo TV Plus. Öffnet dessen eigenen EPG und aktualisiert/repariert Favoriten nach geänderten Senderlisten über die installierte Vavoo-Logik. Keine Änderungen an Vavoo-Dateien und keine eigene EPG-Oberfläche.</description>
       <platform>all</platform>
       <license>MIT</license>
       <assets>
         <icon>icon.png</icon>
         <fanart>fanart.jpg</fanart>
       </assets>
-      <news>Favoritenansicht, eindeutiges Kontextmenü, persistenter Guide und kleinere Senderseiten.</news>
+      <news>Widgets und EPG-Einstieg für Vavoo TV Plus. Automatische Favoritenpflege nach geänderten Senderlisten, ohne Vavoo-Dateien zu verändern. Alter eigener Guide entfernt.</news>
     </extension>
   </addon>
-  <addon id="plugin.video.nebelkindmusic" name="[B][COLOR skyblue]Nebelkind[/COLOR][COLOR gold] Musik[/COLOR][/B]" version="5.0.1" provider-name="NebelKind">
+  <addon id="plugin.video.nebelkindmusic" name="[B][COLOR skyblue]Nebelkind[/COLOR][COLOR gold] Musik[/COLOR][/B]" version="5.1.2" provider-name="NebelKind">
     <requires>
       <import addon="xbmc.python" version="3.0.0" />
       <import addon="plugin.video.youtube" />
@@ -69,6 +70,7 @@
     <extension point="xbmc.python.pluginsource" library="default.py">
       <provides>video</provides>
     </extension>
+    <extension point="xbmc.service" library="service.py" />
     <extension point="xbmc.addon.metadata">
       <summary>YouTube Music Video Playlists</summary>
       <description>
@@ -79,7 +81,7 @@
         <icon>icon.png</icon>
         <fanart>fanart.jpg</fanart>
       </assets>
-      <news>Wartungsrevision für den gemeinsamen Revisions-Updater-Test; Musikfunktionen unverändert.</news>
+      <news>Einheitliche Genre- und Addon-Icons. Öffentliche Titellisten statt Playlist-Data-API; Videos über YouTube-Addon. Bis 100 Titel pro Warteschlange, vollständige Playlist im Kontextmenü.</news>
     </extension>
   </addon>
   <addon id="repository.nebelkind" name="Nebelkind Repo" version="1.0.0" provider-name="Nebelkind">
@@ -103,7 +105,7 @@
       </assets>
     </extension>
   </addon>
-  <addon id="skin.nebelflix" version="0.5.79" name="Nebelflix" provider-name="Nebelflix / Nebelflix contributors">
+  <addon id="skin.nebelflix" version="0.5.81" name="Nebelflix" provider-name="Nebelflix / Nebelflix contributors">
     <requires>
       <import addon="xbmc.gui" version="5.17.0" />
       <import addon="xbmc.python" version="3.0.0" />
@@ -121,7 +123,7 @@
       <assets>
         <icon>resources/nebelflix-icon.png</icon>
       </assets>
-      <news>Nach Widget-Vorbereitung direkt zur Oberfläche ohne Neustart. Sofortige Rückmeldung am Einrichtungsbutton und Diagnose der Controller-Ladezeit.</news>
+      <news>Spotlight pro Nutzer abschaltbar; Fire-TV-Last reduziert, stabile Widgetposition und Rückkehr aus Details. Angekündigter Abschluss-Neustart bzw. Beenden auf Android.</news>
     </extension>
     <extension point="xbmc.python.pluginsource" library="resources/provider.py">
       <provides>video</provides>
