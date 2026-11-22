@@ -72,6 +72,7 @@ class Hubs:
         self.windows = {}
         self.jobs = set()
         self.tasks = {}
+        self.explicit_requests = {}
         self.inflight = set()
         self.logo_pool = SearchExecutor(max_workers=1)
         self.logo_jobs = {}
@@ -161,19 +162,24 @@ class Hubs:
     def complete_tasks(self):
         # Downloads can finish into disk cache while the user is browsing, but
         # changing static provider items can reset every list in the window.
-        if self.presentation_locked():return
+        locked=self.presentation_locked()
+        modal=xbmc.getCondVisibility('System.HasModalDialog') or xbmc.getCondVisibility('Player.HasVideo')
         self.inflight={job for job in self.inflight if not job.done()}
         applied=0
         for identity,task in list(self.tasks.items()):
             future,window,source,offset,back,request,row=task
+            explicit=self.explicit_requests.get(identity)==request
+            if locked and (not explicit or modal):continue
             if not future.done():continue
             if applied >= (1 if self.budget.name=='low' else 2):break
             del self.tasks[identity]
+            self.explicit_requests.pop(identity,None)
             applied+=1
             page,cid=identity;prefix=direct_widgets.key(page,cid)
             if self.home.getProperty(prefix+'.Request')!=request:continue
             try:
                 entry,stale,status=future.result()
+                if explicit:window.clearProperty('NF.Source'+str(cid))
                 direct_widgets.restore(window,self.home,page,cid,source,entry,
                     row['label'].lower().startswith('top 10'),allow_personal=True,offset=offset,back=back,budget=self.budget)
                 hub_protocol.set_property(self.home,prefix+'.Stale','true' if stale else '')
@@ -183,6 +189,9 @@ class Hubs:
                 direct_widgets.restore(window,self.home,page,cid,source,dict(items=[retry],time=time.time()),allow_personal=True)
                 hub_protocol.set_property(self.home,prefix+'.State','error')
                 xbmc.log('[Nebelflix Widgets] row=%s %s'%(cid,type(exc).__name__),xbmc.LOGWARNING)
+            if explicit and window.getFocusId()==cid:
+                try:window.getControl(cid).selectItem(0)
+                except RuntimeError:pass
             if window.getFocusId()==cid+1000:
                 slot=int(window.getProperty('NF.HubSlot') or 0)
                 window.setFocusId(cid if self.home.getProperty(prefix+'.State')=='ready' else hub_protocol.topbar_id(slot))
@@ -486,6 +495,8 @@ class Hubs:
                 history.append(json.loads(window.getProperty('NF.Source'+str(cid))))
         hub_protocol.set_property(window,'NF.History'+str(cid),json.dumps(history))
         self.bind(window,page,cid,rows[cid-600],source=target['source'],offset=target['offset'],back=bool(history),refresh=bool(data.get('Retry')))
+        task=self.tasks.get((page,cid))
+        if task:self.explicit_requests[(page,cid)]=task[5]
 
     def busy(self):
         if any(not job.done() for job in self.inflight):return True
