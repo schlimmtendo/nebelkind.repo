@@ -1,226 +1,356 @@
 <window id="1191" type="dialog">
   <defaultcontrol always="true">1300</defaultcontrol>
-  <backgroundcolor>FF141414</backgroundcolor>
+  <backgroundcolor>FF101010</backgroundcolor>
   <onunload>ClearProperty(NF.DetailOpen,Home)</onunload>
   <onunload>SetProperty(NF.RestoreWidgetFocus,true,Home)</onunload>
   <controls>
     <control type="image">
+      <left>0</left>
+      <top>0</top>
       <width>1920</width>
       <height>1080</height>
-      <texture>nebelflix/background.png</texture>
-      <aspectratio>stretch</aspectratio>
-      <colordiffuse>DFFFFFFF</colordiffuse>
-    </control>
-    <control type="image">
-      <left>250</left>
-      <top>40</top>
-      <width>1420</width>
-      <height>1000</height>
-      <texture>nebelflix/background.png</texture>
+      <texture>nebelflix/detail-solid.png</texture>
       <aspectratio>stretch</aspectratio>
     </control>
     <control type="image">
-      <left>250</left>
-      <top>40</top>
-      <width>1420</width>
-      <height>670</height>
-      <visible>!String.IsEqual(Window(Home).Property(NFD.DBType),channel)</visible>
+      <left>0</left>
+      <top>0</top>
+      <width>1920</width>
+      <height>1080</height>
       <texture>$INFO[Window(Home).Property(NFD.Fanart)]</texture>
       <aspectratio>scale</aspectratio>
+      <colordiffuse>55FFFFFF</colordiffuse>
     </control>
     <control type="image">
-      <left>250</left>
-      <top>40</top>
-      <width>1420</width>
-      <height>670</height>
-      <visible>!String.IsEqual(Window(Home).Property(NFD.DBType),channel)</visible>
+      <left>0</left>
+      <top>0</top>
+      <width>1920</width>
+      <height>1080</height>
       <texture>nebelflix/hero-shade.png</texture>
-      <aspectratio>stretch</aspectratio>
+      <aspectratio>scale</aspectratio>
+      <colordiffuse>FFFFFFFF</colordiffuse>
     </control>
     <control type="image">
-      <left>310</left>
-      <top>310</top>
-      <width>750</width>
-      <height>155</height>
-      <visible>!String.IsEmpty(Window(Home).Property(NFD.Clearlogo)) + !Skin.HasSetting(NFHideClearlogo) + !String.IsEqual(Window(Home).Property(NFD.DBType),channel)</visible>
-      <texture>$INFO[Window(Home).Property(NFD.Clearlogo)]</texture>
-      <aspectratio>keep</aspectratio>
-    </control>
-    <control type="image">
-      <left>310</left>
-      <top>660</top>
-      <width>240</width>
-      <height>280</height>
-      <visible>String.IsEqual(Window(Home).Property(NFD.DBType),channel)</visible>
+      <left>60</left>
+      <top>150</top>
+      <width>510</width>
+      <height>770</height>
       <texture>$INFO[Window(Home).Property(NFD.Poster)]</texture>
       <aspectratio>keep</aspectratio>
-    </control>
-    <control type="textbox">
-      <left>310</left>
-      <top>320</top>
-      <width>1210</width>
-      <height>145</height>
-      <visible>String.IsEmpty(Window(Home).Property(NFD.Clearlogo)) | Skin.HasSetting(NFHideClearlogo) | String.IsEqual(Window(Home).Property(NFD.DBType),channel)</visible>
-      <font>NFDetailTitle</font>
-      <label>$INFO[Window(Home).Property(NFD.Title)]</label>
-      <textcolor>FFFFFFFF</textcolor>
+      <colordiffuse>FFFFFFFF</colordiffuse>
     </control>
     <control type="label">
-      <left>310</left>
-      <top>480</top>
-      <width>1210</width>
-      <height>42</height>
-      <label>$INFO[Window(Home).Property(NFD.Meta)]</label>
-      <font>NFBody</font>
-      <textcolor>FFDDDDDD</textcolor>
+      <left>610</left>
+      <top>20</top>
+      <width>1190</width>
+      <height>75</height>
+      <label>$INFO[Window(Home).Property(NFD.Title)]$INFO[Window(Home).Property(NFD.Year), (,)]</label>
+      <font>NFTitle</font>
+      <textcolor>FFFFFFFF</textcolor>
+      <align>center</align>
       <aligny>center</aligny>
     </control>
-    <control type="button" id="1300">
-      <left>310</left>
-      <top>550</top>
-      <width>270</width>
-      <height>65</height>
-      <label>Abspielen</label>
+    <control type="label">
+      <left>610</left>
+      <top>95</top>
+      <width>1190</width>
+      <height>45</height>
+      <label>$INFO[Window(Home).Property(NFD.Tagline)]</label>
       <font>NFBody</font>
-      <textcolor>FF141414</textcolor>
-      <focusedcolor>FF141414</focusedcolor>
+      <textcolor>FFCCCCCC</textcolor>
       <align>center</align>
-      <texturefocus>nebelflix/button-focus.png</texturefocus>
-      <texturenofocus>nebelflix/button.png</texturenofocus>
-      <onclick>RunScript(skin.nebelflix,play,detail)</onclick>
-      <onup>1304</onup>
-      <onleft>1304</onleft>
-      <onright condition="String.IsEqual(Window(Home).Property(NFD.DBType),channel)">1304</onright>
-      <onright condition="!String.IsEqual(Window(Home).Property(NFD.DBType),channel)">1301</onright>
-      <ondown condition="!String.IsEqual(Window(Home).Property(NFD.DBType),channel)">1307</ondown>
-      <ondown condition="String.IsEqual(Window(Home).Property(NFD.DBType),channel)">1308</ondown>
+      <aligny>center</aligny>
     </control>
-    <control type="button" id="1301">
-      <left>600</left>
-      <top>550</top>
-      <width>220</width>
-      <height>65</height>
-      <visible>!String.IsEmpty(Window(Home).Property(NFD.TMDB)) + !String.IsEqual(Window(Home).Property(NFD.DBType),channel)</visible>
-      <label>Trailer</label>
-      <font>NFBody</font>
-      <textcolor>FFFFFFFF</textcolor>
-      <focusedcolor>FF141414</focusedcolor>
-      <align>center</align>
-      <texturefocus>nebelflix/button-focus.png</texturefocus>
-      <texturenofocus>nebelflix/pill-dark.png</texturenofocus>
-      <onclick>RunScript(skin.nebelflix,trailer,detail)</onclick>
+    <control type="list" id="1310">
+      <left>610</left>
+      <top>155</top>
+      <width>1245</width>
+      <height>305</height>
+      <orientation>horizontal</orientation>
       <onup>1304</onup>
-      <onleft>1300</onleft>
-      <onright>1302</onright>
-      <ondown condition="!String.IsEqual(Window(Home).Property(NFD.DBType),channel)">1307</ondown>
-      <ondown condition="String.IsEqual(Window(Home).Property(NFD.DBType),channel)">1308</ondown>
-    </control>
-    <control type="button" id="1302">
-      <left>840</left>
-      <top>550</top>
-      <width>270</width>
-      <height>65</height>
-      <label>$INFO[Window(Home).Property(NFD.MyListLabel)]</label>
+      <ondown>1321</ondown>
+      <onback>SetFocus(1300)</onback>
+      <onclick>RunScript(skin.nebelflix,detail_person,$INFO[Container(1310).ListItem.Property(PersonID)])</onclick>
       <visible>!String.IsEqual(Window(Home).Property(NFD.DBType),channel)</visible>
-      <font>NFBody</font>
-      <textcolor>FFFFFFFF</textcolor>
-      <focusedcolor>FF141414</focusedcolor>
-      <align>center</align>
-      <texturefocus>nebelflix/button-focus.png</texturefocus>
-      <texturenofocus>nebelflix/pill-dark.png</texturenofocus>
-      <onclick>RunScript(skin.nebelflix,mylist,detail)</onclick>
-      <onup>1304</onup>
-      <onleft>1301</onleft>
-      <onright>1303</onright>
-      <ondown condition="!String.IsEqual(Window(Home).Property(NFD.DBType),channel)">1307</ondown>
-      <ondown condition="String.IsEqual(Window(Home).Property(NFD.DBType),channel)">1308</ondown>
+      <scrolltime>180</scrolltime>
+      <itemlayout width="245" height="305">
+        <control type="image">
+          <left>5</left>
+          <top>0</top>
+          <width>230</width>
+          <height>300</height>
+          <texture>nebelflix/background.png</texture>
+          <colordiffuse>FF202020</colordiffuse>
+        </control>
+        <control type="image">
+          <left>10</left>
+          <top>5</top>
+          <width>220</width>
+          <height>238</height>
+          <aspectratio>scale</aspectratio>
+          <texture fallback="nebelflix/poster.png">$INFO[ListItem.Icon]</texture>
+        </control>
+        <control type="label">
+          <left>12</left>
+          <top>244</top>
+          <width>216</width>
+          <height>27</height>
+          <label>$INFO[ListItem.Label]</label>
+          <font>NFSmall</font>
+          <align>center</align>
+          <textcolor>FFFFFFFF</textcolor>
+        </control>
+        <control type="label">
+          <left>12</left>
+          <top>271</top>
+          <width>216</width>
+          <height>27</height>
+          <label>$INFO[ListItem.Label2]</label>
+          <font>NFSmall</font>
+          <align>center</align>
+          <textcolor>FFFFFFFF</textcolor>
+        </control>
+      </itemlayout>
+      <focusedlayout width="245" height="305">
+        <control type="image">
+          <left>5</left>
+          <top>0</top>
+          <width>230</width>
+          <height>300</height>
+          <texture>nebelflix/button-focus.png</texture>
+          <colordiffuse>FFB20710</colordiffuse>
+        </control>
+        <control type="image">
+          <left>10</left>
+          <top>5</top>
+          <width>220</width>
+          <height>238</height>
+          <aspectratio>scale</aspectratio>
+          <texture fallback="nebelflix/poster.png">$INFO[ListItem.Icon]</texture>
+        </control>
+        <control type="label">
+          <left>12</left>
+          <top>244</top>
+          <width>216</width>
+          <height>27</height>
+          <label>$INFO[ListItem.Label]</label>
+          <font>NFSmall</font>
+          <align>center</align>
+          <textcolor>FFFFFFFF</textcolor>
+        </control>
+        <control type="label">
+          <left>12</left>
+          <top>271</top>
+          <width>216</width>
+          <height>27</height>
+          <label>$INFO[ListItem.Label2]</label>
+          <font>NFSmall</font>
+          <align>center</align>
+          <textcolor>FFFFFFFF</textcolor>
+        </control>
+      </focusedlayout>
+      <content>
+        <item id="1">
+          <label>$INFO[Window(Home).Property(NFD.Actor1.Name)]</label>
+          <label2>$INFO[Window(Home).Property(NFD.Actor1.Role)]</label2>
+          <icon>$INFO[Window(Home).Property(NFD.Actor1.Image)]</icon>
+          <property name="PersonID">$INFO[Window(Home).Property(NFD.Actor1.ID)]</property>
+          <visible>!String.IsEmpty(Window(Home).Property(NFD.Actor1.Name))</visible>
+        </item>
+        <item id="2">
+          <label>$INFO[Window(Home).Property(NFD.Actor2.Name)]</label>
+          <label2>$INFO[Window(Home).Property(NFD.Actor2.Role)]</label2>
+          <icon>$INFO[Window(Home).Property(NFD.Actor2.Image)]</icon>
+          <property name="PersonID">$INFO[Window(Home).Property(NFD.Actor2.ID)]</property>
+          <visible>!String.IsEmpty(Window(Home).Property(NFD.Actor2.Name))</visible>
+        </item>
+        <item id="3">
+          <label>$INFO[Window(Home).Property(NFD.Actor3.Name)]</label>
+          <label2>$INFO[Window(Home).Property(NFD.Actor3.Role)]</label2>
+          <icon>$INFO[Window(Home).Property(NFD.Actor3.Image)]</icon>
+          <property name="PersonID">$INFO[Window(Home).Property(NFD.Actor3.ID)]</property>
+          <visible>!String.IsEmpty(Window(Home).Property(NFD.Actor3.Name))</visible>
+        </item>
+        <item id="4">
+          <label>$INFO[Window(Home).Property(NFD.Actor4.Name)]</label>
+          <label2>$INFO[Window(Home).Property(NFD.Actor4.Role)]</label2>
+          <icon>$INFO[Window(Home).Property(NFD.Actor4.Image)]</icon>
+          <property name="PersonID">$INFO[Window(Home).Property(NFD.Actor4.ID)]</property>
+          <visible>!String.IsEmpty(Window(Home).Property(NFD.Actor4.Name))</visible>
+        </item>
+        <item id="5">
+          <label>$INFO[Window(Home).Property(NFD.Actor5.Name)]</label>
+          <label2>$INFO[Window(Home).Property(NFD.Actor5.Role)]</label2>
+          <icon>$INFO[Window(Home).Property(NFD.Actor5.Image)]</icon>
+          <property name="PersonID">$INFO[Window(Home).Property(NFD.Actor5.ID)]</property>
+          <visible>!String.IsEmpty(Window(Home).Property(NFD.Actor5.Name))</visible>
+        </item>
+        <item id="6">
+          <label>$INFO[Window(Home).Property(NFD.Actor6.Name)]</label>
+          <label2>$INFO[Window(Home).Property(NFD.Actor6.Role)]</label2>
+          <icon>$INFO[Window(Home).Property(NFD.Actor6.Image)]</icon>
+          <property name="PersonID">$INFO[Window(Home).Property(NFD.Actor6.ID)]</property>
+          <visible>!String.IsEmpty(Window(Home).Property(NFD.Actor6.Name))</visible>
+        </item>
+        <item id="7">
+          <label>$INFO[Window(Home).Property(NFD.Actor7.Name)]</label>
+          <label2>$INFO[Window(Home).Property(NFD.Actor7.Role)]</label2>
+          <icon>$INFO[Window(Home).Property(NFD.Actor7.Image)]</icon>
+          <property name="PersonID">$INFO[Window(Home).Property(NFD.Actor7.ID)]</property>
+          <visible>!String.IsEmpty(Window(Home).Property(NFD.Actor7.Name))</visible>
+        </item>
+        <item id="8">
+          <label>$INFO[Window(Home).Property(NFD.Actor8.Name)]</label>
+          <label2>$INFO[Window(Home).Property(NFD.Actor8.Role)]</label2>
+          <icon>$INFO[Window(Home).Property(NFD.Actor8.Image)]</icon>
+          <property name="PersonID">$INFO[Window(Home).Property(NFD.Actor8.ID)]</property>
+          <visible>!String.IsEmpty(Window(Home).Property(NFD.Actor8.Name))</visible>
+        </item>
+        <item id="9">
+          <label>$INFO[Window(Home).Property(NFD.Actor9.Name)]</label>
+          <label2>$INFO[Window(Home).Property(NFD.Actor9.Role)]</label2>
+          <icon>$INFO[Window(Home).Property(NFD.Actor9.Image)]</icon>
+          <property name="PersonID">$INFO[Window(Home).Property(NFD.Actor9.ID)]</property>
+          <visible>!String.IsEmpty(Window(Home).Property(NFD.Actor9.Name))</visible>
+        </item>
+        <item id="10">
+          <label>$INFO[Window(Home).Property(NFD.Actor10.Name)]</label>
+          <label2>$INFO[Window(Home).Property(NFD.Actor10.Role)]</label2>
+          <icon>$INFO[Window(Home).Property(NFD.Actor10.Image)]</icon>
+          <property name="PersonID">$INFO[Window(Home).Property(NFD.Actor10.ID)]</property>
+          <visible>!String.IsEmpty(Window(Home).Property(NFD.Actor10.Name))</visible>
+        </item>
+        <item id="11">
+          <label>$INFO[Window(Home).Property(NFD.Actor11.Name)]</label>
+          <label2>$INFO[Window(Home).Property(NFD.Actor11.Role)]</label2>
+          <icon>$INFO[Window(Home).Property(NFD.Actor11.Image)]</icon>
+          <property name="PersonID">$INFO[Window(Home).Property(NFD.Actor11.ID)]</property>
+          <visible>!String.IsEmpty(Window(Home).Property(NFD.Actor11.Name))</visible>
+        </item>
+        <item id="12">
+          <label>$INFO[Window(Home).Property(NFD.Actor12.Name)]</label>
+          <label2>$INFO[Window(Home).Property(NFD.Actor12.Role)]</label2>
+          <icon>$INFO[Window(Home).Property(NFD.Actor12.Image)]</icon>
+          <property name="PersonID">$INFO[Window(Home).Property(NFD.Actor12.ID)]</property>
+          <visible>!String.IsEmpty(Window(Home).Property(NFD.Actor12.Name))</visible>
+        </item>
+        <item id="13">
+          <label>$INFO[Window(Home).Property(NFD.Actor13.Name)]</label>
+          <label2>$INFO[Window(Home).Property(NFD.Actor13.Role)]</label2>
+          <icon>$INFO[Window(Home).Property(NFD.Actor13.Image)]</icon>
+          <property name="PersonID">$INFO[Window(Home).Property(NFD.Actor13.ID)]</property>
+          <visible>!String.IsEmpty(Window(Home).Property(NFD.Actor13.Name))</visible>
+        </item>
+        <item id="14">
+          <label>$INFO[Window(Home).Property(NFD.Actor14.Name)]</label>
+          <label2>$INFO[Window(Home).Property(NFD.Actor14.Role)]</label2>
+          <icon>$INFO[Window(Home).Property(NFD.Actor14.Image)]</icon>
+          <property name="PersonID">$INFO[Window(Home).Property(NFD.Actor14.ID)]</property>
+          <visible>!String.IsEmpty(Window(Home).Property(NFD.Actor14.Name))</visible>
+        </item>
+        <item id="15">
+          <label>$INFO[Window(Home).Property(NFD.Actor15.Name)]</label>
+          <label2>$INFO[Window(Home).Property(NFD.Actor15.Role)]</label2>
+          <icon>$INFO[Window(Home).Property(NFD.Actor15.Image)]</icon>
+          <property name="PersonID">$INFO[Window(Home).Property(NFD.Actor15.ID)]</property>
+          <visible>!String.IsEmpty(Window(Home).Property(NFD.Actor15.Name))</visible>
+        </item>
+        <item id="16">
+          <label>$INFO[Window(Home).Property(NFD.Actor16.Name)]</label>
+          <label2>$INFO[Window(Home).Property(NFD.Actor16.Role)]</label2>
+          <icon>$INFO[Window(Home).Property(NFD.Actor16.Image)]</icon>
+          <property name="PersonID">$INFO[Window(Home).Property(NFD.Actor16.ID)]</property>
+          <visible>!String.IsEmpty(Window(Home).Property(NFD.Actor16.Name))</visible>
+        </item>
+        <item id="17">
+          <label>$INFO[Window(Home).Property(NFD.Actor17.Name)]</label>
+          <label2>$INFO[Window(Home).Property(NFD.Actor17.Role)]</label2>
+          <icon>$INFO[Window(Home).Property(NFD.Actor17.Image)]</icon>
+          <property name="PersonID">$INFO[Window(Home).Property(NFD.Actor17.ID)]</property>
+          <visible>!String.IsEmpty(Window(Home).Property(NFD.Actor17.Name))</visible>
+        </item>
+        <item id="18">
+          <label>$INFO[Window(Home).Property(NFD.Actor18.Name)]</label>
+          <label2>$INFO[Window(Home).Property(NFD.Actor18.Role)]</label2>
+          <icon>$INFO[Window(Home).Property(NFD.Actor18.Image)]</icon>
+          <property name="PersonID">$INFO[Window(Home).Property(NFD.Actor18.ID)]</property>
+          <visible>!String.IsEmpty(Window(Home).Property(NFD.Actor18.Name))</visible>
+        </item>
+        <item id="19">
+          <label>$INFO[Window(Home).Property(NFD.Actor19.Name)]</label>
+          <label2>$INFO[Window(Home).Property(NFD.Actor19.Role)]</label2>
+          <icon>$INFO[Window(Home).Property(NFD.Actor19.Image)]</icon>
+          <property name="PersonID">$INFO[Window(Home).Property(NFD.Actor19.ID)]</property>
+          <visible>!String.IsEmpty(Window(Home).Property(NFD.Actor19.Name))</visible>
+        </item>
+        <item id="20">
+          <label>$INFO[Window(Home).Property(NFD.Actor20.Name)]</label>
+          <label2>$INFO[Window(Home).Property(NFD.Actor20.Role)]</label2>
+          <icon>$INFO[Window(Home).Property(NFD.Actor20.Image)]</icon>
+          <property name="PersonID">$INFO[Window(Home).Property(NFD.Actor20.ID)]</property>
+          <visible>!String.IsEmpty(Window(Home).Property(NFD.Actor20.Name))</visible>
+        </item>
+      </content>
+      <onleft>1310</onleft>
+      <onright>1310</onright>
     </control>
-    <control type="button" id="1303">
-      <left>1130</left>
-      <top>550</top>
-      <width>390</width>
-      <height>65</height>
-      <label>In Nebelflix Hybrid öffnen</label>
-      <visible>!String.IsEmpty(Window(Home).Property(NFD.TMDB)) + !String.IsEqual(Window(Home).Property(NFD.DBType),channel)</visible>
+    <control type="label">
+      <left>620</left>
+      <top>240</top>
+      <width>1210</width>
+      <height>55</height>
+      <label>Besetzung wird geladen …</label>
       <font>NFBody</font>
-      <textcolor>FFFFFFFF</textcolor>
-      <focusedcolor>FF141414</focusedcolor>
+      <textcolor>FFBBBBBB</textcolor>
       <align>center</align>
-      <texturefocus>nebelflix/button-focus.png</texturefocus>
-      <texturenofocus>nebelflix/pill-dark.png</texturenofocus>
-      <onclick>RunScript(skin.nebelflix,browse,detail)</onclick>
-      <onup>1304</onup>
-      <onleft>1302</onleft>
-      <onright>1304</onright>
-      <ondown condition="!String.IsEqual(Window(Home).Property(NFD.DBType),channel)">1307</ondown>
-      <ondown condition="String.IsEqual(Window(Home).Property(NFD.DBType),channel)">1308</ondown>
+      <aligny>center</aligny>
+      <visible>String.IsEmpty(Window(Home).Property(NFD.CastReady)) + !String.IsEqual(Window(Home).Property(NFD.DBType),channel)</visible>
     </control>
-    <control type="button" id="1304">
-      <left>1560</left>
-      <top>70</top>
-      <width>65</width>
-      <height>60</height>
-      <label>×</label>
-      <font>NFBody</font>
-      <textcolor>FFFFFFFF</textcolor>
-      <focusedcolor>FF141414</focusedcolor>
-      <align>center</align>
-      <texturefocus>nebelflix/button-focus.png</texturefocus>
-      <texturenofocus>nebelflix/pill-dark.png</texturenofocus>
-      <onclick>Dialog.Close(1191)</onclick>
-      <onup>1300</onup>
-      <ondown>1300</ondown>
-      <onleft>1303</onleft>
-      <onright>1300</onright>
+    <control type="image">
+      <left>610</left>
+      <top>485</top>
+      <width>730</width>
+      <height>350</height>
+      <texture>nebelflix/background.png</texture>
+      <aspectratio>scale</aspectratio>
+      <colordiffuse>EDFFFFFF</colordiffuse>
+    </control>
+    <control type="image">
+      <left>1360</left>
+      <top>485</top>
+      <width>495</width>
+      <height>350</height>
+      <texture>nebelflix/background.png</texture>
+      <aspectratio>scale</aspectratio>
+      <colordiffuse>EDFFFFFF</colordiffuse>
     </control>
     <control type="textbox" id="1305">
-      <left>310</left>
-      <top>760</top>
-      <width>1250</width>
-      <height>205</height>
-      <visible>!String.IsEqual(Window(Home).Property(NFD.DBType),channel)</visible>
+      <left>635</left>
+      <top>540</top>
+      <width>665</width>
+      <height>270</height>
       <font>NFBody</font>
       <textcolor>FFFFFFFF</textcolor>
       <label>$INFO[Window(Home).Property(NFD.Plot)]</label>
-      <onup>1300</onup>
-      <ondown>1300</ondown>
-      <onleft>1300</onleft>
-      <onright>1300</onright>
       <pagecontrol>1307</pagecontrol>
       <autoscroll>false</autoscroll>
     </control>
-    <control type="textbox" id="1306">
-      <left>600</left>
-      <top>760</top>
-      <width>920</width>
-      <height>205</height>
-      <visible>String.IsEqual(Window(Home).Property(NFD.DBType),channel)</visible>
-      <font>NFBody</font>
+    <control type="textbox" id="1314">
+      <left>1380</left>
+      <top>540</top>
+      <width>440</width>
+      <height>270</height>
+      <font>NFSmall</font>
       <textcolor>FFFFFFFF</textcolor>
-      <label>$INFO[Window(Home).Property(NFD.Plot)]</label>
-      <onup>1300</onup>
-      <ondown>1300</ondown>
-      <onleft>1300</onleft>
-      <onright>1300</onright>
-      <pagecontrol>1308</pagecontrol>
+      <label>$INFO[Window(Home).Property(NFD.Details)]</label>
+      <pagecontrol>1309</pagecontrol>
       <autoscroll>false</autoscroll>
     </control>
-    <control type="label">
-      <left>310</left>
-      <top>1010</top>
-      <width>1200</width>
-      <height>30</height>
-      <label>$INFO[Window(Home).Property(NFD.Genres)]</label>
-      <font>NFSmall</font>
-      <textcolor>FFBBBBBB</textcolor>
-      <aligny>center</aligny>
-    </control>
     <control type="scrollbar" id="1307">
-      <left>1580</left>
-      <top>760</top>
+      <left>1310</left>
+      <top>540</top>
       <width>16</width>
-      <height>205</height>
-      <visible>!String.IsEqual(Window(Home).Property(NFD.DBType),channel)</visible>
+      <height>270</height>
       <orientation>vertical</orientation>
       <showonepage>true</showonepage>
       <texturesliderbackground>nebelflix/pill-dark.png</texturesliderbackground>
@@ -230,16 +360,16 @@
       <textureslidernibfocus>nebelflix/button-focus.png</textureslidernibfocus>
       <onup>1307</onup>
       <ondown>1307</ondown>
-      <onleft>1300</onleft>
-      <onright>1300</onright>
-      <onback>SetFocus(1300)</onback>
+      <onleft>1321</onleft>
+      <onright>1322</onright>
+      <onback>SetFocus(1321)</onback>
+      <onclick>SetFocus(1321)</onclick>
     </control>
-    <control type="scrollbar" id="1308">
-      <left>1580</left>
-      <top>760</top>
+    <control type="scrollbar" id="1309">
+      <left>1830</left>
+      <top>540</top>
       <width>16</width>
-      <height>205</height>
-      <visible>String.IsEqual(Window(Home).Property(NFD.DBType),channel)</visible>
+      <height>270</height>
       <orientation>vertical</orientation>
       <showonepage>true</showonepage>
       <texturesliderbackground>nebelflix/pill-dark.png</texturesliderbackground>
@@ -247,21 +377,249 @@
       <texturesliderbarfocus>nebelflix/button-focus.png</texturesliderbarfocus>
       <textureslidernib>nebelflix/button.png</textureslidernib>
       <textureslidernibfocus>nebelflix/button-focus.png</textureslidernibfocus>
-      <onup>1308</onup>
-      <ondown>1308</ondown>
+      <onup>1309</onup>
+      <ondown>1309</ondown>
+      <onleft>1321</onleft>
+      <onright>1322</onright>
+      <onback>SetFocus(1322)</onback>
+      <onclick>SetFocus(1322)</onclick>
+    </control>
+    <control type="button" id="1300">
+      <left>610</left>
+      <top>855</top>
+      <width>240</width>
+      <height>95</height>
+      <label>$VAR[NFDetailPlayLabel]</label>
+      <font>NFBody</font>
+      <textcolor>FFFFFFFF</textcolor>
+      <focusedcolor>FFFFFFFF</focusedcolor>
+      <align>center</align>
+      <aligny>center</aligny>
+      <texturenofocus>nebelflix/pill-dark.png</texturenofocus>
+      <onclick>RunScript(skin.nebelflix,play,detail)</onclick>
+      <onright condition="!String.IsEqual(Window(Home).Property(NFD.DBType),channel)">1301</onright>
+      <texturefocus colordiffuse="FFB20710">nebelflix/button-focus.png</texturefocus>
+      <onright condition="String.IsEqual(Window(Home).Property(NFD.DBType),channel)">1304</onright>
+      <onup>1321</onup>
+      <ondown>1304</ondown>
+      <onleft condition="String.IsEqual(Window(Home).Property(NFD.DBType),channel)">1304</onleft>
+      <onleft condition="!String.IsEqual(Window(Home).Property(NFD.DBType),channel) + !String.IsEmpty(Window(Home).Property(NFD.CollectionID))">1316</onleft>
+      <onleft condition="!String.IsEqual(Window(Home).Property(NFD.DBType),channel) + String.IsEmpty(Window(Home).Property(NFD.CollectionID))">1303</onleft>
+    </control>
+    <control type="button" id="1301">
+      <left>860</left>
+      <top>855</top>
+      <width>240</width>
+      <height>95</height>
+      <label>Trailer</label>
+      <font>NFBody</font>
+      <textcolor>FFFFFFFF</textcolor>
+      <focusedcolor>FFFFFFFF</focusedcolor>
+      <align>center</align>
+      <aligny>center</aligny>
+      <texturenofocus>nebelflix/pill-dark.png</texturenofocus>
+      <onclick>RunScript(skin.nebelflix,trailer,detail)</onclick>
       <onleft>1300</onleft>
+      <onright>1302</onright>
+      <texturefocus colordiffuse="FFB20710">nebelflix/button-focus.png</texturefocus>
+      <visible>!String.IsEqual(Window(Home).Property(NFD.DBType),channel)</visible>
+      <onup>1321</onup>
+      <ondown>1304</ondown>
+    </control>
+    <control type="button" id="1302">
+      <left>1110</left>
+      <top>855</top>
+      <width>240</width>
+      <height>95</height>
+      <label>$INFO[Window(Home).Property(NFD.MyListLabel)]</label>
+      <font>NFBody</font>
+      <textcolor>FFFFFFFF</textcolor>
+      <focusedcolor>FFFFFFFF</focusedcolor>
+      <align>center</align>
+      <aligny>center</aligny>
+      <texturenofocus>nebelflix/pill-dark.png</texturenofocus>
+      <onclick>RunScript(skin.nebelflix,mylist,detail)</onclick>
+      <onleft>1301</onleft>
+      <onright>1303</onright>
+      <texturefocus colordiffuse="FFB20710">nebelflix/button-focus.png</texturefocus>
+      <visible>!String.IsEqual(Window(Home).Property(NFD.DBType),channel)</visible>
+      <onup>1322</onup>
+      <ondown>1304</ondown>
+    </control>
+    <control type="button" id="1303">
+      <left>1360</left>
+      <top>855</top>
+      <width>240</width>
+      <height>95</height>
+      <label>In Hybrid öffnen</label>
+      <font>NFBody</font>
+      <textcolor>FFFFFFFF</textcolor>
+      <focusedcolor>FFFFFFFF</focusedcolor>
+      <align>center</align>
+      <aligny>center</aligny>
+      <texturenofocus>nebelflix/pill-dark.png</texturenofocus>
+      <onclick>RunScript(skin.nebelflix,browse,detail)</onclick>
+      <onleft>1302</onleft>
+      <onright condition="!String.IsEmpty(Window(Home).Property(NFD.CollectionID))">1316</onright>
+      <texturefocus colordiffuse="FFB20710">nebelflix/button-focus.png</texturefocus>
+      <visible>!String.IsEqual(Window(Home).Property(NFD.DBType),channel)</visible>
+      <onright condition="String.IsEmpty(Window(Home).Property(NFD.CollectionID))">1300</onright>
+      <onup>1322</onup>
+      <ondown>1304</ondown>
+    </control>
+    <control type="button" id="1316">
+      <left>1610</left>
+      <top>855</top>
+      <width>240</width>
+      <height>95</height>
+      <label>Filmreihe</label>
+      <font>NFBody</font>
+      <textcolor>FFFFFFFF</textcolor>
+      <focusedcolor>FFFFFFFF</focusedcolor>
+      <align>center</align>
+      <aligny>center</aligny>
+      <texturenofocus>nebelflix/pill-dark.png</texturenofocus>
+      <onclick>RunScript(skin.nebelflix,detail_collection)</onclick>
+      <onleft>1303</onleft>
       <onright>1300</onright>
-      <onback>SetFocus(1300)</onback>
+      <texturefocus colordiffuse="FFB20710">nebelflix/button-focus.png</texturefocus>
+      <visible>!String.IsEmpty(Window(Home).Property(NFD.CollectionID))</visible>
+      <onup>1322</onup>
+      <ondown>1304</ondown>
+    </control>
+    <control type="button" id="1304">
+      <left>1840</left>
+      <top>25</top>
+      <width>60</width>
+      <height>60</height>
+      <label>×</label>
+      <font>NFBody</font>
+      <align>center</align>
+      <textcolor>FFFFFFFF</textcolor>
+      <focusedcolor>FF141414</focusedcolor>
+      <texturefocus>nebelflix/button-focus.png</texturefocus>
+      <texturenofocus>nebelflix/pill-dark.png</texturenofocus>
+      <onclick>Dialog.Close(1191)</onclick>
+      <onright>1300</onright>
+      <onup>1300</onup>
+      <ondown condition="!String.IsEmpty(Window(Home).Property(NFD.Actor1.Name))">1310</ondown>
+      <ondown condition="String.IsEmpty(Window(Home).Property(NFD.Actor1.Name))">1321</ondown>
+      <onleft condition="!String.IsEmpty(Window(Home).Property(NFD.Actor1.Name))">1310</onleft>
+      <onleft condition="String.IsEmpty(Window(Home).Property(NFD.Actor1.Name))">1322</onleft>
     </control>
     <control type="label">
-      <left>310</left>
-      <top>975</top>
-      <width>1250</width>
-      <height>30</height>
+      <left>610</left>
+      <top>965</top>
+      <width>420</width>
+      <height>45</height>
+      <label>$INFO[Window(Home).Property(NFD.Meta)]</label>
       <font>NFSmall</font>
+      <textcolor>FFDDDDDD</textcolor>
+      <align>left</align>
+      <aligny>center</aligny>
+    </control>
+    <control type="label">
+      <left>610</left>
+      <top>1015</top>
+      <width>1240</width>
+      <height>35</height>
+      <label>↑ / ↓ Bereich wechseln   •   OK auf Handlung / Informationen: scrollen   •   Zurück: Textbereich verlassen</label>
+      <font>NFSmall</font>
+      <textcolor>FFAAAAAA</textcolor>
+      <align>left</align>
+      <aligny>center</aligny>
+    </control>
+    <control type="label">
+      <left>620</left>
+      <top>240</top>
+      <width>1210</width>
+      <height>55</height>
+      <label>Keine Besetzung hinterlegt.</label>
+      <font>NFBody</font>
       <textcolor>FFBBBBBB</textcolor>
-      <label>Hoch / Runter: Text scrollen     •     Links / Zurück: Aktionsbuttons</label>
-      <visible>Control.HasFocus(1307) | Control.HasFocus(1308)</visible>
+      <align>center</align>
+      <visible>String.IsEqual(Window(Home).Property(NFD.CastReady),true) + String.IsEmpty(Window(Home).Property(NFD.Actor1.Name)) + !String.IsEqual(Window(Home).Property(NFD.DBType),channel)</visible>
+    </control>
+    <control type="button" id="1321">
+      <left>610</left>
+      <top>485</top>
+      <width>730</width>
+      <height>50</height>
+      <label>Handlung  ↓</label>
+      <font>NFHeading</font>
+      <textcolor>FFFFFFFF</textcolor>
+      <focusedcolor>FFFFFFFF</focusedcolor>
+      <textoffsetx>25</textoffsetx>
+      <aligny>center</aligny>
+      <texturenofocus>nebelflix/detail-solid.png</texturenofocus>
+      <onclick>SetFocus(1307)</onclick>
+      <onleft>1322</onleft>
+      <onright>1322</onright>
+      <onback>SetFocus(1300)</onback>
+      <texturefocus colordiffuse="FFB20710">nebelflix/button-focus.png</texturefocus>
+      <onup condition="!String.IsEmpty(Window(Home).Property(NFD.Actor1.Name))">1310</onup>
+      <onup condition="String.IsEmpty(Window(Home).Property(NFD.Actor1.Name))">1300</onup>
+      <ondown>1300</ondown>
+    </control>
+    <control type="image">
+      <left>610</left>
+      <top>531</top>
+      <width>730</width>
+      <height>4</height>
+      <texture>nebelflix/button-focus.png</texture>
+      <colordiffuse>FFE50914</colordiffuse>
+      <visible>Control.HasFocus(1321) | Control.HasFocus(1307)</visible>
+    </control>
+    <control type="button" id="1322">
+      <left>1360</left>
+      <top>485</top>
+      <width>495</width>
+      <height>50</height>
+      <label>Informationen  ↓</label>
+      <font>NFHeading</font>
+      <textcolor>FFFFFFFF</textcolor>
+      <focusedcolor>FFFFFFFF</focusedcolor>
+      <textoffsetx>25</textoffsetx>
+      <aligny>center</aligny>
+      <texturenofocus>nebelflix/detail-solid.png</texturenofocus>
+      <onclick>SetFocus(1309)</onclick>
+      <onleft>1321</onleft>
+      <onright>1321</onright>
+      <onback>SetFocus(1300)</onback>
+      <texturefocus colordiffuse="FFB20710">nebelflix/button-focus.png</texturefocus>
+      <onup condition="!String.IsEmpty(Window(Home).Property(NFD.Actor1.Name))">1310</onup>
+      <onup condition="String.IsEmpty(Window(Home).Property(NFD.Actor1.Name))">1300</onup>
+      <ondown condition="!String.IsEqual(Window(Home).Property(NFD.DBType),channel)">1303</ondown>
+      <ondown condition="String.IsEqual(Window(Home).Property(NFD.DBType),channel)">1300</ondown>
+    </control>
+    <control type="image">
+      <left>1360</left>
+      <top>531</top>
+      <width>495</width>
+      <height>4</height>
+      <texture>nebelflix/button-focus.png</texture>
+      <colordiffuse>FFE50914</colordiffuse>
+      <visible>Control.HasFocus(1322) | Control.HasFocus(1309)</visible>
+    </control>
+    <control type="label">
+      <left>1050</left>
+      <top>965</top>
+      <width>200</width>
+      <height>45</height>
+      <label>$INFO[Window(Home).Property(NFD.Stars)]</label>
+      <font>NFBody</font>
+      <textcolor>FFFFCB45</textcolor>
+      <aligny>center</aligny>
+    </control>
+    <control type="label">
+      <left>1260</left>
+      <top>965</top>
+      <width>590</width>
+      <height>45</height>
+      <label>$INFO[Window(Home).Property(NFD.RatingLabel)]</label>
+      <font>NFSmall</font>
+      <textcolor>FFDDDDDD</textcolor>
+      <aligny>center</aligny>
     </control>
   </controls>
 </window>

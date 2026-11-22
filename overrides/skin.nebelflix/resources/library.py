@@ -97,7 +97,7 @@ def request_hub_setup():
 
 
 
-WIDGET_CACHE_DIRECTORIES = ('direct-widgets', 'artwork', 'widget-artwork', 'logos')
+WIDGET_CACHE_DIRECTORIES = ('direct-widgets', 'artwork', 'widget-artwork', 'logos', 'details-cache')
 
 
 def clear_widget_cache_directories():
@@ -203,8 +203,25 @@ def restore_bulk_continue():
     write('continue-bulk-hidden.json', [])
     return len(bulk)
 
+def ensure_collection_rows(data):
+    """Insert our row immediately after Continue Watching, preserving other rows."""
+    for tab in data.get('tabs',[]):
+        if tab.get('id') not in ('home','tv','movie'):continue
+        rows=tab.setdefault('rows',[])
+        existing=next((r for r in rows if r.get('path','').startswith('nf://collections/')),None)
+        rows[:]=[r for r in rows if not r.get('path','').startswith('nf://collections/')]
+        index=next((i+1 for i,r in enumerate(rows) if r.get('path','').startswith('nf://continue')),len(rows))
+        row=dict(existing or {},label='Filmreihen',path='nf://collections/'+('random' if tab['id']=='home' else 'all'))
+        rows.insert(index,row)
+    return data
+
+
 def layout():
-    return read('layout.json', json.loads((SKIN / 'resources/default-layout.json').read_text(encoding='utf-8')))
+    data=read('layout.json', json.loads((SKIN / 'resources/default-layout.json').read_text(encoding='utf-8')))
+    for tab in data.get('tabs',[]):
+        if tab.get('id')=='new' and not any('nf_upcoming' in row.get('path','') for row in tab.get('rows',[])):
+            tab.setdefault('rows',[]).insert(1,dict(label='Bald verfügbar · Serien',path='plugin://plugin.video.nebelflix.hybrid/?'+urlencode(dict(action='listings',media_type='tv',url='catalogue/discover/tv?nf_upcoming=true',next_pages=1))))
+    return ensure_collection_rows(data)
 
 
 # Standard TMDb genre identifiers: movie and television genre trees differ.
@@ -801,6 +818,21 @@ def _provider_items(rpc, media, slug, page=1):
 
 def _special_directory(rpc, path):
     parts = path[len('nf://'):].split('/')
+    if len(parts)==2 and parts[0]=='collections' and parts[1] in ('all','random'):
+        rows=json.loads((SKIN/'resources/film-collections.json').read_text(encoding='utf8'))
+        if parts[1]=='random':
+            from datetime import date
+            random.Random('collections:'+date.today().isoformat()).shuffle(rows)
+        else:rows.sort(key=lambda r:r['title'].casefold())
+        return [dict(Title=r['title'],Plot=r.get('plot') or 'Filme dieser offiziellen TMDB-Filmreihe öffnen.',
+                     Poster='https://image.tmdb.org/t/p/w342'+r['poster'] if r.get('poster') else '',
+                     Fanart='https://image.tmdb.org/t/p/w780'+r['fanart'] if r.get('fanart') else '',
+                     Path='nf://collection/'+str(r['id']),DirectNavigate='nf://collection/'+str(r['id']),
+                     Folder=True,DBType='set') for r in rows],''
+    if len(parts)==2 and parts[0]=='collection' and parts[1].isdigit():
+        route='plugin://plugin.video.nebelflix.hybrid/?'+urlencode(dict(action='listings',media_type='movie',url='catalogue/collection/'+parts[1],next_pages='1'))
+        items,_more=_tmdb_directory(rpc,route)
+        return items,''
     if len(parts) >= 3 and parts[0] == 'genre':
         media = parts[1]
         if media not in ('all', 'movie', 'tv'):
@@ -908,7 +940,7 @@ def directory(rpc, path):
                 })
         items.sort(key=lambda item: item.get('Title', '').casefold())
         return items, ''
-    if path.startswith(('nf://random/', 'nf://provider/', 'nf://genre/')):
+    if path.startswith(('nf://random/', 'nf://provider/', 'nf://genre/', 'nf://collections/', 'nf://collection/')):
         result = _special_directory(rpc, path)
         if result is not None:
             return result

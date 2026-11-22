@@ -1,4 +1,3 @@
-<?xml version='1.0' encoding='utf-8'?>
 <includes>
   <include file="Defaults.xml" />
   <include file="Includes_Home.xml" />
@@ -1777,4 +1776,8 @@
   </include>
   <include file="Includes_Nebelflix.xml" />
   <include file="Includes_NFHub.xml" />
+  <variable name="NFDetailPlayLabel">
+    <value condition="String.IsEqual(Window(Home).Property(NFD.Upcoming),true)">Bald verfügbar</value>
+    <value>Abspielen</value>
+  </variable>
 </includes>

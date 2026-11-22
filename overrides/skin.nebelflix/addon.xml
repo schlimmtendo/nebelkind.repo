@@ -1,5 +1,5 @@
-<?xml version='1.0' encoding='utf-8'?>
-<addon id="skin.nebelflix" version="0.5.84" name="Nebelflix" provider-name="Nebelflix / Nebelflix contributors">
+<?xml version="1.0" encoding="UTF-8"?>
+<addon id="skin.nebelflix" version="0.5.85" name="Nebelflix" provider-name="Nebelflix / Nebelflix contributors">
   <requires>
     <import addon="xbmc.gui" version="5.17.0" />
     <import addon="xbmc.python" version="3.0.0" />

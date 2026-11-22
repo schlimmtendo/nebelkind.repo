@@ -27,7 +27,18 @@ def required(rows,force=False):
     state=library.read(STATE,{})
     if force:return True
     if not missing:return False
-    return not state.get('completed_at') or missing>=max(1,(len(rows)+1)//2)
+    # A completed attempt with a few offline sources is retried by normal row
+    # workers, not by reopening full-screen preparation at every startup.
+    attempted=state.get('completed_at') or state.get('attempted_at')
+    return not attempted or missing>=max(1,(len(rows)+1)//2)
+
+
+def prepare_source(source):
+    """A stale snapshot is a fallback, not a finished preparation result."""
+    entry,stale,status=direct_widgets.contents(source)
+    if stale:
+        return direct_widgets.contents(source,force=True)
+    return entry,stale,status
 
 
 def run(api,force=False):
@@ -52,7 +63,7 @@ def run(api,force=False):
                 cancelled=True;break
             while queue and len(jobs)<budget.limits['requests']:
                 row=queue.pop(0)
-                future=pool.submit(direct_widgets.contents,row['source'])
+                future=pool.submit(prepare_source,row['source'])
                 jobs[future]=(row,time.monotonic())
             for future,(row,started) in list(jobs.items()):
                 if not future.done() and time.monotonic()-started<90:continue
@@ -70,7 +81,7 @@ def run(api,force=False):
                     art.prepare(tiles)
                 except Exception as exc:
                     failed+=1
-                    xbmc.log('[Nebelflix Preparation] '+type(exc).__name__,xbmc.LOGWARNING)
+                    xbmc.log('[Nebelflix Preparation] '+row['hub']+' / '+row['label']+': '+type(exc).__name__,xbmc.LOGWARNING)
                 api.prop('PreloadStatus',row['hub']+' - '+row['label'])
                 api.publish_preload_progress(done,len(rows))
         # Finish downloads already queued for first visible artwork.
@@ -80,10 +91,12 @@ def run(api,force=False):
             if api.MONITOR.waitForAbort(0.1) or api.prop('SkipPreload')=='true':cancelled=True
         complete=not cancelled and not failed and done==len(rows)
         state=dict(started_at=library.read(STATE,{}).get('started_at',0),planned=len(rows),
-                   completed_at=time.time() if complete else 0,failed=failed,cancelled=cancelled)
+                   completed_at=time.time() if complete else 0,failed=failed,cancelled=cancelled,
+                   attempted_at=time.time() if not cancelled and done==len(rows) else 0)
         library.write(STATE,state)
         if not complete:
-            if not cancelled:api.notification('%s Reihen vorbereitet, %s Quellen nicht erreichbar. Vorbereitung wird beim naechsten Start fortgesetzt.'%(done-failed,failed))
+            if not cancelled:api.notification('%s Reihen vorbereitet, %s Quellen nicht erreichbar. Fehlende Inhalte werden im Hintergrund erneut versucht.'%(done-failed,failed))
+            if not api.MONITOR.abortRequested():restore_surface(api)
             return False
         library.preload_finished(len(rows),0)
         android=xbmc.getCondVisibility('System.Platform.Android')

@@ -18,6 +18,10 @@ def route(params):
                       page=params.get('page', '1'))
     elif info == 'provider':
         return _provider_route(params, media)
+    elif info=='collection':
+        ident=str(params.get('tmdb_id') or '')
+        if not ident.isdigit():raise ValueError('Ungültige Filmreihe')
+        params=dict(action='listings',media_type='movie',next_pages='1',url='catalogue/collection/'+ident)
     elif info in ('details', 'seasons', 'play'):
         from resources.lib.tmdb import cTMDB
         kind = 'tvshow' if media == 'tv' else 'movie'
@@ -35,6 +39,11 @@ def route(params):
                 meta = tmdb.get_meta(kind, '', '', ident, advanced='true')
         if not meta:
             raise ValueError('Keine Metadaten fuer diesen Titel gefunden')
+        from resources.lib import release_policy
+        release=meta.get('premiered') or meta.get('release_date') or meta.get('first_air_date')
+        if info=='play' and release and not release_policy.visible({'ReleaseDate':release}):
+            control.infoDialog('Dieser Titel ist noch nicht erschienen.',icon='INFO')
+            return None
         meta.update(tmdb_id=ident, mediatype=kind)
         meta.setdefault('systitle', meta.get('title', ''))
         meta.setdefault('sysname', meta.get('title', ''))

@@ -294,6 +294,16 @@ def show_details(args):
     if data.get('DBType') == 'channel':
         publish(data, 'NFD')
         WIN.setProperty('NFD.MyListLabel', '')
+        WIN.setProperty('NFD.Token','')
+        WIN.setProperty('NFD.Upcoming','')
+        WIN.setProperty('NFD.Tagline','')
+        WIN.setProperty('NFD.Details',data.get('EPG') or 'Live-TV')
+        WIN.setProperty('NFD.DirectorID','')
+        WIN.setProperty('NFD.CollectionID','')
+        WIN.setProperty('NFD.Stars','')
+        WIN.setProperty('NFD.RatingLabel','')
+        WIN.setProperty('NFD.CastReady','true')
+        WIN.setProperty('NFD.Actor1.Name','')
         remember_detail_origin(args)
         prop('DetailOpen', 'true')
         xbmc.executebuiltin('ActivateWindow(1191)')
@@ -320,11 +330,41 @@ def show_details(args):
         notification('Der ausgewählte Titel wird noch geladen.')
         return
     publish(data, 'NFD')
+    detail_token=str(time.time_ns())
+    WIN.setProperty('NFD.Token',detail_token)
+    WIN.setProperty('NFD.Section','plot')
+    WIN.setProperty('NFD.Details','Zusätzliche Informationen werden geladen …')
+    WIN.setProperty('NFD.Cast','Besetzung wird geladen …')
+    WIN.setProperty('NFD.Tagline','')
+    WIN.setProperty('NFD.DirectorID','')
+    WIN.setProperty('NFD.CollectionID','')
+    WIN.setProperty('NFD.Stars','')
+    WIN.setProperty('NFD.RatingLabel','')
+    WIN.setProperty('NFD.CastReady','')
+    for index in range(1,21):
+        for field in ('Name','Role','ID','Image'):WIN.setProperty('NFD.Actor%s.%s'%(index,field),'')
+    WIN.setProperty('NFD.Upcoming','true' if data.get('Upcoming') else '')
     WIN.setProperty('NFD.MyListLabel', detail_list_label(data))
     remember_detail_origin(args)
     prop('DetailOpen', 'true')
     log(f'Detail snapshot: {data["Title"]} [{data.get("Type")}:{data.get("TMDB")}]')
     xbmc.executebuiltin('ActivateWindow(1191)')
+    threading.Thread(target=enrich_details,args=(dict(data),detail_token),daemon=False).start()
+
+
+def enrich_details(item,token):
+    try:
+        import detail_metadata
+        values=detail_metadata.fetch(item)
+        if WIN.getProperty('NFD.Token')!=token or prop('DetailOpen')!='true':return
+        for key,value in values.items():WIN.setProperty('NFD.'+key,str(value))
+        if not values:raise ValueError('No detail metadata')
+    except Exception as exc:
+        if WIN.getProperty('NFD.Token')==token:
+            WIN.setProperty('NFD.Details','Zusätzliche Informationen sind derzeit nicht verfügbar.')
+            WIN.setProperty('NFD.Cast','Besetzung ist derzeit nicht verfügbar.')
+            WIN.setProperty('NFD.CastReady','true')
+        log('Detail metadata: '+type(exc).__name__)
 
 
 def resolve_trailer(item):
@@ -350,6 +390,10 @@ def play_trailer(item, context='spotlight'):
 
 
 def play_selected(item):
+    import release_policy
+    if item.get('Upcoming') or (release_policy.release_date(item) and not release_policy.visible(item)):
+        notification('Dieser Titel ist noch nicht erschienen. Trailer und Merkliste sind verfügbar.')
+        return
     cancel_spotlight_video(suppress=True)
     prop('PlaybackOwner', 'manual')
     if item.get('DBType') == 'channel':
@@ -852,6 +896,18 @@ def dispatch(command, args=()):
         prop('SkipIntro', 'true'); return
     if command == 'intro':
         return intro()
+    if command == 'detail_collection':
+        ident=WIN.getProperty('NFD.CollectionID')
+        if not ident.isdigit():return
+        route='plugin://plugin.video.nebelflix.hybrid/?'+urlencode(dict(info='collection',tmdb_type='movie',tmdb_id=ident))
+        xbmc.executebuiltin('Dialog.Close(1191)')
+        return open_directory(route)
+    if command == 'detail_person':
+        if not args or not str(args[0]).isdigit():return
+        kind='with_crew' if len(args)>1 and args[1]=='director' else 'with_cast'
+        route='plugin://plugin.video.nebelflix.hybrid/?'+urlencode(dict(info='discover',tmdb_type='movie',**{kind:args[0]}))
+        xbmc.executebuiltin('Dialog.Close(1191)')
+        return open_directory(route)
     if command == 'details':
         return show_details(args)
     if command == 'trailer':

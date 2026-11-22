@@ -15,6 +15,7 @@ import performance
 import widget_snapshot
 import hub_protocol
 import logo_art
+import release_policy
 
 ROOT=Path(xbmcvfs.translatePath('special://profile/addon_data/skin.nebelflix/'))
 
@@ -46,8 +47,28 @@ def cache_name(source):
     return 'direct-widgets/' + hashlib.sha256(source.encode('utf-8')).hexdigest() + '.json'
 
 
+def released_snapshot(source,entry):
+    if not isinstance(entry,dict):return entry
+    discovery=source.startswith(('nf://catalog','nf://genre/','nf://provider/','nf://random/')) or (source.startswith('plugin://plugin.video.nebelflix.hybrid/') and ('listings' in source or 'info=' in source))
+    if not discovery:return entry
+    preview=release_policy.upcoming(source)
+    from datetime import date
+    today=date.today();items=[];old=False
+    for item in entry.get('items',[]):
+        if item.get('Type') not in ('movie','tv') or not item.get('TMDB'):
+            items.append(item);continue
+        if release_policy.release_date(item):
+            if release_policy.visible(item,preview,today):items.append(item)
+        else:
+            old=True
+            year=str(item.get('Year') or '')
+            if not preview and year.isdigit() and int(year)<today.year:items.append(item)
+    return dict(entry,items=items,time=0 if old else entry.get('time',0))
+
+
 def current_tv_cards(source, entry):
-    """Retire old category shortcuts without discarding cached channel data."""
+    """Normalize old snapshots without discarding personal channel data."""
+    entry=released_snapshot(source,entry)
     if source not in ('nf://nebelflix/tv', 'nf://moviescout/germany') or not isinstance(entry, dict):
         return entry
     retired = {'plugin://plugin.video.nebelflix.tv/?action=list&group=' + group

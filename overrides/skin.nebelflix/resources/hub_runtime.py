@@ -547,7 +547,9 @@ def monitor(api):
     api.prop('FullPreparationRequested','')
     if hub_preload.run(api,force=force_preparation):return
     state=library.read(hub_preload.STATE,{})
-    if state and not state.get('completed_at') and hub_preload.required(hub_preload.plan(library.layout())):return
+    # Incomplete sources must not terminate the controller and lock the surface.
+    # Normal row workers retry missing/stale data while available hubs stay usable.
+    if api.MONITOR.abortRequested():return
     api.prop('StartupBlocked','')
     hubs = Hubs(api)
     progress = library.Progress(api.rpc,api.PLAYER,api.prop)

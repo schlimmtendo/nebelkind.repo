@@ -1,0 +1,515 @@
+{
+  "version": 1,
+  "tabs": [
+    {
+      "id": "home",
+      "label": "Startseite",
+      "rows": [
+        {
+          "label": "Zufällig für dich · Filme & Serien",
+          "path": "nf://random/all"
+        },
+        {
+          "label": "Heutige Top-Auswahl für dich",
+          "path": "plugin://plugin.video.nebelflix.hybrid/?action=listings&media_type=movie&url=catalogue%2Ftrending%2Fmovie%2Fday&next_pages=1"
+        },
+        {
+          "label": "Serien, die gerade begeistern",
+          "path": "plugin://plugin.video.nebelflix.hybrid/?action=listings&media_type=tv&url=catalogue%2Ftrending%2Ftv%2Fweek&next_pages=1"
+        },
+        {
+          "label": "Top 10 · Beliebte Filme auf TMDB",
+          "path": "plugin://plugin.video.nebelflix.hybrid/?action=listings&media_type=movie&url=catalogue%2Fmovie%2Fpopular&next_pages=1"
+        },
+        {
+          "label": "Weiterschauen",
+          "path": "nf://continue/all"
+        },
+        {
+          "label": "Filmreihen",
+          "path": "nf://collections/random"
+        },
+        {
+          "label": "Action",
+          "path": "nf://genre/all/28/10759"
+        },
+        {
+          "label": "Abenteuer",
+          "path": "nf://genre/all/12/10759"
+        },
+        {
+          "label": "Animation",
+          "path": "nf://genre/all/16/16"
+        },
+        {
+          "label": "Komödie",
+          "path": "nf://genre/all/35/35"
+        },
+        {
+          "label": "Krimi",
+          "path": "nf://genre/all/80/80"
+        },
+        {
+          "label": "Dokumentationen",
+          "path": "nf://genre/all/99/99"
+        },
+        {
+          "label": "Drama",
+          "path": "nf://genre/all/18/18"
+        },
+        {
+          "label": "Familie",
+          "path": "nf://genre/all/10751/10751"
+        },
+        {
+          "label": "Fantasy",
+          "path": "nf://genre/all/14/10765"
+        },
+        {
+          "label": "Geschichte",
+          "path": "nf://genre/all/36/0"
+        },
+        {
+          "label": "Horror",
+          "path": "nf://genre/all/27/0"
+        },
+        {
+          "label": "Musik",
+          "path": "nf://genre/all/10402/0"
+        },
+        {
+          "label": "Mystery",
+          "path": "nf://genre/all/9648/9648"
+        },
+        {
+          "label": "Romantik",
+          "path": "nf://genre/all/10749/0"
+        },
+        {
+          "label": "Science Fiction",
+          "path": "nf://genre/all/878/10765"
+        },
+        {
+          "label": "Thriller & Nervenkitzel",
+          "path": "nf://genre/all/53/9648"
+        },
+        {
+          "label": "Krieg & Politik",
+          "path": "nf://genre/all/10752/10768"
+        },
+        {
+          "label": "Western",
+          "path": "nf://genre/all/37/37"
+        },
+        {
+          "label": "Kinder",
+          "path": "nf://genre/all/0/10762"
+        },
+        {
+          "label": "Nachrichten",
+          "path": "nf://genre/all/0/10763"
+        },
+        {
+          "label": "Reality",
+          "path": "nf://genre/all/0/10764"
+        },
+        {
+          "label": "Soap",
+          "path": "nf://genre/all/0/10766"
+        },
+        {
+          "label": "Talkshows",
+          "path": "nf://genre/all/0/10767"
+        },
+        {
+          "label": "TV-Filme",
+          "path": "nf://genre/all/10770/0"
+        },
+        {
+          "label": "Netflix-Serien entdecken",
+          "path": "plugin://plugin.video.nebelflix.hybrid/?action=listings&media_type=tv&url=catalogue%2Fdiscover%2Ftv%3Fwith_networks%3D213&next_pages=1"
+        },
+        {
+          "label": "Britische Serien",
+          "path": "plugin://plugin.video.nebelflix.hybrid/?action=listings&media_type=tv&url=catalogue%2Fdiscover%2Ftv%3Fwith_origin_country%3DGB&next_pages=1"
+        },
+        {
+          "label": "Netflix · Filme & Serien",
+          "path": "nf://provider/all/netflix"
+        },
+        {
+          "label": "Disney+ · Filme & Serien",
+          "path": "nf://provider/all/disney"
+        },
+        {
+          "label": "Prime Video · Filme & Serien",
+          "path": "nf://provider/all/prime"
+        },
+        {
+          "label": "RTL+ · Filme & Serien",
+          "path": "nf://provider/all/rtl"
+        },
+        {
+          "label": "WOW · Filme & Serien",
+          "path": "nf://provider/all/wow"
+        },
+        {
+          "label": "Paramount+ · Filme & Serien",
+          "path": "nf://provider/all/paramount"
+        }
+      ]
+    },
+    {
+      "id": "tv",
+      "label": "Serien",
+      "rows": [
+        {
+          "label": "Serien · Geschichten, die bleiben",
+          "path": "plugin://plugin.video.nebelflix.hybrid/?action=listings&media_type=tv&url=catalogue%2Ftrending%2Ftv%2Fweek&next_pages=1"
+        },
+        {
+          "label": "Beliebte Serien",
+          "path": "plugin://plugin.video.nebelflix.hybrid/?action=listings&media_type=tv&url=catalogue%2Ftv%2Fpopular&next_pages=1"
+        },
+        {
+          "label": "Top 10 · Bestbewertete Serien",
+          "path": "plugin://plugin.video.nebelflix.hybrid/?action=listings&media_type=tv&url=catalogue%2Ftv%2Ftop_rated&next_pages=1"
+        },
+        {
+          "label": "Weiterschauen · Folgen",
+          "path": "nf://continue/tv"
+        },
+        {
+          "label": "Filmreihen",
+          "path": "nf://collections/all"
+        },
+        {
+          "label": "Action- & Abenteuerserien",
+          "path": "nf://genre/tv/10759"
+        },
+        {
+          "label": "Animationsserien",
+          "path": "nf://genre/tv/16"
+        },
+        {
+          "label": "Comedyserien",
+          "path": "nf://genre/tv/35"
+        },
+        {
+          "label": "Krimiserien",
+          "path": "nf://genre/tv/80"
+        },
+        {
+          "label": "Dokuserien",
+          "path": "nf://genre/tv/99"
+        },
+        {
+          "label": "Dramaserien",
+          "path": "nf://genre/tv/18"
+        },
+        {
+          "label": "Familienserien",
+          "path": "nf://genre/tv/10751"
+        },
+        {
+          "label": "Kinderserien",
+          "path": "nf://genre/tv/10762"
+        },
+        {
+          "label": "Mystery-Serien",
+          "path": "nf://genre/tv/9648"
+        },
+        {
+          "label": "Nachrichtensendungen",
+          "path": "nf://genre/tv/10763"
+        },
+        {
+          "label": "Realityshows",
+          "path": "nf://genre/tv/10764"
+        },
+        {
+          "label": "Sci-Fi- & Fantasyserien",
+          "path": "nf://genre/tv/10765"
+        },
+        {
+          "label": "Soap-Serien",
+          "path": "nf://genre/tv/10766"
+        },
+        {
+          "label": "Talkshows",
+          "path": "nf://genre/tv/10767"
+        },
+        {
+          "label": "Kriegs- & Politikserien",
+          "path": "nf://genre/tv/10768"
+        },
+        {
+          "label": "Westernserien",
+          "path": "nf://genre/tv/37"
+        },
+        {
+          "label": "Netflix-Serien entdecken",
+          "path": "plugin://plugin.video.nebelflix.hybrid/?action=listings&media_type=tv&url=catalogue%2Fdiscover%2Ftv%3Fwith_networks%3D213&next_pages=1"
+        },
+        {
+          "label": "Britische Serien",
+          "path": "plugin://plugin.video.nebelflix.hybrid/?action=listings&media_type=tv&url=catalogue%2Fdiscover%2Ftv%3Fwith_origin_country%3DGB&next_pages=1"
+        },
+        {
+          "label": "Netflix · Serien",
+          "path": "nf://provider/tv/netflix"
+        },
+        {
+          "label": "Disney+ · Serien",
+          "path": "nf://provider/tv/disney"
+        },
+        {
+          "label": "Prime Video · Serien",
+          "path": "nf://provider/tv/prime"
+        },
+        {
+          "label": "RTL+ · Serien",
+          "path": "nf://provider/tv/rtl"
+        },
+        {
+          "label": "WOW · Serien",
+          "path": "nf://provider/tv/wow"
+        },
+        {
+          "label": "Paramount+ · Serien",
+          "path": "nf://provider/tv/paramount"
+        }
+      ]
+    },
+    {
+      "id": "movie",
+      "label": "Filme",
+      "rows": [
+        {
+          "label": "Filme · Deine nächste große Geschichte",
+          "path": "plugin://plugin.video.nebelflix.hybrid/?action=listings&media_type=movie&url=catalogue%2Ftrending%2Fmovie%2Fweek&next_pages=1"
+        },
+        {
+          "label": "Beliebt bei Filmfans",
+          "path": "plugin://plugin.video.nebelflix.hybrid/?action=listings&media_type=movie&url=catalogue%2Fmovie%2Fpopular&next_pages=1"
+        },
+        {
+          "label": "Top 10 · Bestbewertete Filme",
+          "path": "plugin://plugin.video.nebelflix.hybrid/?action=listings&media_type=movie&url=catalogue%2Fmovie%2Ftop_rated&next_pages=1"
+        },
+        {
+          "label": "Weiterschauen",
+          "path": "nf://continue/movie"
+        },
+        {
+          "label": "Filmreihen",
+          "path": "nf://collections/all"
+        },
+        {
+          "label": "Actionfilme",
+          "path": "nf://genre/movie/28"
+        },
+        {
+          "label": "Abenteuerfilme",
+          "path": "nf://genre/movie/12"
+        },
+        {
+          "label": "Animationsfilme",
+          "path": "nf://genre/movie/16"
+        },
+        {
+          "label": "Komödien",
+          "path": "nf://genre/movie/35"
+        },
+        {
+          "label": "Krimis",
+          "path": "nf://genre/movie/80"
+        },
+        {
+          "label": "Dokumentarfilme",
+          "path": "nf://genre/movie/99"
+        },
+        {
+          "label": "Dramen",
+          "path": "nf://genre/movie/18"
+        },
+        {
+          "label": "Familienfilme",
+          "path": "nf://genre/movie/10751"
+        },
+        {
+          "label": "Fantasyfilme",
+          "path": "nf://genre/movie/14"
+        },
+        {
+          "label": "Historienfilme",
+          "path": "nf://genre/movie/36"
+        },
+        {
+          "label": "Horrorfilme",
+          "path": "nf://genre/movie/27"
+        },
+        {
+          "label": "Musikfilme",
+          "path": "nf://genre/movie/10402"
+        },
+        {
+          "label": "Mysteryfilme",
+          "path": "nf://genre/movie/9648"
+        },
+        {
+          "label": "Liebesfilme",
+          "path": "nf://genre/movie/10749"
+        },
+        {
+          "label": "Science-Fiction-Filme",
+          "path": "nf://genre/movie/878"
+        },
+        {
+          "label": "Thriller",
+          "path": "nf://genre/movie/53"
+        },
+        {
+          "label": "Kriegsfilme",
+          "path": "nf://genre/movie/10752"
+        },
+        {
+          "label": "Western",
+          "path": "nf://genre/movie/37"
+        },
+        {
+          "label": "TV-Filme",
+          "path": "nf://genre/movie/10770"
+        },
+        {
+          "label": "Auf Netflix verfügbar · Deutschland",
+          "path": "plugin://plugin.video.nebelflix.hybrid/?action=listings&media_type=movie&url=catalogue%2Fdiscover%2Fmovie%3Fwith_watch_monetization_types%3Dflatrate%26watch_region%3DDE%26with_watch_providers%3D8&next_pages=1"
+        },
+        {
+          "label": "Netflix · Filme",
+          "path": "nf://provider/movie/netflix"
+        },
+        {
+          "label": "Disney+ · Filme",
+          "path": "nf://provider/movie/disney"
+        },
+        {
+          "label": "Prime Video · Filme",
+          "path": "nf://provider/movie/prime"
+        },
+        {
+          "label": "RTL+ · Filme",
+          "path": "nf://provider/movie/rtl"
+        },
+        {
+          "label": "WOW · Filme",
+          "path": "nf://provider/movie/wow"
+        },
+        {
+          "label": "Paramount+ · Filme",
+          "path": "nf://provider/movie/paramount"
+        }
+      ]
+    },
+    {
+      "id": "new",
+      "label": "Neu und beliebt",
+      "rows": [
+        {
+          "label": "Demnächst im Kino",
+          "path": "plugin://plugin.video.nebelflix.hybrid/?action=listings&media_type=movie&url=catalogue%2Fmovie%2Fupcoming&next_pages=1"
+        },
+        {
+          "label": "Bald verfügbar · Serien",
+          "path": "plugin://plugin.video.nebelflix.hybrid/?action=listings&media_type=tv&url=catalogue%2Fdiscover%2Ftv%3Fnf_upcoming%3Dtrue&next_pages=1"
+        },
+        {
+          "label": "Jetzt im Kino",
+          "path": "plugin://plugin.video.nebelflix.hybrid/?action=listings&media_type=movie&url=catalogue%2Fmovie%2Fnow_playing&next_pages=1"
+        },
+        {
+          "label": "Aktuell im TV",
+          "path": "plugin://plugin.video.nebelflix.hybrid/?action=listings&media_type=tv&url=catalogue%2Ftv%2Fon_the_air&next_pages=1"
+        },
+        {
+          "label": "Top 10 · Heute im Trend",
+          "path": "plugin://plugin.video.nebelflix.hybrid/?action=listings&media_type=movie&url=catalogue%2Ftrending%2Fmovie%2Fday&next_pages=1"
+        },
+        {
+          "label": "Heute ausgestrahlte Serien",
+          "path": "plugin://plugin.video.nebelflix.hybrid/?action=listings&media_type=tv&url=catalogue%2Ftv%2Fairing_today&next_pages=1"
+        },
+        {
+          "label": "Neue Filme in deiner Bibliothek",
+          "path": "videodb://recentlyaddedmovies/"
+        },
+        {
+          "label": "Neue Folgen in deiner Bibliothek",
+          "path": "videodb://recentlyaddedepisodes/"
+        },
+        {
+          "label": "Serien im Trend",
+          "path": "plugin://plugin.video.nebelflix.hybrid/?action=listings&media_type=tv&url=catalogue%2Ftrending%2Ftv%2Fday&next_pages=1"
+        }
+      ]
+    },
+    {
+      "id": "my",
+      "label": "Mein Nebelflix",
+      "rows": [
+        {
+          "label": "Meine Liste",
+          "path": "nf://mylist"
+        },
+        {
+          "label": "Weiterschauen · Filme",
+          "path": "nf://continue/movie"
+        },
+        {
+          "label": "Weiterschauen · Folgen",
+          "path": "nf://continue/tv"
+        },
+        {
+          "label": "Neu in deiner Bibliothek",
+          "path": "videodb://recentlyaddedmovies/"
+        },
+        {
+          "label": "Neue Folgen",
+          "path": "videodb://recentlyaddedepisodes/"
+        }
+      ]
+    },
+    {
+      "id": "language",
+      "label": "Sprache",
+      "rows": [
+        {
+          "label": "Deutschsprachige Filme",
+          "path": "plugin://plugin.video.nebelflix.hybrid/?action=listings&media_type=movie&url=catalogue%2Fdiscover%2Fmovie%3Fwith_original_language%3Dde&next_pages=1"
+        },
+        {
+          "label": "Deutschsprachige Serien",
+          "path": "plugin://plugin.video.nebelflix.hybrid/?action=listings&media_type=tv&url=catalogue%2Fdiscover%2Ftv%3Fwith_original_language%3Dde&next_pages=1"
+        }
+      ]
+    },
+    {
+      "id": "live_tv",
+      "label": "LiveTV",
+      "rows": [
+        {
+          "label": "TV Gruppen",
+          "path": "nf://nebelflix/tv"
+        },
+        {
+          "label": "Live",
+          "path": "plugin://plugin.video.titansmarttvplus/"
+        }
+      ]
+    }
+  ],
+  "genre_layout_version": 3,
+  "top10_layout_version": 1,
+  "moviescout_livetv_layout_version": 2,
+  "nebelflix_tv_layout_version": 1
+}

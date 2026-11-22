@@ -1,5 +1,5 @@
-<?xml version='1.0' encoding='utf-8'?>
-<addon id="plugin.video.nebelflix.hybrid" version="2026.11.22.1" name="Nebelkind Hybrid" provider-name="Nebelkind">
+<?xml version="1.0" encoding="UTF-8"?>
+<addon id="plugin.video.nebelflix.hybrid" version="2026.11.22.3" name="Nebelkind Hybrid" provider-name="Nebelkind">
   <requires>
     <import addon="xbmc.python" version="3.0.0" />
     <import addon="script.module.requests" />
