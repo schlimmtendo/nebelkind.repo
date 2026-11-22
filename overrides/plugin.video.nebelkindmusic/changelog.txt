@@ -1,3 +1,10 @@
+Nebelkind Musik 5.1.4 – Repository-Release (22.11.2026)
+- Auswahl der Abspielreihenfolge vor dem Start: Normal, Zufall oder Rückwärts.
+- Abbrechen lässt die bisherige Warteschlange unverändert.
+- Playlist-Cover pro Titel als Thumbnail, Poster und Fanart übergeben.
+- Titelliste und direkte Playlist-Wiedergabe verwenden dieselben Bildmetadaten.
+- Hinweis: Eine eventuell überlappende Anzeige des NebelFlix-Video-OSD ist gegebenenfalls separat im Skin zu korrigieren.
+
 Nebelkind Musik 5.1.1 – lokal (22.11.2026)
 
 Alle acht Kategorien verwenden eigene, einheitliche Nebelkind-Icons: Charts, Dance, Electro, Techno, Festival, House, Trance und Weihnachten. Neues Addon-Icon. Playlist-Kacheln verwenden das passende Kategorie-Motiv. Bestehende Nutzerbilder in fremden Addons bleiben unberührt.

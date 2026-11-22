@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<addon id="plugin.video.nebelkindmusic" name="[B][COLOR skyblue]Nebelkind[/COLOR][COLOR gold] Musik[/COLOR][/B]" version="5.1.2" provider-name="NebelKind">
+<addon id="plugin.video.nebelkindmusic" name="[B][COLOR skyblue]Nebelkind[/COLOR][COLOR gold] Musik[/COLOR][/B]" version="5.1.4" provider-name="NebelKind">
   <requires>
     <import addon="xbmc.python" version="3.0.0" />
     <import addon="plugin.video.youtube" />
@@ -19,6 +19,6 @@
       <fanart>fanart.jpg</fanart>
       <screenshot />
     </assets>
-    <news>Einheitliche Genre- und Addon-Icons. Öffentliche Titellisten statt Playlist-Data-API; Videos über YouTube-Addon. Bis 100 Titel pro Warteschlange, vollständige Playlist im Kontextmenü.</news>
+    <news>5.1.4: Abspielreihenfolge Normal, Zufall oder Rückwärts auswählbar. Playlist-Cover und Song-Metadaten werden pro Musikvideo gesetzt, auch nach vorheriger Filmwiedergabe.</news>
   </extension>
 </addon>
