@@ -46,10 +46,20 @@ def cache_name(source):
     return 'direct-widgets/' + hashlib.sha256(source.encode('utf-8')).hexdigest() + '.json'
 
 
+def current_tv_cards(source, entry):
+    """Retire old category shortcuts without discarding cached channel data."""
+    if source not in ('nf://nebelflix/tv', 'nf://moviescout/germany') or not isinstance(entry, dict):
+        return entry
+    retired = {'plugin://plugin.video.nebelflix.tv/?action=list&group=' + group
+               for group in ('favorites', 'recent')}
+    return dict(entry, items=[item for item in entry.get('items', [])
+                             if item.get('Path') not in retired])
+
+
 def cached(source):
     entry = read(cache_name(source), None)
     if entry is not None:
-        return entry
+        return current_tv_cards(source, entry)
     # Reuse users' already downloaded results when upgrading from 0.5.74.
     legacy = read('widget-cache.json', {}).get(source)
     if isinstance(legacy, dict):
@@ -57,7 +67,7 @@ def cached(source):
             store(source, legacy)
         except OSError:
             pass  # A cache write must never hide already available content.
-    return legacy if isinstance(legacy, dict) else None
+    return current_tv_cards(source, legacy) if isinstance(legacy, dict) else None
 
 
 def store(source, entry):
@@ -95,6 +105,7 @@ def contents(source, force=False, paused=False):
 
 def restore(window, home, page, cid, source, entry, top10=False, allow_personal=False, offset=0, back=False, budget=None):
     """Fill the native list from disk without launching a Python provider per row."""
+    entry = current_tv_cards(source, entry)
     if not allow_personal and source.startswith(('nf://continue','nf://mylist')):
         return False
     try:

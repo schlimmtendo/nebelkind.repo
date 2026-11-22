@@ -52,8 +52,6 @@ def root(handle):
     entries=[
       item('📺 Programmführer · Jetzt und nächste Sendungen',url('guide'),False,
            'Programmführer von Vavoo TV Plus öffnen',logo=category_icon('guide')),
-      item('🕘 Zuletzt gesehen (TV)',url('list',group='recent'),True,logo=category_icon('all')),
-      item('★ TV-Favoriten',url('list',group='favorites'),True,logo=category_icon('all')),
       item('📂 Vavoo-Sendergruppen (%d)' % n,url('groups'),True,logo=category_icon('all')),
       item('🔎 Sender suchen',url('search'),True),
       item('⚙️ TV-Widgets & Vavoo verwalten',url('manage'),True),
@@ -62,8 +60,7 @@ def root(handle):
 
 
 def groups(handle):
-    entries=[item('★ TV-Favoriten',url('list',group='favorites'),True,logo=category_icon('all')),
-             item('🕘 Zuletzt gesehen (TV)',url('list',group='recent'),True,logo=category_icon('all'))]
+    entries=[]
     for slug,name in channels.group_catalog():
         entries.append(item(name,url('list',group=slug),True,logo=category_icon(slug)))
     _finish(handle,entries)
