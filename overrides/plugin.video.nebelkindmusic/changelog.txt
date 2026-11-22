@@ -1,3 +1,9 @@
+Nebelkind Musik 5.1.5 – Stabilitäts-Rollback (22.11.2026)
+- Playlist-Router, Kachel-Übergabe und Video-Warteschlange wieder auf der vorherigen 5.1.3-Basis.
+- Die experimentelle Reihenfolge-Auswahl und Videoplayer-Fanart-Übergabe aus 5.1.4 sind vorübergehend entfernt.
+- Kodi- und YouTube-Einstellungen werden nicht angefasst.
+- Die eigenständige Installation ohne NebelFlix-Skin bleibt erhalten.
+
 Nebelkind Musik 5.1.4 – Repository-Release (22.11.2026)
 - Auswahl der Abspielreihenfolge vor dem Start: Normal, Zufall oder Rückwärts.
 - Abbrechen lässt die bisherige Warteschlange unverändert.
