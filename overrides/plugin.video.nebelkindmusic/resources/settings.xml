@@ -1,0 +1,6 @@
+<settings>
+  <category label="Musik-Playlists">
+    <setting id="catalog.autoupdate" type="bool" default="true" label="Playlist-Katalog im Hintergrund aktualisieren" />
+    <setting type="lsep" label="Einmal täglich; gespeicherte Playlists bleiben bei Netzproblemen verfügbar." />
+  </category>
+</settings>

@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Regression checks for Kodi TV guide Back button / Backspace navigation."""
 import ast
+import sys
 import json
 from pathlib import Path
 from zipfile import ZipFile
@@ -13,6 +14,13 @@ SOURCE = AID + "/resources/lib/guide.py"
 
 with ZipFile(ARCHIVE) as z:
     assert z.testzip() is None
+    if SOURCE not in z.namelist():
+        bridge = z.read(AID + "/resources/lib/vavoo_bridge.py").decode("utf-8")
+        assert "favorites_epg" in bridge and "plugin.video.vavoo.tv.plus" in bridge
+        assert AID + "/resources/skins/Default/1080i/Guide.xml" not in z.namelist()
+        compile(bridge, "vavoo_bridge.py", "exec")
+        print("PASS: native Vavoo guide delegation; obsolete local guide and XML removed")
+        sys.exit(0)
     contents = z.read(SOURCE).decode("utf-8")
     compile(contents, SOURCE, "exec")
     tree = ast.parse(contents)

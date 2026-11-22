@@ -42,7 +42,11 @@ def main():
     with ZipFile(target) as original:
         names = original.namelist()
         if SOURCE not in names:
-            raise ValueError("TV guide not found inside ZIP")
+            bridge = original.read(AID + "/resources/lib/vavoo_bridge.py")
+            if b"favorites_epg" not in bridge:
+                raise ValueError("Neither legacy guide nor native Vavoo bridge found")
+            print("Legacy TV guide retired; native Vavoo guide needs no patch")
+            return
         previous = original.read(SOURCE)
         patched = fix(previous.decode("utf-8")).encode("utf-8")
         if patched == previous:

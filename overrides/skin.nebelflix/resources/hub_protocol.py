@@ -11,6 +11,14 @@ STATIC_TILE_PROPERTIES=('NF.Data','NF.Hub','NF.Clearlogo','NF.RankArt','NFTV.Cat
                         'NF.EPG','NF.EPGNext','NF.EPGProgress','tmdb_id','tmdb_type')
 
 
+def set_property(window,key,value):
+    """Avoid invalidating Kodi's dynamic lists for unchanged property values."""
+    value=str(value)
+    if window.getProperty(key)==value:return False
+    window.setProperty(key,value)
+    return True
+
+
 def topbar_id(slot):
     return 200+slot if slot<6 else 230+slot
 

@@ -373,11 +373,12 @@ class sources:
 
             # edit for captcha
             waiting_time = start_time =30
-            if item['provider'] == 'burningseries': waiting_time = start_time = int(control.getSetting('captcha.timeout', '120'))
-            while waiting_time > 0:
+            if item['provider'] == 'burningseries': waiting_time = start_time = max(5,min(120,int(control.getSetting('captcha.timeout', '120'))))
+            hard_deadline=time.monotonic()+start_time
+            while waiting_time > 0 and time.monotonic()<hard_deadline:
                 try:
-                    if control.abortRequested: return sys.exit()
-                    if progressDialog.iscanceled(): return progressDialog.close()
+                    if control.abortRequested or progressDialog.iscanceled():
+                        self._cancelled.set();future.cancel();progressDialog.close();return None
                 except:
                     pass
                 if future.done(): break
@@ -396,7 +397,9 @@ class sources:
             control.execute('Dialog.Close(virtualkeyboard)')
             control.execute('Dialog.Close(yesnoDialog)')
 
-            resolved_url = future.result() if future.done() else None
+            if not future.done():
+                self._cancelled.set();future.cancel()
+            resolved_url = future.result() if future.done() and not future.cancelled() else None
             if not resolved_url:
                 return
             from resources.lib.player import player
@@ -404,6 +407,10 @@ class sources:
             return resolved_url
         except Exception as e:
             log_utils.log('Error %s' % str(e), log_utils.LOGERROR)
+        finally:
+            self._cancelled.set()
+            self.executor.shutdown(wait=False)
+            self.resolve_executor.shutdown(wait=False)
 
 
     def getSources(self, title, year, imdb, season, episode, originaltitle, premiered, quality='HD', timeout=30):
@@ -893,6 +900,7 @@ class sources:
 
 
     def sourcesResolve(self, item, info=False):
+        if self._cancelled.is_set():return None
         try:
             self.url = None
             url = item['url']
@@ -901,6 +909,7 @@ class sources:
             provider = item['provider']
             call = [i[1] for i in self.provider_sources if i[0] == provider][0]
             url = call.resolve(url)
+            if self._cancelled.is_set():return None
 
             if not direct == True:
                 try:
@@ -908,6 +917,7 @@ class sources:
                     if not hmf.valid_url():
                         hmf = resolver.HostedMediaFile(url=url, include_disabled=True, include_universal=False, include_popups=True)
                     if hmf.valid_url():
+                        if self._cancelled.is_set():return None
                         url = hmf.resolve()
                         if url == False or url == None or url == '': url = None  # raise Exception()
                 except:
@@ -916,6 +926,7 @@ class sources:
                 try:
                     hmf = resolver.HostedMediaFile(url=url, include_disabled=True, include_universal=False, include_popups=True)
                     if hmf.valid_url():
+                        if self._cancelled.is_set():return None
                         url = hmf.resolve()
                         if url == False or url == None or url == '': url = None
                 except:
@@ -942,6 +953,7 @@ class sources:
                         provider, item.get('source', ''), host, fmt, 'ja' if '|' in str(url) else 'nein'), log_utils.LOGINFO)
                 except Exception:
                     pass
+                if self._cancelled.is_set():return None
                 self.url = url
                 return url
             else:
@@ -961,11 +973,8 @@ class sources:
         if select < 0 or select >= len(items):
             return 'close://'
 
-        next = [y for x,y in enumerate(items) if x >= select]
-        prev = [y for x,y in enumerate(items) if x < select][::-1]
-
+        # A manual click selects exactly one source, not forty hidden fallbacks.
         items = [items[select]]
-        items = [i for i in items+next+prev][:40]
 
         header = control.addonInfo('name')
         header2 = header.upper()
@@ -990,7 +999,8 @@ class sources:
                         progressDialog.update(int((100 / float(len(items))) * i), str(header2) + str(items[i]['label']))
 
                     waiting_time = 30
-                    while waiting_time > 0:
+                    hard_deadline=time.monotonic()+30
+                    while waiting_time > 0 and time.monotonic()<hard_deadline:
                         try:
                             if control.abortRequested: return sys.exit() #xbmc.Monitor().abortRequested()
                             if progressDialog.iscanceled(): return progressDialog.close()
@@ -1009,6 +1019,7 @@ class sources:
 
                     if not future.done():
                         block = items[i]['source']
+                        self._cancelled.set()
                         future.cancel()
                         raise Exception()
                     resolved_url = future.result()
@@ -1037,7 +1048,7 @@ class sources:
 
     def sourcesDirect(self, items):
         from resources.lib.quality_policy import order_sources
-        items = order_sources(items, control.getSetting('mscout.autoplay.quality') or '0')
+        items = order_sources(items, control.getSetting('mscout.autoplay.quality') or '0')[:3]
         # TODO - OK
         # filter = [i for i in items if i['source'].lower() in self.hostcapDict and i['debrid'] == '']
         # items = [i for i in items if not i in filter]
@@ -1065,7 +1076,18 @@ class sources:
             try:
                 if control.abortRequested: return sys.exit()
 
-                url = self.sourcesResolve(items[i])
+                future=self.resolve_executor.submit(self.sourcesResolve,items[i])
+                deadline=time.monotonic()+30
+                monitor=xbmc.Monitor()
+                while not future.done() and time.monotonic()<deadline:
+                    if self._cancelled.is_set() or control.abortRequested or progressDialog.iscanceled():
+                        self._cancelled.set();future.cancel();break
+                    if monitor.waitForAbort(0.25):
+                        self._cancelled.set();future.cancel();break
+                if self._cancelled.is_set():break
+                if not future.done():
+                    self._cancelled.set();future.cancel();break
+                url=future.result()
                 if u == None: u = url
                 if not url == None: break
             except:

@@ -81,6 +81,7 @@ class Hubs:
         self.refreshed = set()
         self.visited = set()
         self.next_freshness_check = 0
+        self.tv_revision=api.prop('TVRevision')
         self.load_config()
 
     def load_config(self):
@@ -100,54 +101,97 @@ class Hubs:
             if entry is not None and direct_widgets.restore(window,self.home,page,cid,path,entry,row['label'].lower().startswith('top 10'),budget=self.budget):
                 return
         window.clearProperty('NF.RowNative'+str(cid))
-        if refresh:
-            try:window.setProperty('NF.RestorePosition'+str(cid),str(window.getControl(cid).getSelectedPosition()))
-            except RuntimeError:pass
-        else:
-            self.refreshed.discard((page,cid))
-        window.setProperty('NF.RowNetwork'+str(cid),'true' if refresh or direct_widgets.cached(path) is None else '')
-        window.setProperty('NF.RowLoading'+str(cid), 'true')
-        self.home.setProperty(direct_widgets.key(page, cid)+'.State', 'queued')
+        if not refresh:self.refreshed.discard((page,cid))
+        hub_protocol.set_property(window,'NF.RowNetwork'+str(cid),'true' if refresh or direct_widgets.cached(path) is None else '')
+        hub_protocol.set_property(window,'NF.RowLoading'+str(cid), 'true')
+        hub_protocol.set_property(self.home,direct_widgets.key(page, cid)+'.State', 'queued')
         request = str(time.time_ns()) if refresh else hub_protocol.request_key(page,cid,path,offset)
-        self.home.setProperty(direct_widgets.key(page,cid)+'.Request', request)
-        window.setProperty('NF.RowURL'+str(cid), direct_widgets.url(
+        hub_protocol.set_property(self.home,direct_widgets.key(page,cid)+'.Request', request)
+        hub_protocol.set_property(window,'NF.RowURL'+str(cid), direct_widgets.url(
             page, cid, path, row['label'].lower().startswith('top 10'),
             request if refresh else '', offset=offset, back=back, request=request))
-        window.setProperty('NF.Source'+str(cid), json.dumps(dict(source=path, offset=offset)))
+        hub_protocol.set_property(window,'NF.Source'+str(cid), json.dumps(dict(source=path, offset=offset)))
         self.jobs.add((page, cid))
-        self.home.setProperty(direct_widgets.key(page,cid)+'.Job',request)
-        self.home.setProperty(direct_widgets.key(page,cid)+'.Started',str(time.time()))
+        hub_protocol.set_property(self.home,direct_widgets.key(page,cid)+'.Job',request)
+        hub_protocol.set_property(self.home,direct_widgets.key(page,cid)+'.Started',str(time.time()))
         future=self.pool.submit(direct_widgets.contents,path,refresh)
         self.inflight.add(future)
         self.tasks[(page,cid)]=(future,window,path,offset,back,request,row)
 
+    def apply_spotlight_setting(self):
+        if self.api.prop('SpotlightChanged')!='true':return
+        self.api.prop('SpotlightChanged','')
+        if not xbmc.getCondVisibility('Skin.HasSetting(NFHideSpotlight)'):return
+        window=xbmcgui.Window(xbmcgui.getCurrentWindowId())
+        slot=window.getProperty('NF.HubSlot')
+        if not slot.isdigit() or window.getFocusId() not in (100,101,102):return
+        if not 0<=int(slot)<len(self.config['tabs']):return
+        rows=self.config['tabs'][int(slot)].get('rows',[])[:48]
+        for index,row in enumerate(rows):
+            cid=600+index
+            if self.enabled(row) and int(window.getProperty('NF.TileCount'+str(cid)) or 0)>0:
+                window.setFocusId(cid);return
+        window.setFocusId(hub_protocol.topbar_id(int(slot)))
+
+    def restore_detail_focus(self):
+        if self.api.prop('RestoreWidgetFocus')!='true':return
+        self.api.prop('RestoreWidgetFocus','')
+        try:target=json.loads(self.api.prop('DetailOrigin') or '{}')
+        except ValueError:return
+        active=xbmcgui.getCurrentWindowId()
+        if target.get('window')!=active:return
+        window=xbmcgui.Window(active)
+        cid=target.get('row',0)
+        if not 600<=cid<648 or window.getProperty('NF.Page')!=target.get('page'):return
+        count=int(window.getProperty('NF.TileCount'+str(cid)) or 0)
+        if not count:return
+        try:
+            window.setFocusId(cid)
+            window.getControl(cid).selectItem(min(max(0,int(target.get('position',0))),count-1))
+        except RuntimeError:pass
+
+    def presentation_locked(self):
+        if xbmc.getCondVisibility('System.HasModalDialog') or xbmc.getCondVisibility('Player.HasVideo'):
+            return True
+        try:
+            window=xbmcgui.Window(xbmcgui.getCurrentWindowId());focus=window.getFocusId()
+        except RuntimeError:return True
+        return 600<=focus<648 and int(window.getProperty('NF.TileCount'+str(focus)) or 0)>0
+
     def complete_tasks(self):
+        # Downloads can finish into disk cache while the user is browsing, but
+        # changing static provider items can reset every list in the window.
+        if self.presentation_locked():return
         self.inflight={job for job in self.inflight if not job.done()}
+        applied=0
         for identity,task in list(self.tasks.items()):
             future,window,source,offset,back,request,row=task
             if not future.done():continue
+            if applied >= (1 if self.budget.name=='low' else 2):break
             del self.tasks[identity]
+            applied+=1
             page,cid=identity;prefix=direct_widgets.key(page,cid)
             if self.home.getProperty(prefix+'.Request')!=request:continue
             try:
                 entry,stale,status=future.result()
                 direct_widgets.restore(window,self.home,page,cid,source,entry,
                     row['label'].lower().startswith('top 10'),allow_personal=True,offset=offset,back=back,budget=self.budget)
-                self.home.setProperty(prefix+'.Stale','true' if stale else '')
+                hub_protocol.set_property(self.home,prefix+'.Stale','true' if stale else '')
             except Exception as exc:
                 retry=dict(Title='Quelle nicht erreichbar · Erneut versuchen',Path=source,
                            DirectNavigate=source,Retry=True,Row=cid,Hub=page)
                 direct_widgets.restore(window,self.home,page,cid,source,dict(items=[retry],time=time.time()),allow_personal=True)
-                self.home.setProperty(prefix+'.State','error')
+                hub_protocol.set_property(self.home,prefix+'.State','error')
                 xbmc.log('[Nebelflix Widgets] row=%s %s'%(cid,type(exc).__name__),xbmc.LOGWARNING)
             if window.getFocusId()==cid+1000:
                 slot=int(window.getProperty('NF.HubSlot') or 0)
                 window.setFocusId(cid if self.home.getProperty(prefix+'.State')=='ready' else hub_protocol.topbar_id(slot))
             self.home.clearProperty(prefix+'.Job')
-            window.setProperty('NF.RowLoading'+str(cid),'')
+            hub_protocol.set_property(window,'NF.RowLoading'+str(cid),'')
             self.jobs.discard(identity)
 
     def tick_logos(self,window,focus):
+        if self.presentation_locked():return
         if time.monotonic()<self.next_logo_check:return
         self.next_logo_check=time.monotonic()+1
         # XML controls returned by getControl() do not expose another Python
@@ -186,7 +230,7 @@ class Hubs:
                 limit=10 if top10 else (12 if self.budget.name=='low' else 20)
                 count=min(limit,max(0,len(entry.get('items',[]))-offset))
                 if count:control.selectItem(min(selected,count-1))
-                window.setProperty('NF.RowLogoStamp'+str(cid),revision)
+                hub_protocol.set_property(window,'NF.RowLogoStamp'+str(cid),revision)
         for key,job in list(self.logo_jobs.items()):
             if job.done():
                 try:job.result()
@@ -211,22 +255,22 @@ class Hubs:
         signature = hub_protocol.signature(tab,segment)
         changed = window.getProperty('NF.LayoutSignature') != signature
         if changed:
-            window.setProperty('NF.RowsReady','')
-            window.setProperty('NF.LayoutSignature', signature)
+            hub_protocol.set_property(window,'NF.RowsReady','')
+            hub_protocol.set_property(window,'NF.LayoutSignature', signature)
             for cid in range(600, 648):
                 for prefix in ('RowURL','RowHeading','RowState','RowKind','RowLoading','RowNative','TileCount','History','Source'):
                     window.clearProperty('NF.'+prefix+str(cid))
-            window.setProperty('NF.Bound', str(start))
-        window.setProperty('NF.Page', page)
+            hub_protocol.set_property(window,'NF.Bound', str(start))
+        hub_protocol.set_property(window,'NF.Page', page)
         self.api.prop('Page', page)
         self.api.prop('TabSelected', str(slot))
         self.api.prop('HubSegment'+str(slot),str(segment))
         self.api.prop('TabWindow'+str(slot),'Home' if window_id(slot,segment)==10000 else str(window_id(slot,segment)))
-        window.setProperty('NF.NextWidgetsWindow',str(window_id(slot,min(5,segment+1))))
+        hub_protocol.set_property(window,'NF.NextWidgetsWindow',str(window_id(slot,min(5,segment+1))))
         previous=window_id(slot,max(0,segment-1))
-        window.setProperty('NF.PreviousWidgetsWindow','Home' if previous==10000 else str(previous))
-        window.setProperty('NF.HasPreviousWidgets','true' if segment else '')
-        window.setProperty('NF.HasMoreWidgets','true' if start+ROWS_PER_VIEW < len(tab.get('rows',[])) else '')
+        hub_protocol.set_property(window,'NF.PreviousWidgetsWindow','Home' if previous==10000 else str(previous))
+        hub_protocol.set_property(window,'NF.HasPreviousWidgets','true' if segment else '')
+        hub_protocol.set_property(window,'NF.HasMoreWidgets','true' if start+ROWS_PER_VIEW < len(tab.get('rows',[])) else '')
         self.api.prop('DirectHubs', 'true')
         self.api.prop('HubSwitching', '')
         self.api.prop('HasHero', 'true' if page in ('home','movie','tv','new') else 'false')
@@ -255,17 +299,19 @@ class Hubs:
             self.visited.add(page)
         for offset, row in enumerate(tab.get('rows', [])[:48]):
             cid = 600+offset
-            window.setProperty('NF.RowHeading'+str(cid), row['label'])
+            hub_protocol.set_property(window,'NF.RowHeading'+str(cid), row['label'])
             kind = 'continue' if row['path'].startswith('nf://continue') else 'top10' if row['label'].lower().startswith('top 10') else 'content'
-            window.setProperty('NF.RowKind'+str(cid), kind)
+            hub_protocol.set_property(window,'NF.RowKind'+str(cid), kind)
         return tab
 
     def tick(self):
-        if self.api.prop('StartupBlocked')=='true':return False
+        if self.api.prop('StartupBlocked')=='true' or xbmc.getCondVisibility('Player.HasVideo'):return False
         if (xbmc.getCondVisibility('System.HasModalDialog')
                 or xbmc.getCondVisibility('System.ScreenSaverActive')
                 or xbmc.getCondVisibility('System.DPMSActive')):
             return False
+        self.apply_spotlight_setting()
+        self.restore_detail_focus()
         self.complete_tasks()
         self.budget.sample()
         self.api.prop('PerformanceProfile', self.budget.name)
@@ -282,6 +328,15 @@ class Hubs:
             return False
         page = tab['id']
         rows = tab.get('rows', [])[:48]
+        revision=self.api.prop('TVRevision')
+        if revision!=self.tv_revision:
+            self.tv_revision=revision
+            for tvtab in self.config['tabs']:
+                for index,row in enumerate(tvtab.get('rows',[])[:48]):
+                    if row.get('path','').startswith(('nf://nebelflix/tv','nf://moviescout/germany','plugin://plugin.video.nebelflix.tv/')):
+                        identity=(tvtab['id'],600+index)
+                        hub_protocol.set_property(self.home,direct_widgets.key(*identity)+'.Stale','true')
+                        self.refreshed.discard(identity)
         start = int(window.getProperty('NF.Segment') or 0)*ROWS_PER_VIEW
         end = min(len(rows), start+ROWS_PER_VIEW)
         bound = int(window.getProperty('NF.Bound') or start)
@@ -293,7 +348,7 @@ class Hubs:
                     and direct_widgets.cached(rows[index]['path']) is not None):
                 self.bind(window,page,cid,rows[index])
         bound=end
-        window.setProperty('NF.Bound',str(end))
+        hub_protocol.set_property(window,'NF.Bound',str(end))
 
         # Fill only a short navigation horizon, one provider at a time on sticks.
         try:
@@ -323,10 +378,10 @@ class Hubs:
                 # Kodi served the stable URL from its native directory cache;
                 # no Python provider needs to run merely to display these items.
                 state='ready'
-                self.home.setProperty(prefix+'.State',state)
+                hub_protocol.set_property(self.home,prefix+'.State',state)
                 entry=direct_widgets.cached(rows[index]['path'])
                 if entry and time.time()-entry.get('time',0) >= library.widget_cache_ttl(rows[index]['path']):
-                    self.home.setProperty(prefix+'.Stale','true')
+                    hub_protocol.set_property(self.home,prefix+'.Stale','true')
             pending = state in ('queued','loading')
             if state == 'loading':
                 try:
@@ -340,15 +395,15 @@ class Hubs:
             if not pending:
                 self.jobs.discard((page,cid))
                 position=window.getProperty('NF.RestorePosition'+str(cid))
-                if position.isdigit() and has_items:
+                if position.isdigit() and has_items and time.monotonic()>=float(window.getProperty('NF.RestoreAfter'+str(cid)) or 0):
                     try:window.getControl(cid).selectItem(int(position))
                     except RuntimeError:pass
                     window.clearProperty('NF.RestorePosition'+str(cid))
-            window.setProperty('NF.RowLoading'+str(cid), 'true' if pending else '')
+            hub_protocol.set_property(window,'NF.RowLoading'+str(cid), 'true' if pending else '')
             if state == 'error':
-                window.setProperty('NF.RowState'+str(cid), 'Quelle nicht erreichbar · Erneut versuchen')
+                hub_protocol.set_property(window,'NF.RowState'+str(cid), 'Quelle nicht erreichbar · Erneut versuchen')
             else:
-                window.setProperty('NF.RowState'+str(cid), '')
+                hub_protocol.set_property(window,'NF.RowState'+str(cid), '')
             visible_count += int(has_items)
             visible_after_focus += int(has_items and cid > focus)
         # Empty initial rows must not prevent discovery of later nonempty rows.
@@ -357,8 +412,8 @@ class Hubs:
         if 600 <= focus < 648 and not visible_after_focus and not active_jobs and bound < end:
             horizon = max(horizon, bound+1)
         settled=all(not self.enabled(rows[i]) or self.home.getProperty(direct_widgets.key(page,600+i)+'.State') in ('ready','empty','error') for i in range(start,end))
-        window.setProperty('NF.Empty', 'true' if not visible_count and not active_jobs and settled else '')
-        window.setProperty('NF.RowsReady','true')
+        hub_protocol.set_property(window,'NF.Empty', 'true' if not visible_count and not active_jobs and settled else '')
+        hub_protocol.set_property(window,'NF.RowsReady','true')
         # An empty/removed row cannot retain remote focus on an invisible control.
         if 600 <= focus < 648 and not active_jobs and not xbmc.getCondVisibility('Control.IsVisible(%s)'%focus):
             window.setFocusId(hub_protocol.topbar_id(int(raw_slot)))
@@ -374,7 +429,7 @@ class Hubs:
                 self.bind(window,page,cid,rows[index]);available-=1
         self.navigate(window, page, rows)
         if window.getProperty('NF.PersonalRevision') != self.api.prop('RefreshWidgets'):
-            window.setProperty('NF.PersonalRevision', self.api.prop('RefreshWidgets'))
+            hub_protocol.set_property(window,'NF.PersonalRevision', self.api.prop('RefreshWidgets'))
             for i in range(start,min(bound,len(rows))):
                 row=rows[i]
                 if row['path'].startswith(('nf://continue','nf://mylist')):
@@ -389,7 +444,7 @@ class Hubs:
                 if source.startswith(('nf://continue','nf://mylist')):continue
                 entry=direct_widgets.cached(source)
                 if entry and time.time()-entry.get('time',0) >= library.widget_cache_ttl(source):
-                    self.home.setProperty(direct_widgets.key(page,600+i)+'.Stale','true')
+                    hub_protocol.set_property(self.home,direct_widgets.key(page,600+i)+'.Stale','true')
                     self.refreshed.discard((page,600+i))
         if not active_jobs and bound >= end and time.monotonic()-self.entered_at > 3 and not self.budget.pressure:
             for i in range(start,min(bound,len(rows))):
@@ -406,7 +461,7 @@ class Hubs:
             self.tick_logos(window,focus)
         item = self.api.update_spotlight(page) or {}
         if item:
-            window.setProperty('NF.HeroData', json.dumps(item,ensure_ascii=False))
+            hub_protocol.set_property(window,'NF.HeroData', json.dumps(item,ensure_ascii=False))
         return True
 
     def navigate(self, window, page, rows):
@@ -429,7 +484,7 @@ class Hubs:
                 return
             if not data.get('Retry'):
                 history.append(json.loads(window.getProperty('NF.Source'+str(cid))))
-        window.setProperty('NF.History'+str(cid),json.dumps(history))
+        hub_protocol.set_property(window,'NF.History'+str(cid),json.dumps(history))
         self.bind(window,page,cid,rows[cid-600],source=target['source'],offset=target['offset'],back=bool(history),refresh=bool(data.get('Retry')))
 
     def busy(self):
@@ -530,7 +585,8 @@ def monitor(api):
                     api.prop('StopSpotlight',''); api.cancel_spotlight_video(suppress=True)
                 if api.prop('ResumeFallbackRequested')=='true':
                     api.resume_helper_fallback()
-                if active:
+                if active or (api.prop('PlaybackOwner')=='auto' and api.PLAYER.isPlayingVideo()):
+                    # Pausing widget work must not itself cancel an owned preview.
                     video.tick(hubs.active,api.action_item())
                 else:
                     video.reset()

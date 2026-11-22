@@ -118,49 +118,49 @@ class StopObserver(xbmc.Player):
             from resources.lib.playback import clear
             clear()
 
-def _maintenance():
+def _maintenance(revision):
+    # Vavoo is the single EPG/favourites owner. No duplicate XMLTV downloads.
     try:
-        from resources.lib import epg,channels,art
-        cached=channels.channel_list()
-        if cached:
-            epg.refresh_due(limit=1,target_channels=cached)
-            if epg.source_status():
-                art.cache_batch(cached,limit=12)
+        from resources.lib import channels
+        channels.channel_list(force=True)
+        import xbmcgui
+        win=xbmcgui.Window(10000)
+        win.setProperty('NFTV.AppliedVavooRevision',revision)
+        win.setProperty('NF.TVRevision',revision)
+        win.setProperty('NF.RefreshWidgets',revision)
     except Exception as exc:
-        log('Background EPG update deferred: %s'%exc,xbmc.LOGWARNING)
+        log('Vavoo Widget-Abgleich zurückgestellt: '+type(exc).__name__,xbmc.LOGWARNING)
 
 
 def run():
+    from resources.lib.vavoo_watch import Watcher
+    watcher=Watcher()
     observer=StopObserver()
     monitor=xbmc.Monitor()
     if monitor.waitForAbort(15):
         return
     maintenance_thread = None
+    favorites_thread = None
     last_network=0
     last_osd=0
     while not monitor.abortRequested():
         import xbmcgui
         win = xbmcgui.Window(10000)
-        if (win.getProperty('NFTV.RestoreGuide') == '1'
-                and win.getProperty('NFTV.GuideAlive') != 'true'
-                and not xbmc.Player().isPlayingVideo()
-                and xbmcgui.getCurrentWindowDialogId() in (0, 9999)):
-            win.clearProperty('NFTV.RestoreGuide')
-            win.clearProperty('NF.RestorePlaybackFocus')
-            win.setProperty('NF.PlaybackOwner', 'tv')
-            xbmc.executebuiltin('RunPlugin(plugin://plugin.video.nebelflix.tv/?action=guide)')
         now=time.monotonic()
+        watcher.poll()
+        if watcher.due() and (favorites_thread is None or not favorites_thread.is_alive()):
+            watcher.next_worker=now+1800
+            favorites_thread=threading.Thread(target=watcher.run,args=(monitor,),daemon=True)
+            favorites_thread.start()
         if now-last_osd>=3:
             try:_update_osd()
             except Exception as exc:log('OSD-Update: %s'%exc,xbmc.LOGWARNING)
             last_osd=now
-        conf=settings()
-        if conf.get('sync_started') and now-last_network>=60:
-            # Network work at startup/due time only; the main loop keeps
-            # the on-screen EPG clock responsive between refreshes.
-            last_network=now
+        revision=win.getProperty('VavooPlus.FavoritesRevision')
+        if revision and revision!=win.getProperty('NFTV.AppliedVavooRevision') and now-last_network>=60:
             if maintenance_thread is None or not maintenance_thread.is_alive():
-                maintenance_thread = threading.Thread(target=_maintenance, daemon=True)
+                last_network=now
+                maintenance_thread=threading.Thread(target=_maintenance,args=(revision,),daemon=True)
                 maintenance_thread.start()
         if monitor.waitForAbort(2):
             break

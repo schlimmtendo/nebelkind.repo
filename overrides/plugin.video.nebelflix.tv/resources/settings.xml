@@ -1,0 +1,5 @@
+<settings>
+  <category label="Vavoo TV Plus">
+    <setting id="vavoo.auto_maintenance" type="bool" default="true" label="Bei geänderten Senderlisten Favoriten automatisch aktualisieren und reparieren" />
+  </category>
+</settings>

@@ -31,7 +31,7 @@ def required(rows,force=False):
 
 
 def run(api,force=False):
-    """Prepare saved data; the caller continues without restarting Kodi."""
+    """Prepare saved data; return true when an application exit/restart was requested."""
     rows=plan(library.layout())
     if not required(rows,force):return False
     api.prop('Revisions.Deferred','true')
@@ -86,7 +86,19 @@ def run(api,force=False):
             if not cancelled:api.notification('%s Reihen vorbereitet, %s Quellen nicht erreichbar. Vorbereitung wird beim naechsten Start fortgesetzt.'%(done-failed,failed))
             return False
         library.preload_finished(len(rows),0)
-        api.prop('PreloadStatus','Vorbereitung fertig – Oberfläche wird geöffnet ...')
+        android=xbmc.getCondVisibility('System.Platform.Android')
+        supported=(xbmc.getCondVisibility('System.Platform.Windows') or xbmc.getCondVisibility('System.Platform.Linux')) and not android
+        if supported or android:
+            message=('Alle Reihen gespeichert. Kodi startet jetzt neu ...' if supported else
+                     'Alle Reihen gespeichert. Kodi wird jetzt beendet. Bitte danach erneut öffnen.')
+            api.prop('PreloadStatus',message)
+            api.notification(message)
+            state['restart_requested_at']=time.time()
+            state['restart_mode']='automatic' if supported else 'manual-reopen'
+            library.write(STATE,state)
+            if not api.MONITOR.waitForAbort(4):
+                xbmc.executebuiltin('RestartApp' if supported else 'Quit')
+            return True
         restore_surface(api)
         return False
 

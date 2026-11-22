@@ -1,0 +1,13 @@
+Nebelkind Musik 5.1.1 – lokal (22.11.2026)
+
+Alle acht Kategorien verwenden eigene, einheitliche Nebelkind-Icons: Charts, Dance, Electro, Techno, Festival, House, Trance und Weihnachten. Neues Addon-Icon. Playlist-Kacheln verwenden das passende Kategorie-Motiv. Bestehende Nutzerbilder in fremden Addons bleiben unberührt.
+
+Fire-TV-Log 1jk6p, 14:11:59 und 14:12:46: YouTube get_playlist_items meldet HTTP 403 quotaExceeded. Das ist ein ausgeschöpftes YouTube-Data-API-Kontingent, kein Beleg für gelöschte Playlists. Keine API-Schlüssel verändert oder rotiert.
+
+Neue Standard-Wiedergabe: öffentlich sichtbare Playlist-Seite lesen, verfügbare Titel extrahieren, Kodi-Warteschlange mit einzelnen plugin.video.youtube/play/?video_id=... anlegen. YouTube-Addon bleibt für die Video-Wiedergabe zuständig. Keine Änderung am installierten YouTube-Addon. Titellisten werden eine Stunde im persönlichen Addon-Profil gespeichert, bei Netzwerkfehlern werden vorhandene Titel weiter verwendet. Leere/private/nicht verfügbare Playlists zeigen eine verständliche Meldung, statt die vorhandene Warteschlange zu leeren. Eine Playlist-Seite kann keine regionalen Abspielrechte, Login oder den Streamresolver garantieren.
+
+Grenze: maximal 100 Titel aus der öffentlich ausgelieferten Seite je Warteschlange. Bei langen Listen wird darauf hingewiesen. Die vollständige Playlist bleibt über das Kontextmenü im YouTube-Addon erreichbar und kann dort weiterhin das API-Kontingent benötigen. Keine verdeckte Nachlade-Endlosschleife.
+
+Online-Test: je eine Playlist aller acht Kategorien über neue Titellisten-Route erfolgreich: 100/100/98/24/100/85/100/100 Titel. 13 isolierte Tests bestanden (Parser, Cache, Fehler, Queue-/URL-Übergabe, Menüs, Katalog). Wiedergabe auf echtem Kodi/Fire TV nicht ferngesteuert und nicht live bestätigt.
+
+TV-Addon unverändert. Keine Veröffentlichung auf GitHub. Nutzerprofile und Rohlogs sind nicht Bestandteil des Pakets.

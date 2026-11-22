@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<addon id="plugin.video.nebelkindmusic" name="[B][COLOR skyblue]Nebelkind[/COLOR][COLOR gold] Musik[/COLOR][/B]" version="5.0.1" provider-name="NebelKind">
+<addon id="plugin.video.nebelkindmusic" name="[B][COLOR skyblue]Nebelkind[/COLOR][COLOR gold] Musik[/COLOR][/B]" version="5.1.2" provider-name="NebelKind">
   <requires>
     <import addon="xbmc.python" version="3.0.0" />
     <import addon="plugin.video.youtube" />
@@ -7,6 +7,7 @@
   <extension point="xbmc.python.pluginsource" library="default.py">
     <provides>video</provides>
   </extension>
+  <extension point="xbmc.service" library="service.py" />
   <extension point="xbmc.addon.metadata">
     <summary>YouTube Music Video Playlists</summary>
     <description>
@@ -18,6 +19,6 @@
       <fanart>fanart.jpg</fanart>
       <screenshot />
     </assets>
-    <news>Wartungsrevision für den gemeinsamen Revisions-Updater-Test; Musikfunktionen unverändert.</news>
+    <news>Einheitliche Genre- und Addon-Icons. Öffentliche Titellisten statt Playlist-Data-API; Videos über YouTube-Addon. Bis 100 Titel pro Warteschlange, vollständige Playlist im Kontextmenü.</news>
   </extension>
 </addon>

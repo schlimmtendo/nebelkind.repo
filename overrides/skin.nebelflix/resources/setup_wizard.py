@@ -44,7 +44,7 @@ def run(home,monitor,existing=False):
         first=choose(home,monitor,1,'Dein Nebelflix wird vorbereitet',
             ('Deine vorhandenen Reiter, Widget-Zuordnungen, Listen und dein Verlauf bleiben erhalten.' if existing else
              'Die Nebelflix-Vorlage richtet deine Startseite und die Bereiche Filme, Serien und Live TV ein.')+
-            '[CR][CR]1. Leistung einstellen[CR]2. Inhalte aller Bereiche speichern[CR]3. Direkt zur Oberfläche wechseln'+
+            '[CR][CR]1. Leistung einstellen[CR]2. Inhalte aller Bereiche speichern[CR]3. Kodi sauber neu starten'+
             '[CR][CR]Während dieser Einrichtung werden im Hintergrund keine Widget-Reihen geladen.',
             ['Weiter zur Leistungseinstellung'])
         if first is None:return None
@@ -57,7 +57,7 @@ def run(home,monitor,existing=False):
         last=choose(home,monitor,3,'Jetzt werden alle Bereiche gespeichert',
             'Nebelflix lädt die konfigurierten Widget-Quellen aller Hubs und speichert die Ergebnisse auf diesem Gerät.'+
             '[CR][CR]Ein Fortschrittsbalken zeigt, welche Reihe gerade vorbereitet wird. Dies kann beim ersten Mal einige Minuten dauern.'+
-            '[CR][CR]Nach erfolgreichem Abschluss öffnet sich direkt deine Oberfläche. Ein Neustart ist nicht nötig.'+
+            '[CR][CR]'+('Nach erfolgreichem Abschluss beendet sich Kodi. Bitte öffne Kodi danach wieder; Android unterstützt keinen automatischen Kodi-Neustart.' if xbmc.getCondVisibility('System.Platform.Android') else 'Nach erfolgreichem Abschluss kündigt Kodi den Neustart an und startet einmal automatisch neu.')+
             '[CR][CR]Danach erscheinen gespeicherte Inhalte ohne erneute Quellensuche. Neue Inhalte werden später im Hintergrund aktualisiert.',
             ['Vorbereitung starten'])
         return profile if last is not None else None

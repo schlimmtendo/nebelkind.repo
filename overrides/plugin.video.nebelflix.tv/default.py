@@ -22,7 +22,7 @@ def run(handle,params):
         ui.root(handle)
     elif action=='guide':
         ui.guide()
-        xbmcplugin.endOfDirectory(handle,succeeded=True)
+        if handle>=0:xbmcplugin.endOfDirectory(handle,succeeded=False)
     elif action=='groups': ui.groups(handle)
     elif action=='list':
         group=params.get('group','all')

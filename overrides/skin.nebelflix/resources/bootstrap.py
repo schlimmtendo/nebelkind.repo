@@ -107,6 +107,11 @@ def ensure_monitor(home):
 
 
 def prewarm(home,root,config):
+    # Cached inactive hubs stay on disk on sticks; writing thousands of native
+    # properties while video/UI renders starves the Android render/decoder loop.
+    try:override=json.loads((root/'performance.json').read_text(encoding='utf-8')).get('profile','auto')
+    except (OSError,ValueError):override='auto'
+    if override=='low' or xbmc.getCondVisibility('System.Platform.Android'):return
     for slot,tab in enumerate(config.get('tabs',[])[:12]):
         if slot==0:continue
         try:configure(xbmcgui.Window(hub_protocol.window_id(slot)+10000),home,root,tab,slot)
@@ -127,7 +132,6 @@ def startup_intro(home,prepare=None):
     monitor=xbmc.Monitor();started=time.monotonic()
     try:
         player.play(clip,windowed=True)
-        finish_prepare()
         while not monitor.waitForAbort(0.1) and time.monotonic()-started<8:
             if home.getProperty('NF.SkipIntro')=='true':break
             if time.monotonic()-started>1 and not player.isPlaying():break
@@ -139,8 +143,10 @@ def startup_intro(home,prepare=None):
             try:
                 if player.getPlayingFile()==clip:player.stop()
             except RuntimeError:pass
-        try:home.setFocusId(200)
-        except RuntimeError:pass
+        try:
+            if xbmcgui.getCurrentWindowId()==10000 and home.getFocusId()==1999:home.setFocusId(200)
+        except (RuntimeError,AttributeError):pass
+    finish_prepare()
 
 
 def startup_phase(root,config):

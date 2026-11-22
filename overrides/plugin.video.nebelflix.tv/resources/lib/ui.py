@@ -50,13 +50,13 @@ def _finish(handle, entries, content='files'):
 def root(handle):
     n=len(channels.group_catalog())
     entries=[
-      item('📺 Programmführer · Jetzt und nächste Sendungen',url('guide'),True,
-           'Eigener Nebelflix-TV-Guide mit Sendergruppen und Zeitachse',logo=category_icon('guide')),
+      item('📺 Programmführer · Jetzt und nächste Sendungen',url('guide'),False,
+           'Programmführer von Vavoo TV Plus öffnen',logo=category_icon('guide')),
       item('🕘 Zuletzt gesehen (TV)',url('list',group='recent'),True,logo=category_icon('all')),
       item('★ TV-Favoriten',url('list',group='favorites'),True,logo=category_icon('all')),
       item('📂 Vavoo-Sendergruppen (%d)' % n,url('groups'),True,logo=category_icon('all')),
       item('🔎 Sender suchen',url('search'),True),
-      item('⚙️ TV & EPG verwalten',url('manage'),True),
+      item('⚙️ TV-Widgets & Vavoo verwalten',url('manage'),True),
     ]
     _finish(handle,entries)
 
@@ -105,24 +105,15 @@ def list_channels(handle, group='all', search='', page=0):
     load_timing.record('tv','channels.list',started,rows=len(entries))
 
 
-def schedule(handle, ch):
-    channel=channels.find_channel(ch)
-    if not channel:
-        _finish(handle,[]);return
-    source,events=epg.schedule(channel)
-    entries=[item('[B]▶ Sender ansehen: %s[/B]' % channel['name'],url('play',id=channel['id']),True,
-                 'Wiedergabe über '+channel['source'],channel.get('logo') or CHANNEL_ICON,True)]
-    for start,end,title,desc in events:
-        entries.append(item('%s–%s  %s' % (friendly_time(start),friendly_time(end),title),
-                            url('play',id=channel['id']),True,desc,channel.get('logo') or CHANNEL_ICON,False))
-    if not events:
-        entries.append(item('Noch keine Programmdaten zugeordnet',url('manage'),True))
-    _finish(handle,entries)
+def schedule(handle,ch):
+    from .vavoo_bridge import open_guide
+    open_guide(channels.find_channel(ch))
+    if handle>=0:xbmcplugin.endOfDirectory(handle,succeeded=False)
 
 
 def guide():
-    from .guide import open_guide
-    open_guide()
+    from .vavoo_bridge import open_guide
+    return open_guide()
 
 
 def search(handle):

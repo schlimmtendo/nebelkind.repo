@@ -26,6 +26,7 @@ ALLOWED = {
     "plugin.video.nebelkindmusic",
     "skin.nebelflix",
 }
+RETIRED={"plugin.video.nebelflix.tv": {"resources/lib/guide.py", "resources/skins/Default/1080i/Guide.xml"}}
 VERSION = re.compile(r"^[0-9][0-9A-Za-z.+_-]*$")
 
 
@@ -110,7 +111,8 @@ def build(addon_id, intended_version):
 
         # Do not rewrite ZIPs if nothing has changed.
         old_names = set(z.namelist())
-        modified = (version != old_version or any(
+        retired = {addon_id+"/"+name for name in RETIRED.get(addon_id,set())}
+        modified = (version != old_version or bool(retired & old_names) or any(
             key not in old_names or z.read(key) != value
             for key, value in patches.items()
         ))
@@ -126,6 +128,7 @@ def build(addon_id, intended_version):
         try:
             with ZipFile(temp, "w") as target:
                 for entry in z.infolist():
+                    if entry.filename in retired or '__pycache__' in Path(entry.filename).parts or entry.filename.endswith(('.pyc','.pyo')):continue
                     if entry.is_dir():
                         target.writestr(entry, b"")
                     else:

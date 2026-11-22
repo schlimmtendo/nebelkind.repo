@@ -97,6 +97,17 @@ def restore(window, home, page, cid, source, entry, top10=False, allow_personal=
     """Fill the native list from disk without launching a Python provider per row."""
     if not allow_personal and source.startswith(('nf://continue','nf://mylist')):
         return False
+    try:
+        previous=json.loads(window.getProperty('NF.Source'+str(cid)) or '{}')
+        selected=max(0,window.getControl(cid).getSelectedPosition())
+        old_item=json.loads(window.getProperty('NF.Tile%s.%s.NF.Data'%(cid,selected)) or '{}')
+    except (RuntimeError,AttributeError,ValueError):
+        previous={};selected=0;old_item={}
+    preserve=previous.get('source')==source and previous.get('offset',0)==offset
+    def identity(item):
+        if item.get('TMDB'):return ('tmdb',item.get('Type',''),str(item['TMDB']))
+        if item.get('Path'):return ('path',item['Path'])
+        return ('title',item.get('Title',''))
     budget=budget or performance.Budget(read('performance.json',{}).get('profile','auto'))
     limit=10 if top10 else (12 if budget.name=='low' else 20)
     items=[dict(item,Hub=page,Row=cid) for item in entry.get('items',[])[offset:offset+limit]]
@@ -125,22 +136,27 @@ def restore(window, home, page, cid, source, entry, top10=False, allow_personal=
     # while cached rows still require no individual Python provider invocation.
     for index,item in enumerate(items[:hub_protocol.STATIC_TILE_LIMIT]):
         prefix='NF.Tile%s.%s.'%(cid,index)
-        window.setProperty(prefix+'Title',item.get('Title',''))
-        window.setProperty(prefix+'Thumb',item.get('Fanart') or item.get('Poster') or 'special://skin/media/nebelflix/poster.png')
+        hub_protocol.set_property(window,prefix+'Title',item.get('Title',''))
+        hub_protocol.set_property(window,prefix+'Thumb',item.get('Fanart') or item.get('Poster') or 'special://skin/media/nebelflix/poster.png')
         values={'NF.Data':json.dumps(item,ensure_ascii=False),'NF.Hub':page,
                 'NF.Clearlogo':item.get('Clearlogo',''),
                 'NF.RankArt':'special://skin/media/nebelflix/rank-%s.png'%(index+1) if top10 and index<10 else '',
                 'NFTV.Category':'1' if item.get('GuideOpen') or (item.get('AddonBrowse') and '?action=list&group=' in item.get('Path','')) else '',
                 'tmdb_id':str(item.get('TMDB','')),'tmdb_type':item.get('Type','')}
         for field in ('EPG','EPGNext','EPGProgress'):values['NF.'+field]=str(item.get(field) or '')
-        for field in hub_protocol.STATIC_TILE_PROPERTIES:window.setProperty(prefix+field,values.get(field,''))
-    window.setProperty('NF.TileCount'+str(cid),str(min(len(items),hub_protocol.STATIC_TILE_LIMIT)))
-    window.setProperty('NF.RowNative'+str(cid),'true')
-    window.setProperty('NF.RowLoading'+str(cid),'')
-    window.setProperty('NF.Source'+str(cid),json.dumps(dict(source=source,offset=offset)))
+        for field in hub_protocol.STATIC_TILE_PROPERTIES:hub_protocol.set_property(window,prefix+field,values.get(field,''))
+    hub_protocol.set_property(window,'NF.TileCount'+str(cid),str(min(len(items),hub_protocol.STATIC_TILE_LIMIT)))
+    hub_protocol.set_property(window,'NF.RowNative'+str(cid),'true')
+    hub_protocol.set_property(window,'NF.RowLoading'+str(cid),'')
+    hub_protocol.set_property(window,'NF.Source'+str(cid),json.dumps(dict(source=source,offset=offset)))
     prefix=key(page,cid)
-    home.setProperty(prefix+'.State','ready' if items else 'empty')
-    home.setProperty(prefix+'.Stale','true' if time.time()-entry.get('time',0)>=hub_protocol.widget_ttl(source) else '')
+    hub_protocol.set_property(home,prefix+'.State','ready' if items else 'empty')
+    hub_protocol.set_property(home,prefix+'.Stale','true' if time.time()-entry.get('time',0)>=hub_protocol.widget_ttl(source) else '')
+    if preserve and items:
+        target=next((i for i,item in enumerate(items) if identity(item)==identity(old_item)),min(selected,len(items)-1))
+        hub_protocol.set_property(window,'NF.RestorePosition'+str(cid),str(target))
+        hub_protocol.set_property(window,'NF.RestoreAfter'+str(cid),str(time.monotonic()+0.2))
+
     return True
 
 

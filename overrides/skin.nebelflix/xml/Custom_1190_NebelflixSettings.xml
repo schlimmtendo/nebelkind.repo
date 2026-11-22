@@ -23,7 +23,7 @@
       <left>230</left>
       <top>225</top>
       <width>1460</width>
-      <height>80</height>
+      <height>64</height>
       <label>Intro beim Kodi-Start überspringen</label>
       <font>NFHeading</font>
       <texturefocus border="14">nebelflix/button-focus.png</texturefocus>
@@ -44,9 +44,9 @@
     </control>
     <control type="radiobutton" id="1201">
       <left>230</left>
-      <top>313</top>
+      <top>299</top>
       <width>1460</width>
-      <height>80</height>
+      <height>64</height>
       <label>Medientitel statt Clearlogo</label>
       <font>NFHeading</font>
       <texturefocus border="14">nebelflix/button-focus.png</texturefocus>
@@ -62,14 +62,14 @@
       <selected>Skin.HasSetting(NFHideClearlogo)</selected>
       <onclick>Skin.ToggleSetting(NFHideClearlogo)</onclick>
       <onup>1200</onup>
-      <ondown>1202</ondown>
+      <ondown>1217</ondown>
       <onback>PreviousMenu</onback>
     </control>
     <control type="radiobutton" id="1202">
       <left>230</left>
-      <top>401</top>
+      <top>447</top>
       <width>1460</width>
-      <height>80</height>
+      <height>64</height>
       <label>Weiterschauen ausblenden</label>
       <font>NFHeading</font>
       <texturefocus border="14">nebelflix/button-focus.png</texturefocus>
@@ -84,15 +84,15 @@
       <radioheight>32</radioheight>
       <selected>Skin.HasSetting(NFHideContinue)</selected>
       <onclick>Skin.ToggleSetting(NFHideContinue)</onclick>
-      <onup>1201</onup>
+      <onup>1217</onup>
       <ondown>1203</ondown>
       <onback>PreviousMenu</onback>
     </control>
     <control type="radiobutton" id="1203">
       <left>230</left>
-      <top>489</top>
+      <top>521</top>
       <width>1460</width>
-      <height>80</height>
+      <height>64</height>
       <label>Top 10 ausblenden</label>
       <font>NFHeading</font>
       <texturefocus border="14">nebelflix/button-focus.png</texturefocus>
@@ -113,9 +113,9 @@
     </control>
     <control type="radiobutton" id="1204">
       <left>230</left>
-      <top>577</top>
+      <top>595</top>
       <width>1460</width>
-      <height>80</height>
+      <height>64</height>
       <label>Trailer im Spotlight automatisch starten</label>
       <font>NFHeading</font>
       <texturefocus border="14">nebelflix/button-focus.png</texturefocus>
@@ -133,6 +133,7 @@
       <onup>1203</onup>
       <ondown>1212</ondown>
       <onback>PreviousMenu</onback>
+      <enable>!Skin.HasSetting(NFHideSpotlight)</enable>
     </control>
     <control type="button" id="1210">
       <left>230</left>
@@ -289,6 +290,31 @@
       <ondown>1210</ondown>
       <onleft>1211</onleft>
       <onright>1211</onright>
+    </control>
+    <control type="radiobutton" id="1217">
+      <left>230</left>
+      <top>373</top>
+      <width>1460</width>
+      <height>64</height>
+      <label>Spotlight anzeigen</label>
+      <font>NFHeading</font>
+      <texturefocus border="14">nebelflix/button-focus.png</texturefocus>
+      <texturenofocus>nebelflix/background.png</texturenofocus>
+      <textcolor>FFFFFFFF</textcolor>
+      <focusedcolor>FF141414</focusedcolor>
+      <textureradioonfocus>nebelflix/toggle-on.png</textureradioonfocus>
+      <textureradioonnofocus>nebelflix/toggle-on.png</textureradioonnofocus>
+      <textureradioofffocus>nebelflix/toggle-off.png</textureradioofffocus>
+      <textureradiooffnofocus>nebelflix/toggle-off.png</textureradiooffnofocus>
+      <radiowidth>58</radiowidth>
+      <radioheight>32</radioheight>
+      <selected>!Skin.HasSetting(NFHideSpotlight)</selected>
+      <onclick>Skin.ToggleSetting(NFHideSpotlight)</onclick>
+      <onup>1201</onup>
+      <ondown>1202</ondown>
+      <onback>PreviousMenu</onback>
+      <onclick>SetProperty(NF.StopSpotlight,true,Home)</onclick>
+      <onclick>SetProperty(NF.SpotlightChanged,true,Home)</onclick>
     </control>
   </controls>
 </window>

@@ -121,3 +121,22 @@ Keine unscharfe YouTube-Titelsuche, keine lokalen Proxy-Manifeste. Sprachwahl
 und Wiedergabestart werden ohne Stream-URLs protokolliert. Vorschauen gelangen
 nicht in den Film-/Serienverlauf. 115 eindeutige gezielte Tests und Skin-Pruefung
 bestanden. Echte Wiedergabe der letzten Fassung nicht live getestet.
+
+
+Lokale Revision 0.5.80 – Fire TV / Navigation (22.11.2026)
+
+Logs H63B1 und 1jk6p: Amazon AFTKA, 32-bit Android Kodi 21.3, Skin 0.5.79, GUI 3840x2160. Restore bis 20.4 Sekunden für 27 Serien-Reihen; Controller-Import 11.3 Sekunden; Intro-Video parallel zur inaktiven Hub-Hydrierung und OutputPicture/MediaCodec-Fehler. Kein eindeutiger OOM-/Kernel-Crash-Beleg: ein Geräte-Freezer ist aus Kodi-Logs allein nicht abschließend erklärbar.
+
+Änderungen:
+- Keine inaktiven Hub-Eigenschaften vorwärmen auf Android oder im Low-Profil; gespeicherte Quellen auf Disk bleiben unverändert verfügbar. Aktiver Hub behält alle konfigurierten Reihen. Cache wird beim Aufruf des Hubs übernommen, kein erzwungener Neuabruf.
+- Intro vor weiterer Vorwärmung beenden, kein später Fokuszwang auf Topbar. Während Video keine Hub-Aktualisierungen.
+- Native Eigenschaften nur bei tatsächlich geändertem Wert setzen; keine pausenlose Invalidierung gleicher Reihenüberschriften und Metadaten.
+- Downloads dürfen Cache aktualisieren. Übernahme in dynamische Kodi-Listen wird zurückgestellt, während eine belegte Widget-Reihe oder ein Dialog fokussiert ist. Nach Verlassen der Reihen auf Low nur eine fertige Reihe pro Tick; keine verlorenen Future-Ergebnisse.
+- Kachelposition bei Übernahme zum Zeitpunkt der Übernahme erfassen, anhand stabiler TMDB-/Pfad-Identität erhalten, erst nach Kodi-Neubindung wieder setzen.
+- Detaildialog merkt Ursprungsfenster/Reihe/Kachel, Schließen signalisiert Wiederherstellung; kein Fokusklau in einem inzwischen anderen Hub.
+- Low-Kacheln: TMDB-Fanart w500, Logos w300; Hero-Fanart unverändert w780. Fremde Bildserver werden nicht umgeschrieben.
+- Vollständige Erstvorbereitung: Fertigzustand vor Neustart schreiben, Meldung vier Sekunden sichtbar. Windows/Linux RestartApp. Android/Fire TV: Meldung erklärt manuelles Wiederöffnen, dann Quit. Offizielles Kodi 21 unterstützt RestartApp auf Android nicht; kein Geräte-Reboot, kein Force-Stop, keine unzuverlässigen Shell-/Activity-Tricks.
+
+Geprüft: 10 neue Fire-TV-/Fokusregressionen plus 31 geerbte Hubtests (41 Fälle), Setup-Lifecycle 43 Fälle, TV/Performance 30, Trailer/Logos 21, Vorbereitung 7. Geerbte Fälle nicht additiv zählen. XML-/Syntaxvalidator gesondert. Reale Fire-TV-Navigation/Hardwaredecoder wurden nicht ferngesteuert oder live getestet. Keine Garantie auf Beseitigung eines OS-Freezes.
+
+Lokal vorbereitet; keine GitHub-Veröffentlichung. Keine persönlichen Kodi-Einstellungen oder Nutzerdaten geändert; keine Caches gelöscht.

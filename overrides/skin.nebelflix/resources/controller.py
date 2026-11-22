@@ -222,6 +222,17 @@ def action_item(context='spotlight'):
     return json.loads(raw) if raw else {}
 
 
+def remember_detail_origin(args):
+    prop('DetailOrigin','')
+    if not args or not args[0].isdigit():return
+    row=int(args[0])
+    if not 600<=row<648:return
+    window=xbmcgui.Window(xbmcgui.getCurrentWindowId())
+    try:position=max(0,int(args[1])-1) if len(args)>1 and args[1].isdigit() else window.getControl(row).getSelectedPosition()
+    except RuntimeError:position=0
+    prop('DetailOrigin',json.dumps(dict(window=xbmcgui.getCurrentWindowId(),row=row,position=position,page=window.getProperty('NF.Page'))))
+
+
 def show_details(args):
     cancel_spotlight_video(suppress=True)
     if args and args[0].isdigit():
@@ -283,6 +294,7 @@ def show_details(args):
     if data.get('DBType') == 'channel':
         publish(data, 'NFD')
         WIN.setProperty('NFD.MyListLabel', '')
+        remember_detail_origin(args)
         prop('DetailOpen', 'true')
         xbmc.executebuiltin('ActivateWindow(1191)')
         return
@@ -309,6 +321,7 @@ def show_details(args):
         return
     publish(data, 'NFD')
     WIN.setProperty('NFD.MyListLabel', detail_list_label(data))
+    remember_detail_origin(args)
     prop('DetailOpen', 'true')
     log(f'Detail snapshot: {data["Title"]} [{data.get("Type")}:{data.get("TMDB")}]')
     xbmc.executebuiltin('ActivateWindow(1191)')
@@ -594,6 +607,7 @@ def spotlight_candidates(page):
 
 
 def update_spotlight(page):
+    if xbmc.getCondVisibility('Skin.HasSetting(NFHideSpotlight)'):return {}
     if prop('SelectedPage') == page:
         return action_item()  # Freeze identity/art until a different tab is visited.
     candidates = spotlight_candidates(page)
@@ -634,6 +648,7 @@ def item_identity(item):
 
 
 def spotlight_visible():
+    if xbmc.getCondVisibility('Skin.HasSetting(NFHideSpotlight)'):return False
     return (prop('HasHero') == 'true' and (xbmcgui.getCurrentWindowId() == 10000
             or xbmc.getCondVisibility('!String.IsEmpty(Window.Property(NF.HubSlot))'))
             and not xbmc.getCondVisibility('Window.IsVisible(1191)')

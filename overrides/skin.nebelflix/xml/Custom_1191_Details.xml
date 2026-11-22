@@ -2,6 +2,7 @@
   <defaultcontrol always="true">1300</defaultcontrol>
   <backgroundcolor>FF141414</backgroundcolor>
   <onunload>ClearProperty(NF.DetailOpen,Home)</onunload>
+  <onunload>SetProperty(NF.RestoreWidgetFocus,true,Home)</onunload>
   <controls>
     <control type="image">
       <width>1920</width>
