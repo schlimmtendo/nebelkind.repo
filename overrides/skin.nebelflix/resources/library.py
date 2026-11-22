@@ -97,11 +97,36 @@ def request_hub_setup():
 
 
 
+WIDGET_CACHE_DIRECTORIES = ('direct-widgets', 'artwork', 'widget-artwork', 'logos')
+
+
+def clear_widget_cache_directories():
+    """Delete only owned cache trees; refuse links/junctions and escaped paths."""
+    root=ROOT.resolve()
+    targets=[]
+    for name in WIDGET_CACHE_DIRECTORIES:
+        directory=ROOT/name
+        if not directory.exists() and not directory.is_symlink():continue
+        paths=[directory]+list(directory.rglob('*'))
+        for path in paths:
+            if path.is_symlink() or getattr(path.lstat(),'st_file_attributes',0)&0x400:
+                raise OSError('Cache path is a link: '+name)
+            try:path.resolve().relative_to(root)
+            except ValueError:raise OSError('Cache path outside skin profile') from None
+        targets.extend(paths)
+    removed=0
+    for path in sorted(targets,key=lambda p:len(p.parts),reverse=True):
+        if path.is_dir():path.rmdir()
+        else:path.unlink();removed+=1
+    return removed
+
+
 def apply_widget_cache_reset(rpc=None):
     """Clear cached discovery results and row snapshots before Widgets starts.
 
     Never delete layout.json, settings.xml, watch progress, favourites, or
-    installed artwork. Keep the request on disk if deletion partially fails.
+    bundled skin artwork. Downloaded widget images/logos are disposable cache.
+    Keep the request on disk if deletion partially fails.
     """
     marker = ROOT / WIDGET_RESET_MARKER
     if not marker.is_file():
@@ -118,6 +143,7 @@ def apply_widget_cache_reset(rpc=None):
     snapshot_re = re.compile(r'^row-[A-Za-z0-9_-]+-[0-9]+\.json(?:\.bak)?$')
     removed = 0
     try:
+        removed += clear_widget_cache_directories()
         for candidate in ROOT.iterdir():
             if not candidate.is_file():
                 continue

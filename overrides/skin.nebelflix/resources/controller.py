@@ -858,10 +858,10 @@ def dispatch(command, args=()):
         return play_trailer(action_item(context), context)
     if command == 'clear_widget_cache':
         if not xbmcgui.Dialog().yesno('Widget-Cache bereinigen',
-                'Nur gespeicherte Widget-Inhalte neu aufbauen? Wiedergabeverlauf und Einstellungen bleiben erhalten.'):
+                'Gespeicherte Widget-Inhalte, Vorschaubilder und Logos beim nächsten Kodi-Start löschen und neu laden? Wiedergabeverlauf und Einstellungen bleiben erhalten.'):
             return
         library.schedule_widget_cache_reset(include_continue=False)
-        xbmcgui.Dialog().ok('Nebelflix', 'Beim nächsten Kodi-Neustart werden die Widgets neu vorbereitet. Der Hybrid-Verlauf bleibt erhalten.')
+        xbmcgui.Dialog().ok('Nebelflix', 'Beim nächsten Kodi-Neustart werden Widget-Inhalte, Bilder und Logos bereinigt und neu vorbereitet. Der Hybrid-Verlauf bleibt erhalten.')
         return
     if command == 'manage_tv':
         if xbmc.getCondVisibility('System.HasAddon(plugin.video.nebelflix.tv)'):

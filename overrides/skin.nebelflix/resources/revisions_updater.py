@@ -244,6 +244,32 @@ def activate(staged, addon_id, expected, monitor, backup_root):
         raise
 
 
+def request_repository_updates(window, monitor):
+    """Ask Kodi to resolve/install repository updates, including dependencies.
+
+    Kodi owns platform selection, dependency ordering and installed origins.
+    This starts asynchronous work; it never claims packages were installed.
+    """
+    if monitor.abortRequested():return False
+    try:
+        last=float(window.getProperty('NF.Revisions.RepoCheck') or 0)
+    except ValueError:last=0
+    if time.time()-last<3600:return False
+    try:
+        setting='general.addonupdates'
+        current=rpc('Settings.GetSettingValue',{'setting':setting}).get('value')
+        if current!=0:
+            if rpc('Settings.SetSettingValue',{'setting':setting,'value':0}) is not True:
+                raise RuntimeError('Automatische Kodi-Updates konnten nicht aktiviert werden')
+        xbmc.executebuiltin('UpdateAddonRepos',False)
+        window.setProperty('NF.Revisions.RepoCheck',str(time.time()))
+        xbmc.log('[Revisions Updater] Kodi-Repo-Prüfung und automatische Addon-Updates angefordert.',xbmc.LOGINFO)
+        return True
+    except Exception:
+        xbmc.log('[Revisions Updater] Kodi-Repo-Prüfung konnte nicht gestartet werden.',xbmc.LOGERROR)
+        return False
+
+
 class Updater:
     def __init__(self, window, monitor, blocked):
         self.window = window
@@ -305,29 +331,41 @@ class Updater:
             with tempfile.TemporaryDirectory(prefix='.nebelkind-stage-', dir=str(work_root)) as work:
                 stage = Path(work)
                 for index, node in enumerate(pending):
-                    addon_id, revision = node.get('id'), node.get('version')
-                    label = re.sub(r'\[.*?\]', '', node.get('name', addon_id))
-                    progress.update(int(index * 100 / len(pending)),
-                                    '%s → %s\nPaket wird geladen und geprüft (%d/%d)' %
-                                    (label, revision, index + 1, len(pending)))
-                    data = fetch(BASE + '%s/%s-%s.zip' % (addon_id, addon_id, revision),
-                                 MAX_ZIP, self.monitor, progress)
-                    manifest = unpack(data, stage, addon_id, revision)
-                    # Check actual package dependencies, not only the catalog.
-                    dependencies(manifest)
-                    if progress.iscanceled() or self.monitor.abortRequested():
-                        raise InterruptedError('Aktualisierung abgebrochen')
-                    backups = Path(xbmcvfs.translatePath(
-                        'special://profile/addon_data/skin.nebelflix/revision-backups/'))
-                    backup_root = backups / ('%s-%s' % (time.strftime('%Y%m%d-%H%M%S'), index))
-                    backup_root.mkdir(parents=True, exist_ok=False)
-                    progress.update(int(index * 100 / len(pending)),
-                                    '%s → %s\nWird installiert …' % (label, revision))
-                    activate(stage / addon_id, addon_id, revision, self.monitor, backup_root)
-                    updated.append('%s: %s' % (label, revision))
-                    progress.update(int((index + 1) * 100 / len(pending)),
-                                    '%s\nErfolgreich aktualisiert ✓' % updated[-1])
-                    self.monitor.waitForAbort(0.6)
+                    try:
+                        addon_id, revision = node.get('id'), node.get('version')
+                        label = re.sub(r'\[.*?\]', '', node.get('name', addon_id))
+                        progress.update(int(index * 100 / len(pending)),
+                                        '%s → %s\nPaket wird geladen und geprüft (%d/%d)' %
+                                        (label, revision, index + 1, len(pending)))
+                        data = fetch(BASE + '%s/%s-%s.zip' % (addon_id, addon_id, revision),
+                                     MAX_ZIP, self.monitor, progress)
+                        manifest = unpack(data, stage, addon_id, revision)
+                        # Check actual package dependencies, not only the catalog.
+                        dependencies(manifest)
+                        if progress.iscanceled() or self.monitor.abortRequested():
+                            raise InterruptedError('Aktualisierung abgebrochen')
+                        backups = Path(xbmcvfs.translatePath(
+                            'special://profile/addon_data/skin.nebelflix/revision-backups/'))
+                        backup_root = backups / ('%s-%s' % (time.strftime('%Y%m%d-%H%M%S'), index))
+                        backup_root.mkdir(parents=True, exist_ok=False)
+                        progress.update(int(index * 100 / len(pending)),
+                                        '%s → %s\nWird installiert …' % (label, revision))
+                        activate(stage / addon_id, addon_id, revision, self.monitor, backup_root)
+                        updated.append('%s: %s' % (label, revision))
+                        progress.update(int((index + 1) * 100 / len(pending)),
+                                        '%s\nErfolgreich aktualisiert ✓' % updated[-1])
+                        self.monitor.waitForAbort(0.6)
+                    except InterruptedError:
+                        raise
+                    except Exception as exc:
+                        if self.monitor.abortRequested() or progress.iscanceled():
+                            raise InterruptedError('Aktualisierung abgebrochen')
+                        detail=node.get('id')+': '+str(exc)
+                        failure += ('\n' if failure else '')+detail
+                        xbmc.log('[Revisions Updater] Übersprungen: '+detail,xbmc.LOGERROR)
+                        self.window.setProperty('NF.Revisions.LastCheck',str(time.time()-3300))
+                        continue
+
         except Exception as exc:
             failure = str(exc)
             xbmc.log('[Revisions Updater] ' + failure, xbmc.LOGERROR)
@@ -337,12 +375,14 @@ class Updater:
             if progress:
                 progress.close()
             self.window.clearProperty('NF.Revisions.Running')
+            request_repository_updates(self.window,self.monitor)
         if self.monitor.abortRequested():
             return False
         if updated or failure:
             message = '\n'.join(updated)
             if failure:
                 message += '\n\nNicht abgeschlossen: ' + failure
+                if updated:message += '\n\nErfolgreiche Updates bleiben installiert. Der Skin wird neu geladen.'
             elif updated:
                 message += '\n\nAlle Revisionen sind installiert. Der Skin wird neu geladen.'
             xbmcgui.Dialog().ok(TITLE, message.strip())
