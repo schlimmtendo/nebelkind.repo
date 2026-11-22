@@ -29,7 +29,8 @@ def sync_favorite_groups(group_file='',force_reload=False,mode='quick',*,
         filename=group['file']
         if Path(filename).name!=filename or not filename.lower().endswith('.m3u'):return False
         path=Path(group_favs._group_m3u_path(filename))
-        if not path.resolve().is_relative_to(Path(group_favs._profile_dir()).resolve()):return False
+        try:path.resolve().relative_to(Path(group_favs._profile_dir()).resolve())
+        except ValueError:return False
         initial=hashlib.sha256(path.read_bytes()).digest()
         def guarded_save(name,rows):
             if hashlib.sha256(path.read_bytes()).digest()!=initial:return False

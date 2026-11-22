@@ -52,4 +52,8 @@ class Watcher:
             api,groups=load()
             vavoo_jobs.run_pending(DATA,api,groups,monitor)
         except Exception as exc:
-            log('Vavoo-Schnittstelle nicht verfügbar: '+type(exc).__name__)
+            # Log code locations only: exception messages can contain signed URLs.
+            import traceback
+            frames=traceback.extract_tb(exc.__traceback__)
+            location=' > '.join('%s:%s:%s' % (Path(f.filename).name,f.lineno,f.name) for f in frames)
+            log('Vavoo-Schnittstelle nicht verfügbar: '+type(exc).__name__+' ['+location+']')

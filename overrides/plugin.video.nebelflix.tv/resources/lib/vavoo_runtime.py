@@ -50,7 +50,8 @@ class Finder(importlib.abc.MetaPathFinder,importlib.abc.Loader):
         relative=fullname[len(PREFIX)+1:].replace('.', '/')
         directory=self.root/relative
         source=directory/'__init__.py' if directory.is_dir() else self.root/(relative+'.py')
-        if not source.resolve().is_relative_to(self.root):raise ImportError('Invalid Vavoo module path')
+        try:source.resolve().relative_to(self.root)
+        except ValueError:raise ImportError('Invalid Vavoo module path') from None
         if not source.is_file() and not directory.is_dir():return None
         spec=importlib.util.spec_from_loader(fullname,self,is_package=directory.is_dir())
         spec.origin=str(source)
