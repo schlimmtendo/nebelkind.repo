@@ -3,19 +3,19 @@
   "addons": [
     {
       "id": "plugin.video.nebelflix.hybrid",
-      "version": "2026.11.22.1"
+      "version": "2026.11.22.2"
     },
     {
       "id": "plugin.video.nebelflix.tv",
-      "version": "0.2.7"
+      "version": "0.2.8"
     },
     {
       "id": "plugin.video.nebelkindmusic",
-      "version": "5.1.2"
+      "version": "5.1.3"
     },
     {
       "id": "skin.nebelflix",
-      "version": "0.5.82"
+      "version": "0.5.83"
     }
   ]
 }

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <addons>
-  <addon id="plugin.video.nebelflix.hybrid" version="2026.11.22.1" name="Nebelkind Hybrid" provider-name="Nebelkind">
+  <addon id="plugin.video.nebelflix.hybrid" version="2026.11.22.2" name="Nebelkind Hybrid" provider-name="Nebelkind">
     <requires>
       <import addon="xbmc.python" version="3.0.0" />
       <import addon="script.module.requests" />
@@ -39,7 +39,7 @@
       <news>Fehlgeschlagene Wiedergaben beenden Wächter und Folgenvorbereitung. Begrenzte Resolver-Laufzeiten; manuelle Quellenwahl ohne versteckte Massen-Fallbacks.</news>
     </extension>
   </addon>
-  <addon id="plugin.video.nebelflix.tv" name="Nebelflix TV" version="0.2.7" provider-name="TitanX Lab">
+  <addon id="plugin.video.nebelflix.tv" name="Nebelflix TV" version="0.2.8" provider-name="TitanX Lab">
     <requires>
       <import addon="xbmc.python" version="3.0.0" />
       <import addon="plugin.video.vavoo.tv.plus" version="2.0.11" />
@@ -62,7 +62,7 @@
       <news>Widgets und EPG-Einstieg für Vavoo TV Plus. Automatische Favoritenpflege nach geänderten Senderlisten, ohne Vavoo-Dateien zu verändern. Alter eigener Guide entfernt.</news>
     </extension>
   </addon>
-  <addon id="plugin.video.nebelkindmusic" name="[B][COLOR skyblue]Nebelkind[/COLOR][COLOR gold] Musik[/COLOR][/B]" version="5.1.2" provider-name="NebelKind">
+  <addon id="plugin.video.nebelkindmusic" name="[B][COLOR skyblue]Nebelkind[/COLOR][COLOR gold] Musik[/COLOR][/B]" version="5.1.3" provider-name="NebelKind">
     <requires>
       <import addon="xbmc.python" version="3.0.0" />
       <import addon="plugin.video.youtube" />
@@ -105,7 +105,7 @@
       </assets>
     </extension>
   </addon>
-  <addon id="skin.nebelflix" version="0.5.82" name="Nebelflix" provider-name="Nebelflix / Nebelflix contributors">
+  <addon id="skin.nebelflix" version="0.5.83" name="Nebelflix" provider-name="Nebelflix / Nebelflix contributors">
     <requires>
       <import addon="xbmc.gui" version="5.17.0" />
       <import addon="xbmc.python" version="3.0.0" />
