@@ -39,7 +39,7 @@
       <news>Fehlgeschlagene Wiedergaben beenden Wächter und Folgenvorbereitung. Begrenzte Resolver-Laufzeiten; manuelle Quellenwahl ohne versteckte Massen-Fallbacks.</news>
     </extension>
   </addon>
-  <addon id="plugin.video.nebelflix.tv" name="Nebelflix TV" version="0.2.6" provider-name="TitanX Lab">
+  <addon id="plugin.video.nebelflix.tv" name="Nebelflix TV" version="0.2.7" provider-name="TitanX Lab">
     <requires>
       <import addon="xbmc.python" version="3.0.0" />
       <import addon="plugin.video.vavoo.tv.plus" version="2.0.11" />
