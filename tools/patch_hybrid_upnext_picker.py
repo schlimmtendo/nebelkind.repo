@@ -27,7 +27,9 @@ def replace_once(source, original, updated, label):
 
 
 def patch_next_episode(source):
-    """The TMDb-confirmed successor must use select=1, not autoplay (2)."""
+    """Preserve explicit user Autoplay; keep compatibility with older releases."""
+    if "_autoplay_queue" in source:
+        return source
     if "playcount=0, select='1'," in source and "_series_next_autoplay=True," not in source:
         return source
     source = replace_once(
@@ -43,6 +45,8 @@ def patch_next_episode(source):
 
 def patch_player(source):
     """The bounded fallback successor must use the identical normal picker."""
+    if "_autoplay_queue" in source:
+        return source
     mark = "# NEBELFLIX_UPNEXT_MANUAL_SOURCES_V1"
     if mark in source:
         return source
@@ -90,8 +94,8 @@ def main():
             with ZipFile(temp, "r") as verify_zip:
                 if verify_zip.testzip() is not None:
                     raise ValueError("Up Next ZIP failed integrity test")
-                if (b"NEBELFLIX_UPNEXT_MANUAL_SOURCES_V1"
-                        not in verify_zip.read(PLAYER)):
+                if (b"NEBELFLIX_UPNEXT_MANUAL_SOURCES_V1" not in verify_zip.read(PLAYER)
+                        and b"_autoplay_queue" not in verify_zip.read(PLAYER)):
                     raise ValueError("Up Next patch missing")
             source_zip.close()  # Windows: release original archive before replacing it.
             os.replace(temp, archive_path)
@@ -103,4 +107,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

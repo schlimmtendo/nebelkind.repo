@@ -21,6 +21,8 @@ class player(xbmc.Player):
         xbmc.Player.__init__(self, *args, **kwargs)
         self.streamFinished = False
         self._startup_failed = False
+        self._ever_started = False
+        self._user_stopped = False
         self.totalTime = 0
         self.currentTime = 0
         self.playcount = 0
@@ -37,11 +39,14 @@ class player(xbmc.Player):
         self.isdebug = True if control.getSetting('status.debug') == 'true' else False
 
 
-    def run(self, title, url, meta):
+    def run(self, title, url, meta, direct=False, cancel_start=None):
         import xbmc
         try:
             self.streamFinished = False
             self._startup_failed = False
+            self._ever_started = False
+            self._user_stopped = False
+            self._startup_cancel=cancel_start
             self.meta = meta
             self._next_episode_after_playback = False
             self._next_data = None
@@ -150,11 +155,13 @@ class player(xbmc.Player):
                 item.setInfo('video', info)
 
             import xbmcgui
+            xbmcgui.Window(10000).setProperty('NF.PlaybackOwner','manual')
             xbmcgui.Window(10000).setProperty('xShip.PlayerInfoString', json.dumps({
+                'source_hash': hashlib.sha256(str(url).split('|',1)[0].encode('utf8')).hexdigest(),
                 'tmdb_type': 'tv' if self.episode is not None else 'movie',
                 'tmdb_id': str(meta.get('tmdb_id') or ''),
                 'season': self.season, 'episode': self.episode}))
-            if int(sys.argv[1]) > 0:
+            if int(sys.argv[1]) > 0 and not direct:
                 xbmcplugin.setResolvedUrl(int(sys.argv[1]), True, item)
             else:
                 xbmc.Player().play(url, item)
@@ -176,7 +183,14 @@ class player(xbmc.Player):
     def _wait_for_start(self,monitor,timeout=30):
         deadline=time.monotonic()+timeout
         while not self.streamFinished and not monitor.abortRequested():
-            if self.isPlayingVideo():return True
+            cancel=getattr(self,'_startup_cancel',None)
+            if callable(cancel) and cancel():
+                self._user_stopped=True;self.streamFinished=True
+                self.stop()
+                return False
+            if self.isPlayingVideo():
+                self._ever_started=True
+                return True
             if time.monotonic()>=deadline:
                 self.onPlayBackError()
                 # Stop only a still-unstarted attempt. Never stop an active video.
@@ -192,7 +206,7 @@ class player(xbmc.Player):
         self._next_data=None
         self._next_action=''
         self._close_next_prompt()
-        xbmc.log('[Nebelkind Hybrid] Wiedergabe fehlgeschlagen; Player-Wächter und Folgenvorbereitung beendet.',xbmc.LOGWARNING)
+        xbmc.log('[Nebelkind Hybrid] Wiedergabe fehlgeschlagen; bereits gestartet=%s, Benutzer-Stopp=%s' % (getattr(self,'_ever_started',False),getattr(self,'_user_stopped',False)),xbmc.LOGWARNING)
 
     def keepPlaybackAlive(self):
         if self.isdebug: log_utils.log('Start - keepPlaybackAlive', log_utils.LOGINFO)
@@ -260,9 +274,10 @@ class player(xbmc.Player):
 
     def onPlayBackStarted(self):
         if self.isdebug: log_utils.log('Start - onPlayBackStarted', log_utils.LOGINFO)
-        self.onAVStarted()
+        # Keep the source overlay until Kodi confirms AV readiness.
 
     def onAVStarted(self):
+        self._ever_started=True
         if self.isdebug: log_utils.log('Start - onAVStarted', log_utils.LOGINFO)
         control.execute('Dialog.Close(all,true)')
         if not self.offset == '0': self.seekTime(float(self.offset))
@@ -276,6 +291,7 @@ class player(xbmc.Player):
 
 
     def onPlayBackStopped(self):
+        if not self._startup_failed:self._user_stopped=True
         self.streamFinished=True
         if self._startup_failed:return
         self._close_next_prompt()
@@ -352,10 +368,8 @@ class player(xbmc.Player):
                 meta.pop('number_of_episodes', None)
             meta['playcount'] = 0
             meta.pop('overlay', None)
-            # NEBELFLIX_UPNEXT_MANUAL_SOURCES_V1
-            # Auto-select the EPISODE, never the stream: use the ordinary
-            # full-screen SourceProgress and the normal source picker.
-            meta['select'] = '1'
+            # Keep manual source selection unless the user chose Autoplay.
+            meta['select'] = '2' if self.meta.get('_autoplay_queue') else '1'
             # Clear stale flags when this episode originated in an older build.
             meta.pop('_series_next_autoplay', None)
             return meta
@@ -735,4 +749,3 @@ class bookmarks:
                 bookmarkDB.save_query(idFile, timeInSeconds, 'bookmarks')
         except:
             pass
-

@@ -166,7 +166,7 @@
       <texturefocus>nebelflix/button-focus.png</texturefocus>
       <texturenofocus>nebelflix/pill-dark.png</texturenofocus>
       <onclick>Addon.OpenSettings(plugin.video.nebelflix.hybrid)</onclick>
-      <onup>1215</onup>
+      <onup>1218</onup>
       <ondown>1200</ondown>
       <onleft>1210</onleft>
       <onright>1216</onright>
@@ -223,24 +223,24 @@
       <onup>1212</onup>
       <ondown>1210</ondown>
       <onleft>1214</onleft>
-      <onright>1214</onright>
+      <onright>1218</onright>
     </control>
     <control type="button" id="1214">
       <left>1130</left>
       <top>765</top>
       <width>560</width>
       <height>64</height>
-      <label>Wiedergabeverlauf verwalten</label>
+      <label>Weiterschauen + Gesehen zurücksetzen</label>
       <font>NFBody</font>
       <textcolor>FFFFFFFF</textcolor>
       <focusedcolor>FF141414</focusedcolor>
       <align>center</align>
       <texturefocus>nebelflix/button-focus.png</texturefocus>
       <texturenofocus>nebelflix/pill-dark.png</texturenofocus>
-      <onclick>RunScript(skin.nebelflix,manage_history)</onclick>
+      <onclick>RunScript(skin.nebelflix,reset_playback_status)</onclick>
       <onup>1213</onup>
       <ondown>1216</ondown>
-      <onleft>1215</onleft>
+      <onleft>1218</onleft>
       <onright>1215</onright>
     </control>
     <control type="label">
@@ -258,7 +258,7 @@
       <top>950</top>
       <width>1460</width>
       <height>40</height>
-      <label>Widget-Cache und Hybrid-Verlauf werden getrennt verwaltet; Favoriten und Einstellungen bleiben erhalten.</label>
+      <label>Wiedergabestatus setzt Weiterschauen und Gesehen in Skin und Hybrid zurück. Merkliste und Einstellungen bleiben erhalten.</label>
       <font>NFSmall</font>
       <textcolor>FFB5B5B5</textcolor>
       <aligny>center</aligny>
@@ -315,6 +315,25 @@
       <onback>PreviousMenu</onback>
       <onclick>SetProperty(NF.StopSpotlight,true,Home)</onclick>
       <onclick>SetProperty(NF.SpotlightChanged,true,Home)</onclick>
+    </control>
+    <control type="button" id="1218">
+      <left>810</left>
+      <top>765</top>
+      <width>300</width>
+      <height>64</height>
+      <label>Gesehen zurücksetzen</label>
+      <font>NFSmall</font>
+      <textcolor>FFFFFFFF</textcolor>
+      <focusedcolor>FF141414</focusedcolor>
+      <align>center</align>
+      <aligny>center</aligny>
+      <texturefocus>nebelflix/button-focus.png</texturefocus>
+      <texturenofocus>nebelflix/pill-dark.png</texturenofocus>
+      <onclick>RunScript(skin.nebelflix,reset_watched)</onclick>
+      <onleft>1215</onleft>
+      <onright>1214</onright>
+      <onup>1212</onup>
+      <ondown>1211</ondown>
     </control>
   </controls>
 </window>

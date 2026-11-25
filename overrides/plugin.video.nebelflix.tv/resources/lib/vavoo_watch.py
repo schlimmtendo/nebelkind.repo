@@ -38,7 +38,9 @@ class Watcher:
         if xbmc.getCondVisibility('Player.HasVideo') or xbmc.getCondVisibility('System.HasModalDialog'):return False
         home=xbmcgui.Window(10000)
         if home.getProperty('NF.StartupBlocked')=='true' or home.getProperty('NF.IntroActive')=='true':return False
-        if xbmcaddon.Addon('plugin.video.nebelflix.tv').getSetting('vavoo.auto_maintenance')=='false':return False
+        try:
+            if xbmcaddon.Addon('plugin.video.nebelflix.tv').getSetting('vavoo.auto_maintenance')=='false':return False
+        except RuntimeError:return False  # Kodi may be replacing/disabling this addon during an update.
         if not self.addon.getSetting('selected_countries').strip():return False
         if time.monotonic()<self.next_worker:return False
         job=vavoo_jobs.read(DATA/'nebelkind-maintenance-request.json')

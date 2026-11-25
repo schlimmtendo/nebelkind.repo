@@ -7,7 +7,7 @@ ROWS_PER_VIEW=48
 VIEWS_PER_HUB=1
 WINDOW_BASE=1111
 STATIC_TILE_LIMIT=22
-STATIC_TILE_PROPERTIES=('NF.Data','NF.Hub','NF.Clearlogo','NF.RankArt','NFTV.Category',
+STATIC_TILE_PROPERTIES=('NF.WatchBar','NF.WatchState','NF.WatchPercent','NF.Data','NF.Hub','NF.Clearlogo','NF.RankArt','NFTV.Category',
                         'NF.EPG','NF.EPGNext','NF.EPGProgress','tmdb_id','tmdb_type')
 
 

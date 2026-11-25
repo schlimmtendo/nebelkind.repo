@@ -123,16 +123,51 @@ elif action == 'importXshipAccounts':
     from resources.lib.indexers.navigator import navigator
     navigator()._endDirectory()
 
+elif action == 'resetWatched':
+    from resources.lib import hybrid_history
+    import xbmc,xbmcgui
+    dialog=xbmcgui.Dialog()
+    if xbmc.Player().isPlayingVideo():
+        dialog.ok('Gesehen-Status zurücksetzen','Bitte die Wiedergabe zuerst beenden.')
+    elif dialog.yesno('Gesehen-Status zurücksetzen',
+            'Alle Gesehen-Markierungen in Hybrid und im Skin entfernen? Angefangene Inhalte und ihre Fortsetzungspunkte bleiben erhalten. Vorher wird eine Sicherung erstellt.'):
+        try:
+            count,backup=hybrid_history.reset_watched_with_backup()
+            xbmcgui.Window(10000).setProperty('NF.RefreshWidgets',str(__import__('time').time_ns()))
+            xbmc.executebuiltin('Container.Refresh')
+            dialog.ok('Gesehen-Status','Gesehen-Markierungen wurden zurückgesetzt. Weiterschauen und Merkliste bleiben erhalten.')
+        except Exception as exc:
+            xbmc.log('[Hybrid] Watched reset failed: '+type(exc).__name__,xbmc.LOGERROR)
+            dialog.ok('Gesehen-Status','Zurücksetzen konnte nicht abgeschlossen werden. Bitte das Log prüfen.')
+
+elif action == 'resetPlaybackStatus':
+    from resources.lib import hybrid_history
+    import xbmc, xbmcgui
+    dialog = xbmcgui.Dialog()
+    if xbmc.Player().isPlayingVideo():
+        dialog.ok('Wiedergabestatus zurücksetzen', 'Bitte die Wiedergabe zuerst beenden.')
+    elif dialog.yesno('Weiterschauen und Gesehen zurücksetzen?',
+            'Alle Fortsetzungspunkte, Weiterschauen-Einträge und Gesehen-Markierungen in Hybrid und Nebelflix entfernen? Merkliste und Einstellungen bleiben erhalten. Vorher wird eine Sicherung erstellt.'):
+        try:
+            hybrid_history.clear_all_history_with_backup()
+            xbmcgui.Window(10000).setProperty('NF.RefreshWidgets', str(__import__('time').time_ns()))
+            xbmc.executebuiltin('Container.Refresh')
+            xbmc.log('[Hybrid] Full playback status reset completed', xbmc.LOGINFO)
+            dialog.ok('Wiedergabestatus zurückgesetzt', 'Weiterschauen, Fortsetzungspunkte und Gesehen-Markierungen wurden zurückgesetzt.')
+        except Exception as exc:
+            xbmc.log('[Hybrid] Full playback status reset failed: '+type(exc).__name__, xbmc.LOGERROR)
+            dialog.ok('Zurücksetzen fehlgeschlagen', 'Die Bereinigung konnte nicht abgeschlossen werden. Bitte das Log prüfen.')
+
 elif action == 'historyManager':
     from resources.lib import hybrid_history
-    import xbmcgui
+    import xbmc, xbmcgui
     dialog = xbmcgui.Dialog()
     while True:
         rows = hybrid_history.entries(include_completed=True, limit=1000)
         legacy = hybrid_history.legacy_entries(limit=1000)
         keys = {(r['media'],r['identity'],r['season'],r['episode']) for r in rows}
         legacy = [r for r in legacy if (r['media'],r['identity'],r['season'],r['episode']) not in keys]
-        options = ['Neuen und alten Verlauf vollständig bereinigen (mit Sicherung)']
+        options = ['Alles zurücksetzen: Gesehen und Weiterschauen (mit Sicherung)']
         for row in rows:
             label = '%s · %s' % ('Gesehen' if row['completed'] else 'Fortsetzen', row['title'])
             if row['media'] == 'episode':
@@ -150,11 +185,12 @@ elif action == 'historyManager':
             dialog.ok('Verlauf', 'Bitte die Wiedergabe vor dem Bereinigen beenden.')
             break
         if choice == 0:
-            if dialog.yesno('Alle Fortsetzungen löschen?',
-                    'Alle Hybrid-Verlaufseinträge und zugehörige Fortsetzungspunkte entfernen? '
+            if dialog.yesno('Gesamten Wiedergabestatus löschen?',
+                    'Alle Gesehen-Markierungen, Verlaufseinträge und Fortsetzungspunkte entfernen? '
                     'Vorher wird eine Datenbank-Sicherung erstellt. Favoriten bleiben erhalten.'):
                 try:
                     count, old, backup = hybrid_history.clear_all_history_with_backup()
+                    xbmc.executebuiltin('Container.Refresh')
                     dialog.ok('Bereinigung abgeschlossen', '%d neue und %d ältere Einträge bereinigt. '
                               'Datenbank-Backup: %s' % (count, old, backup))
                     xbmcgui.Window(10000).setProperty('NF.RefreshWidgets', str(__import__('time').time_ns()))
@@ -507,4 +543,3 @@ elif action == 'resolverSettings':
 #     pass
 # finally:
 #     exit()
-

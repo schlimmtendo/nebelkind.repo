@@ -1,6 +1,7 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <settings>
     <category label="Allgemein">
+        <setting type="action" label="Gesehen-Status zurücksetzen (Weiterschauen behalten)" action="RunPlugin(plugin://plugin.video.nebelflix.hybrid/?action=resetWatched)" />
         <setting id="hosts.mode" type="enum" label="Standard-Aktion" values="Dialog|Quellenliste|Autoplay" default="1" />
         <setting id="movie.play.mode" type="enum" label="Filme: Standard-Aktion" values="Wie Standard|Dialog|Quellenliste|Autoplay" default="0" />
         <setting id="series.play.mode" type="enum" label="Serien: Standard-Aktion" values="Wie Standard|Dialog|Quellenliste|Autoplay" default="0" />

@@ -3,6 +3,7 @@
 # edit 2026-04-08
 
 import sys
+import xbmc
 import xbmcgui
 import re,json,random,time,threading,traceback
 from resources.lib.search_workers import SearchExecutor
@@ -111,8 +112,12 @@ class sources:
                 override = control.getSetting(override_key)
                 select = {'1': '0', '2': '1', '3': '2'}.get(override, control.getSetting('hosts.mode'))
             self._autoplay_active = str(select) == '2'
+            if self._autoplay_active:
+                from resources.lib.source_progress import ContinuousProgress
+                self._autoplay_progress=ContinuousProgress(json.loads(self.sysmeta))
             #Liste der gefundenen Streams
             items = self.getSources(title, year, imdb, season, episode, originaltitle, premiered)
+            if getattr(self,'_autoplay_progress',None) and self._autoplay_progress.iscanceled():return
             ## unnötig
             #select = '1' if control.getSetting('downloads') == 'true' and not (control.getSetting('download.movie.path') == '' or control.getSetting('download.tv.path') == '') else select
 
@@ -159,7 +164,10 @@ class sources:
                         return
                 # Autoplay
                 else:
-                    url = self.sourcesDirect(items)
+                    try:autoplay_meta=json.loads(meta) if isinstance(meta,str) else meta
+                    except (ValueError,TypeError):autoplay_meta={}
+                    autoplay_meta=dict(autoplay_meta,_autoplay_queue=True)
+                    return self.autoplay_sources(items,title,autoplay_meta)
 
             if url == None: return self.errorForSources()
 
@@ -171,6 +179,8 @@ class sources:
         except Exception as e:
             log_utils.log('Error %s' % str(e), log_utils.LOGERROR)
         finally:
+            progress=getattr(self,'_autoplay_progress',None)
+            if progress:progress.finish()
             self._cancelled.set()
             self.executor.shutdown(wait=False)
             self.resolve_executor.shutdown(wait=False)
@@ -377,7 +387,7 @@ class sources:
             hard_deadline=time.monotonic()+start_time
             while waiting_time > 0 and time.monotonic()<hard_deadline:
                 try:
-                    if control.abortRequested or progressDialog.iscanceled():
+                    if control.abortRequested or getattr(progressDialog,'iscanceled',lambda:False)():
                         self._cancelled.set();future.cancel();progressDialog.close();return None
                 except:
                     pass
@@ -419,7 +429,8 @@ class sources:
         #TODO
         control.idle() #ok
         from resources.lib.source_progress import SourceProgress
-        progressDialog = (_NextProgress() if self._series_next_autoplay
+        progressDialog = (self._autoplay_progress if getattr(self,'_autoplay_active',False)
+                          else _NextProgress() if self._series_next_autoplay
                           else SourceProgress(json.loads(self.sysmeta)))
         progressDialog.create(control.addonInfo('name'), '')
         progressDialog.update(0)
@@ -454,7 +465,7 @@ class sources:
             source_sd = 0
             total = 0
             total_format = '[COLOR %s]%s[/COLOR]' if control.getSetting('bold_labels') == 'false' else '[COLOR %s][B]%s[/B][/COLOR]'
-            pdiag_format = ' 4K: %s | 1080p: %s | 720p: %s | SD: %s | %s: %s                                         '.split('|')
+            pdiag_format = '4K: %s | 1080p: %s | 720p: %s | SD: %s | %s: %s'.split('|')
 
 
             for i in range(0, 4 * timeout):
@@ -463,7 +474,7 @@ class sources:
                         break
                     if control.abortRequested: return sys.exit()
                     try:
-                        if progressDialog.iscanceled():
+                        if getattr(progressDialog,'iscanceled',lambda:False)():
                             self.sources = []
                             return progressDialog.close() or []
                     except:
@@ -684,7 +695,8 @@ class sources:
             from concurrent.futures import wait, FIRST_COMPLETED
             selected = list(self.sources[:8])
             from resources.lib.source_progress import SourceProgress
-            dialog = SourceProgress(json.loads(self.sysmeta))
+            dialog = (self._autoplay_progress if getattr(self,'_autoplay_active',False)
+                      else SourceProgress(json.loads(self.sysmeta)))
             dialog.create(control.addonInfo('name'), 'Ermittle Aufloesung und Bitrate ...')
             pool = SearchExecutor(max_workers=2)
             pending = set(pool.submit(self._get_resolution, src) for src in selected)
@@ -911,26 +923,26 @@ class sources:
             url = call.resolve(url)
             if self._cancelled.is_set():return None
 
-            if not direct == True:
+            # Resolve hoster pages even when a provider incorrectly marks them
+            # direct. An unsupported non-direct URL is not a playable stream.
+            if not local and str(url or '').startswith(('http://','https://')):
+                valid=False
                 try:
-                    hmf = resolver.HostedMediaFile(url=url, include_disabled=True, include_universal=False, include_popups=False)
-                    if not hmf.valid_url():
-                        hmf = resolver.HostedMediaFile(url=url, include_disabled=True, include_universal=False, include_popups=True)
-                    if hmf.valid_url():
+                    hmf=resolver.HostedMediaFile(url=url,include_disabled=True,include_universal=False,include_popups=False)
+                    valid=hmf.valid_url()
+                    if not valid and (not direct or item.get('prioHoster',0)>=999):
+                        hmf=resolver.HostedMediaFile(url=url,include_disabled=True,include_universal=False,include_popups=True)
+                        valid=hmf.valid_url()
+                    if valid:
                         if self._cancelled.is_set():return None
-                        url = hmf.resolve()
-                        if url == False or url == None or url == '': url = None  # raise Exception()
-                except:
-                    url = None
-            elif item.get('prioHoster', 0) >= 999:
-                try:
-                    hmf = resolver.HostedMediaFile(url=url, include_disabled=True, include_universal=False, include_popups=True)
-                    if hmf.valid_url():
-                        if self._cancelled.is_set():return None
-                        url = hmf.resolve()
-                        if url == False or url == None or url == '': url = None
-                except:
-                    url = None
+                        url=hmf.resolve() or None
+                    elif not direct:
+                        log_utils.log('Hoster-Link nicht durch ResolveURL unterstützt: '+str(provider),log_utils.LOGWARNING)
+                        url=None
+                except Exception:
+                    if not direct or valid:url=None
+            elif not direct and not local:
+                url=None
 
             if url == None or (not '://' in str(url) and not local):
                 log_utils.log('Kein Video Link gefunden: Provider %s / %s / %s ' % (item['provider'], item['source'], str(item['source'])), log_utils.LOGERROR)
@@ -993,7 +1005,7 @@ class sources:
                     future = self.resolve_executor.submit(self.sourcesResolve, items[i])
 
                     try:
-                        if progressDialog.iscanceled(): break
+                        if getattr(progressDialog,'iscanceled',lambda:False)(): break
                         progressDialog.update(int((100 / float(len(items))) * i), str(items[i]['label']))
                     except:
                         progressDialog.update(int((100 / float(len(items))) * i), str(header2) + str(items[i]['label']))
@@ -1003,7 +1015,7 @@ class sources:
                     while waiting_time > 0 and time.monotonic()<hard_deadline:
                         try:
                             if control.abortRequested: return sys.exit() #xbmc.Monitor().abortRequested()
-                            if progressDialog.iscanceled(): return progressDialog.close()
+                            if getattr(progressDialog,'iscanceled',lambda:False)(): return progressDialog.close()
                         except:
                             pass
 
@@ -1046,9 +1058,57 @@ class sources:
             log_utils.log('Error %s' % str(e), log_utils.LOGINFO)
 
 
+    def autoplay_sources(self,items,title,meta):
+        from resources.lib.autoplay_queue import run
+        from resources.lib.player import player
+        monitor=xbmc.Monitor()
+        dialog=getattr(self,'_autoplay_progress',None)
+        if dialog is None:
+            from resources.lib.source_progress import ContinuousProgress
+            dialog=ContinuousProgress(meta)
+            self._autoplay_progress=dialog
+        opened=[True]
+        dialog.create('Hybrid Autoplay','%d Quellen gefunden · Autoplay wird vorbereitet …' % len(items))
+        def cancelled():
+            check=getattr(dialog,'iscanceled',None)
+            return self._cancelled.is_set() or monitor.abortRequested() or (opened[0] and callable(check) and check())
+        def report(index,total,status):
+            log_utils.log('Autoplay: %s %d/%d' % (status,index,total),log_utils.LOGINFO)
+            if status=='resolve':
+                dialog.update(int((index-1)*100/max(1,total)),'%d Quellen gefunden · Quelle %d von %d wird geprüft[CR]Autoplay startet mit der besten verfügbaren Qualität' % (total,index,total))
+        def resolve(source):
+            future=self.resolve_executor.submit(self.sourcesResolve,source)
+            deadline=time.monotonic()+30
+            while not future.done():
+                if cancelled():self._cancelled.set();future.cancel();return None
+                if time.monotonic()>=deadline:
+                    self._cancelled.set();future.cancel();raise TimeoutError('Resolver deadline')
+                if monitor.waitForAbort(0.25):self._cancelled.set();future.cancel();return None
+            return future.result()
+        def start(url,index):
+            dialog.update(95,'Quelle %d von %d · Wiedergabe wird gestartet …' % (index,len(items)))
+            current=player()
+            current.run(title,url,dict(meta),direct=index>1,cancel_start=cancelled)
+            if current._startup_failed and not current._ever_started and not current._user_stopped:
+                # Do not start the next attempt behind Kodi's playback-error dialog.
+                deadline=time.monotonic()+60
+                while (xbmc.getCondVisibility('Window.IsActive(okdialog)')
+                       or xbmc.getCondVisibility('Window.IsActive(yesnodialog)')):
+                    if monitor.waitForAbort(0.25) or time.monotonic()>=deadline:
+                        return dict(stopped=True)
+            return dict(started=current._ever_started,stopped=current._user_stopped,failed=current._startup_failed)
+        try:
+            result=run(items,resolve,start,cancelled,report)
+            log_utils.log('Autoplay beendet: '+result,log_utils.LOGINFO)
+            if result=='exhausted':control.infoDialog('Quellen gefunden, aber keine davon konnte gestartet werden.',sound=False,icon='INFO')
+            elif result=='timeout':control.infoDialog('Quellenprüfung wegen Zeitüberschreitung beendet. Bitte erneut versuchen.',sound=False,icon='INFO')
+            elif result=='player_error':control.infoDialog('Wiedergabe wurde wegen eines Playerfehlers beendet.',sound=False,icon='INFO')
+        finally:
+            dialog.finish()
+
     def sourcesDirect(self, items):
         from resources.lib.quality_policy import order_sources
-        items = order_sources(items, control.getSetting('mscout.autoplay.quality') or '0')[:3]
+        items = order_sources(items, '0')
         # TODO - OK
         # filter = [i for i in items if i['source'].lower() in self.hostcapDict and i['debrid'] == '']
         # items = [i for i in items if not i in filter]
@@ -1068,7 +1128,7 @@ class sources:
 
         for i in range(len(items)):
             try:
-                if progressDialog.iscanceled(): break
+                if getattr(progressDialog,'iscanceled',lambda:False)(): break
                 progressDialog.update(int((100 / float(len(items))) * i), str(items[i]['label']))
             except:
                 progressDialog.update(int((100 / float(len(items))) * i), str(header2) + str(items[i]['label']))
@@ -1080,7 +1140,7 @@ class sources:
                 deadline=time.monotonic()+30
                 monitor=xbmc.Monitor()
                 while not future.done() and time.monotonic()<deadline:
-                    if self._cancelled.is_set() or control.abortRequested or progressDialog.iscanceled():
+                    if self._cancelled.is_set() or control.abortRequested or getattr(progressDialog,'iscanceled',lambda:False)():
                         self._cancelled.set();future.cancel();break
                     if monitor.waitForAbort(0.25):
                         self._cancelled.set();future.cancel();break

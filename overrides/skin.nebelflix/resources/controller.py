@@ -927,6 +927,12 @@ def dispatch(command, args=()):
                 'Bitte zuerst das eigenständige Nebelflix-TV-Add-on installieren. '
                 'Danach sind hier die EPG-Quellen, Senderlogos und M3U-Listen erreichbar.')
         return
+    if command == 'reset_watched':
+        xbmc.executebuiltin('RunPlugin(plugin://plugin.video.nebelflix.hybrid/?action=resetWatched)')
+        return
+    if command == 'reset_playback_status':
+        xbmc.executebuiltin('RunPlugin(plugin://plugin.video.nebelflix.hybrid/?action=resetPlaybackStatus)')
+        return
     if command == 'manage_history':
         # Hybrid owns both the history and old playback bookmarks.
         xbmc.executebuiltin('RunPlugin(plugin://plugin.video.nebelflix.hybrid/?action=historyManager)')

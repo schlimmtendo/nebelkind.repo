@@ -22,7 +22,7 @@ def router(paramstring):
 
     elif action == "play":
         from resources.lib.player import play_playlist
-        play_playlist(params.get('playlist_id'))
+        play_playlist(params.get('playlist_id'),order=params.get('order'))
 
     else:
         list_categories()

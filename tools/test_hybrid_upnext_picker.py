@@ -67,6 +67,11 @@ def test_confirmed_episode(source):
     assert metadata["fanart"] == data["fanart"]
     assert metadata["clearlogo"] == data["clearlogo"]
     assert result["next_episode"]["episode"] == 2
+    if "_autoplay_queue" in source:
+        automatic = scope["next_episode"](dict(data, _autoplay_queue=True))
+        auto_meta = json.loads(parse_qs(urlsplit(automatic["play_url"]).query)["sysmeta"][0])
+        assert auto_meta["select"] == "2"
+        assert auto_meta["_autoplay_queue"] is True
 
 
 def test_player_fallback(source):
@@ -100,6 +105,9 @@ def test_player_fallback(source):
     assert (next_season["season"], next_season["episode"]) == (2, 1)
     assert next_season["select"] == "1"
     assert "number_of_episodes" not in next_season
+    if "_autoplay_queue" in source:
+        subject.meta["_autoplay_queue"] = True
+        assert subject._next_episode_meta()["select"] == "2"
 
 
 def main():
@@ -116,7 +124,7 @@ def main():
             compile(text, filename, "exec")
         test_confirmed_episode(src[NEXT])
         test_player_fallback(src[PLAYER])
-        assert "progressDialog = (_NextProgress() if self._series_next_autoplay" in src[SOURCES]
+        assert "else _NextProgress() if self._series_next_autoplay" in src[SOURCES] or "progressDialog = (_NextProgress() if self._series_next_autoplay" in src[SOURCES]
         assert "else SourceProgress(json.loads(self.sysmeta)))" in src[SOURCES]
         assert "elif select == '1':" in src[SOURCES]
         assert "picked = choose_source(items, meta)" in src[SOURCES]
@@ -128,11 +136,10 @@ def main():
         assert "def _offer_next_episode(self):" in src[PLAYER]
         assert "series.next.autoplay" in src[PLAYER]
         assert "RunPlugin(%s)" in src[PLAYER]
-        assert "NEBELFLIX_UPNEXT_MANUAL_SOURCES_V1" in src[PLAYER]
+        assert "NEBELFLIX_UPNEXT_MANUAL_SOURCES_V1" in src[PLAYER] or "_autoplay_queue" in src[PLAYER]
     print("PASS: TMDb and fallback handoffs, full-screen fanart/logo progress,"
           " manual source selection, cancel and Up Next triggers")
 
 
 if __name__ == "__main__":
     main()
-

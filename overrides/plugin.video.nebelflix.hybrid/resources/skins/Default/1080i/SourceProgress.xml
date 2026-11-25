@@ -1,0 +1,72 @@
+<?xml version='1.0' encoding='utf8'?>
+<window>
+  <coordinates>
+    <system>1</system>
+  </coordinates>
+  <controls>
+    <control type="image">
+      <left>-160</left>
+      <top>0</top>
+      <width>2240</width>
+      <height>1080</height>
+      <texture colordiffuse="FF101820">special://skin/media/nebelflix/white.png</texture>
+    </control>
+    <control type="image" id="10">
+      <left>-160</left>
+      <top>0</top>
+      <width>2240</width>
+      <height>1080</height>
+      <aspectratio>scale</aspectratio>
+    </control>
+    <control type="image">
+      <left>-160</left>
+      <top>0</top>
+      <width>2240</width>
+      <height>1080</height>
+      <texture colordiffuse="88000000">special://skin/media/nebelflix/white.png</texture>
+    </control>
+    <control type="image" id="11">
+      <left>660</left>
+      <top>540</top>
+      <width>600</width>
+      <height>190</height>
+      <aspectratio>keep</aspectratio>
+    </control>
+    <control type="label" id="12">
+      <left>240</left>
+      <top>700</top>
+      <width>1440</width>
+      <height>46</height>
+      <font>font13</font>
+      <align>center</align>
+      <textcolor>FFFFFFFF</textcolor>
+    </control>
+    <control type="progress" id="20">
+      <left>640</left>
+      <top>750</top>
+      <width>640</width>
+      <height>24</height>
+      <texturebg colordiffuse="66FFFFFF">special://skin/media/nebelflix/white.png</texturebg>
+      <midtexture colordiffuse="FFE50914">special://skin/media/nebelflix/white.png</midtexture>
+    </control>
+    <control type="textbox" id="21">
+      <left>240</left>
+      <top>847</top>
+      <width>1440</width>
+      <height>128</height>
+      <font>font13</font>
+      <align>center</align>
+      <textcolor>FFDDDDDD</textcolor>
+    </control>
+    <control type="label" id="22">
+      <left>240</left>
+      <top>795</top>
+      <width>1440</width>
+      <height>46</height>
+      <font>font13</font>
+      <align>center</align>
+      <aligny>center</aligny>
+      <textcolor>FFDDDDDD</textcolor>
+    </control>
+  </controls>
+</window>

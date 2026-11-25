@@ -97,7 +97,7 @@ def request_hub_setup():
 
 
 
-WIDGET_CACHE_DIRECTORIES = ('direct-widgets', 'artwork', 'widget-artwork', 'logos', 'details-cache')
+WIDGET_CACHE_DIRECTORIES = ('direct-widgets', 'artwork', 'widget-artwork', 'logos', 'details-cache', 'watch-artwork')
 
 
 def clear_widget_cache_directories():
@@ -535,7 +535,7 @@ def from_file(file):
                 Type=media, DBType=dbtype, Year=str(file.get('year') or ''),
                 ShowTitle=file.get('showtitle', ''),
                 Fanart=art.get('fanart') or art.get('landscape') or file.get('thumbnail', ''),
-                Poster=art.get('poster') or file.get('thumbnail', ''), Clearlogo=art.get('clearlogo') or art.get('tvshow.clearlogo') or art.get('season.clearlogo', ''),
+                Poster=art.get('poster') or art.get('thumb') or file.get('thumbnail', ''), Clearlogo=art.get('clearlogo') or art.get('tvshow.clearlogo') or art.get('season.clearlogo', ''),
                 Genres=' / '.join(file.get('genre') or []), Rating=str(file.get('rating') or ''),
                 Season=str(file.get('season', '')), Episode=str(file.get('episode', '')),
                 Folder=file.get('filetype') == 'directory', Resume=(file.get('resume') or {}).get('position', 0),
@@ -625,7 +625,11 @@ def playback_item(file, path):
         helper = {}
     helper_type = str(helper.get('tmdb_type') or '').lower()
     helper_id = str(helper.get('tmdb_id') or '')
-    if helper_id.isdigit() and helper_type in ('movie', 'tv', 'episode'):
+    import hashlib
+    current_hash=hashlib.sha256(str(path or '').split('|',1)[0].encode('utf8')).hexdigest()
+    trusted=helper.get('source_hash')==current_hash or (item.get('TMDB') and str(item['TMDB'])==helper_id)
+    if not trusted:helper={};helper_id='';helper_type=''
+    if trusted and helper_id.isdigit() and helper_type in ('movie', 'tv', 'episode'):
         if helper_type == 'movie':
             item.update(Type='movie', DBType='movie', TMDB=helper_id)
         else:

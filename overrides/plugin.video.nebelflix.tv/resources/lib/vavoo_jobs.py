@@ -29,6 +29,17 @@ def request(profile,countries,snapshots):
     return payload
 
 
+def active_countries(api,selection):
+    """Vavoo parse_country_codes returns display names, not necessarily codes."""
+    chosen=[str(value).strip() for value in api.parse_country_codes(selection) if str(value).strip()]
+    names={value.casefold() for value in chosen}
+    codes={value.upper() for value in chosen}
+    codes.update(str(api.country_to_code(value) or '').upper() for value in chosen)
+    codes.discard('')
+    return [country for country in api.get_available_countries()
+            if str(country).casefold() in names or str(api.country_to_code(country) or '').upper() in codes]
+
+
 def run_pending(profile,api,groups,monitor):
     from . import vavoo_sync as repair_engine
     root=Path(profile)
@@ -47,10 +58,15 @@ def run_pending(profile,api,groups,monitor):
         with os.fdopen(fd,'w') as stream:stream.write(str(os.getpid()))
         state=read(state_path)
         if state.get('id')==job['id'] and state.get('completed'):return False
-        if not groups.load_groups():return False
-        codes=api.parse_country_codes(__import__('xbmcaddon').Addon('plugin.video.vavoo.tv.plus').getSetting('selected_countries'))
-        countries=[country for country in api.get_available_countries() if api.country_to_code(country).upper() in {str(c).upper() for c in codes}]
-        if not countries:return False
+        if not groups.load_groups():
+            xbmc.log('[Vavoo/Nebelkind] Favoritenpflege zurückgestellt: keine Sendergruppen vorhanden.',xbmc.LOGWARNING)
+            return False
+        selected=__import__('xbmcaddon').Addon('plugin.video.vavoo.tv.plus').getSetting('selected_countries')
+        countries=active_countries(api,selected)
+        if not countries:
+            xbmc.log('[Vavoo/Nebelkind] Favoritenpflege zurückgestellt: keine passenden ausgewählten Länder.',xbmc.LOGWARNING)
+            return False
+        xbmc.log('[Vavoo/Nebelkind] Automatischer Auftrag: %d ausgewählte Länder.' % len(countries),xbmc.LOGINFO)
         attempt=0
         while attempt<3:
             while xbmc.getCondVisibility('Player.HasVideo') or xbmc.getCondVisibility('System.HasModalDialog'):

@@ -158,7 +158,9 @@ class SourceProgress(xbmcgui.WindowXMLDialog):
             self.getControl(12).setLabel('')
             self._shown_logo = self._pending_logo
         self.getControl(20).setPercent(max(0, min(100, percent)))
-        self.getControl(21).setText(message)
+        primary,separator,secondary=str(message or '').partition('[CR]')
+        self.getControl(22).setLabel(primary.strip())
+        self.getControl(21).setText(secondary.strip() if separator else '')
 
     def onAction(self, action):
         if action.getId() in (9, 10, 92, 216):
@@ -167,3 +169,24 @@ class SourceProgress(xbmcgui.WindowXMLDialog):
 
     def iscanceled(self):
         return self.cancelled
+
+
+class ContinuousProgress:
+    """One owner keeps the search overlay across search, probes and Autoplay."""
+    def __init__(self,meta):
+        self.dialog=SourceProgress(meta)
+        self.created=False
+        self.finished=False
+    def create(self,heading,message=''):
+        if not self.created:
+            self.created=True;self.dialog.create(heading,message)
+        else:self.dialog.update(0,message)
+    def update(self,percent,message=''):
+        if not self.finished:self.dialog.update(percent,message)
+    def iscanceled(self):return self.dialog.iscanceled()
+    def close(self):
+        pass  # Intermediate stages release their reference, not the window.
+    def finish(self):
+        if not self.finished:
+            self.finished=True
+            if self.created:self.dialog.close()

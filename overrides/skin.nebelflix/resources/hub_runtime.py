@@ -441,6 +441,7 @@ class Hubs:
             hub_protocol.set_property(window,'NF.PersonalRevision', self.api.prop('RefreshWidgets'))
             for i in range(start,min(bound,len(rows))):
                 row=rows[i]
+                direct_widgets.refresh_markers(window,600+i)
                 if row['path'].startswith(('nf://continue','nf://mylist')):
                     self.bind(window,page,600+i,row,refresh=True)
         # Cached rows appear immediately. Refresh an expired row once per visit,

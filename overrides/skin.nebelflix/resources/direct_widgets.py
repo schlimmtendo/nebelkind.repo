@@ -16,6 +16,8 @@ import widget_snapshot
 import hub_protocol
 import logo_art
 import release_policy
+import watch_status
+import history_access
 
 ROOT=Path(xbmcvfs.translatePath('special://profile/addon_data/skin.nebelflix/'))
 
@@ -143,6 +145,7 @@ def restore(window, home, page, cid, source, entry, top10=False, allow_personal=
     budget=budget or performance.Budget(read('performance.json',{}).get('profile','auto'))
     limit=10 if top10 else (12 if budget.name=='low' else 20)
     items=[dict(item,Hub=page,Row=cid) for item in entry.get('items',[])[offset:offset+limit]]
+    items=watch_status.decorate(items,history_access.db_path())
     for item in items:
         if not item.get('Clearlogo'):
             logo=logo_art.cached(item)
@@ -172,6 +175,8 @@ def restore(window, home, page, cid, source, entry, top10=False, allow_personal=
         hub_protocol.set_property(window,prefix+'Thumb',item.get('Fanart') or item.get('Poster') or 'special://skin/media/nebelflix/poster.png')
         values={'NF.Data':json.dumps(item,ensure_ascii=False),'NF.Hub':page,
                 'NF.Clearlogo':item.get('Clearlogo',''),
+                'NF.WatchBar':watch_status.bar_art(item['WatchPercent'],ROOT/'watch-artwork') if item.get('WatchState')=='partial' else '',
+                'NF.WatchState':item.get('WatchState',''),'NF.WatchPercent':str(item.get('WatchPercent',0)),
                 'NF.RankArt':'special://skin/media/nebelflix/rank-%s.png'%(index+1) if top10 and index<10 else '',
                 'NFTV.Category':'1' if item.get('GuideOpen') or (item.get('AddonBrowse') and '?action=list&group=' in item.get('Path','')) else '',
                 'tmdb_id':str(item.get('TMDB','')),'tmdb_type':item.get('Type','')}
@@ -254,3 +259,23 @@ def run(handle, params):
             home.clearProperty(prop + '.Job')
         load_timing.record('skin', 'widget.direct', started, hub=page, row=row,
                            items=len(items), status=status)
+
+
+def refresh_markers(window,cid):
+    count=min(int(window.getProperty('NF.TileCount'+str(cid)) or 0),hub_protocol.STATIC_TILE_LIMIT)
+    items=[]
+    for index in range(count):
+        try:items.append(json.loads(window.getProperty('NF.Tile%s.%s.NF.Data'%(cid,index)) or '{}'))
+        except ValueError:items.append({})
+    control=None;position=0
+    if window.getFocusId()==cid:
+        try:control=window.getControl(cid);position=control.getSelectedPosition()
+        except RuntimeError:pass
+    changed=False
+    for index,item in enumerate(watch_status.decorate(items,history_access.db_path())):
+        prefix='NF.Tile%s.%s.'%(cid,index)
+        changed=hub_protocol.set_property(window,prefix+'NF.WatchState',item['WatchState']) or changed
+        changed=hub_protocol.set_property(window,prefix+'NF.WatchPercent',str(item['WatchPercent'])) or changed
+        art=watch_status.bar_art(item['WatchPercent'],ROOT/'watch-artwork') if item['WatchState']=='partial' else ''
+        changed=hub_protocol.set_property(window,prefix+'NF.WatchBar',art) or changed
+    if changed and control:control.selectItem(position)
